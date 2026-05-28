@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="B737 OPS QR"/>
+<meta name="theme-color" content="#1a1a2e"/>
+<title>B737 OPS INFO QR</title>
+
+<!-- apple-touch-icon placeholder (replaced by canvas PNG below) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiIHJ4PSIyMDAiIGZpbGw9IiMxYTFhMmUiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjQ2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjBmZjYwIiBzdHJva2Utd2lkdGg9IjYiIG9wYWNpdHk9IjAuNCIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUxMiw0MDApIHJvdGF0ZSgtMzApIj48ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSIxNjAiIHJ5PSIyOCIgZmlsbD0iIzYwZmY2MCIvPjxlbGxpcHNlIGN4PSIxNjAiIGN5PSIwIiByeD0iNDAiIHJ5PSIxOCIgZmlsbD0iIzQwZmY4MCIvPjxwYXRoIGQ9Ik0yMCwtMjAgTC02MCwtMTIwIEwtMTAwLC0xMTAgTC0zMCwyMCBaIiBmaWxsPSIjNDBkMGZmIi8+PHBhdGggZD0iTTIwLDIwIEwtNjAsMTIwIEwtMTAwLDExMCBMLTMwLC0yMCBaIiBmaWxsPSIjNDBkMGZmIi8+PGVsbGlwc2UgY3g9Ii0yMCIgY3k9Ii0xMDUiIHJ4PSIyMCIgcnk9IjEyIiBmaWxsPSIjZmZlMDQwIi8+PGVsbGlwc2UgY3g9Ii0yMCIgY3k9IjEwNSIgcng9IjIwIiByeT0iMTIiIGZpbGw9IiNmZmUwNDAiLz48L2c+PHRleHQgeD0iNTEyIiB5PSI2OTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI3MCIgZm9udC13ZWlnaHQ9IjkwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYwZmY2MCI+QUlSIEFMR0VSSUU8L3RleHQ+PHRleHQgeD0iNTEyIiB5PSI3OTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMTAiIGZvbnQtd2VpZ2h0PSI5MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM0MGQwZmYiPkI3Mzc8L3RleHQ+PHRleHQgeD0iNTEyIiB5PSI4NjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI1MCIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2RmODBmZiI+T1BTIElORk8gUVI8L3RleHQ+PC9zdmc+"/>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:18px;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-system,Helvetica,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+
+/* LAYOUT */
+.app{min-height:100vh;background:radial-gradient(ellipse at 20% 10%,rgba(96,255,96,.06),transparent 45%),radial-gradient(ellipse at 80% 90%,rgba(64,200,255,.06),transparent 45%),#1a1a2e}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(26,26,46,.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;gap:10px;flex-wrap:wrap}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-icon{width:48px;height:48px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(96,255,96,.15),rgba(64,200,255,.15));border:2px solid rgba(96,255,96,.45);box-shadow:0 0 18px rgba(96,255,96,.3);gap:2px;flex-shrink:0}
+.logo-icon .plane{font-size:20px;filter:drop-shadow(0 0 6px #60ff60);line-height:1}
+.logo-icon .txt{font-size:8px;font-weight:900;color:#60ff60;letter-spacing:.5px;text-shadow:0 0 8px rgba(96,255,96,.8);line-height:1}
+.logo-name{font-size:14px;font-weight:900;letter-spacing:2px;color:#60ff60;text-shadow:0 0 14px rgba(96,255,96,.6);line-height:1.2}
+.logo-sub{font-size:10px;color:#7090aa;letter-spacing:1.5px;margin-top:3px;font-family:monospace}
+.hdr-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-btn{padding:8px 14px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap}
+.tool-btn:active,.tool-btn.on{border-color:rgba(64,208,255,.6);color:#40d0ff;background:rgba(64,208,255,.1);box-shadow:0 0 12px rgba(64,208,255,.25)}
+
+/* HOME */
+.home{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;gap:28px}
+.home h1{font-size:clamp(26px,5vw,48px);font-weight:900;text-align:center;background:linear-gradient(135deg,#60ff60,#40d0ff,#df80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;line-height:1.2}
+.home-sub{font-family:monospace;font-size:12px;color:#7090aa;letter-spacing:3px;text-align:center;margin-top:-16px}
+
+/* BLOCKS */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:880px}
+@media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+.block{border-radius:22px;border:2px solid;padding:26px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:transform .2s,filter .2s;text-align:center;min-height:160px;justify-content:center;-webkit-tap-highlight-color:transparent}
+.block:active{transform:scale(.96);filter:brightness(1.2)}
+.block-ico{font-size:42px;line-height:1}
+.block-name{font-size:17px;font-weight:900;letter-spacing:2px}
+.block-sub{font-size:12px;letter-spacing:1px;opacity:.65}
+
+/* PAGE */
+.page{max-width:960px;margin:0 auto;padding:18px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:50px;color:#7090aa;cursor:pointer;font-size:16px;font-weight:700;transition:all .2s;margin-bottom:20px;-webkit-tap-highlight-color:transparent}
+.back:active{color:#e8f0ff;border-color:rgba(255,255,255,.3)}
+.pg-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.pg-ico{font-size:48px;line-height:1}
+.pg-title{font-size:clamp(20px,4vw,32px);font-weight:900;letter-spacing:2px}
+.pg-sub{font-family:monospace;font-size:11px;color:#7090aa;letter-spacing:2px;margin-top:4px}
+
+/* SUBBLOCKS */
+.subgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px}
+@media(max-width:480px){.subgrid{grid-template-columns:1fr}}
+.subblock{border-radius:16px;border:2px solid;padding:20px 16px;cursor:pointer;transition:transform .2s;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent}
+.subblock:active{transform:scale(.97)}
+.subblock-ico{font-size:28px;flex-shrink:0}
+.subblock-name{font-size:17px;font-weight:900}
+.subblock-desc{font-size:13px;opacity:.65;margin-top:3px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid rgba(255,255,255,.08);flex-wrap:wrap;padding-bottom:0}
+.tab{padding:11px 18px;background:transparent;border:none;border-bottom:3px solid transparent;color:#7090aa;cursor:pointer;font-size:16px;font-weight:800;transition:all .2s;margin-bottom:-2px;border-radius:8px 8px 0 0;-webkit-tap-highlight-color:transparent}
+.tab.on{color:#e8f0ff;border-bottom-color:currentColor;background:rgba(255,255,255,.03)}
+
+/* CARD */
+.card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;margin-bottom:14px}
+.card-ttl{font-size:16px;font-weight:900;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card-ttl::before{content:'';display:block;width:5px;height:20px;border-radius:3px;background:currentColor;flex-shrink:0;box-shadow:0 0 10px currentColor}
+
+/* CHECKLIST */
+.ck{display:flex;align-items:flex-start;gap:12px;padding:13px 8px;border-radius:10px;cursor:pointer;transition:all .3s;margin-bottom:3px;-webkit-tap-highlight-color:transparent}
+.ck.done{opacity:.42;background:rgba(255,255,255,.02)}
+.ck-box{width:28px;height:28px;min-width:28px;border-radius:8px;border:2.5px solid;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px;flex-shrink:0;font-size:16px;font-weight:900}
+.ck-box.ticked{box-shadow:0 0 10px currentColor}
+.ck-txt{font-size:17px;line-height:1.55;flex:1;transition:all .3s}
+.ck.done .ck-txt{text-decoration:line-through}
+.ck-act{font-family:monospace;font-size:13px;padding-left:12px;white-space:nowrap;font-weight:700;margin-top:3px}
+.ck-sub{font-size:13px;color:#7090aa;margin-top:4px;line-height:1.4}
+.prog-wrap{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin:8px 0 16px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prog-lbl{font-family:monospace;font-size:12px;color:#7090aa}
+.rst-btn{padding:6px 14px;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#7090aa;cursor:pointer;font-size:13px;font-weight:700;-webkit-tap-highlight-color:transparent}
+
+/* ALERT BOXES */
+.warn{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:16px;display:flex;gap:10px;align-items:flex-start;line-height:1.6;box-shadow:0 0 18px rgba(255,0,51,.12)}
+.info{background:rgba(64,208,255,.07);border:1.5px solid rgba(64,208,255,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;font-size:16px;line-height:1.6}
+.tip{background:rgba(255,224,64,.07);border:1.5px solid rgba(255,224,64,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;font-size:16px;line-height:1.6}
+.ok-box{background:rgba(96,255,96,.08);border:2px solid rgba(96,255,96,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 18px rgba(96,255,96,.12)}
+.err-box{background:rgba(255,0,51,.08);border:2px solid rgba(255,0,51,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 20px rgba(255,0,51,.2);animation:pulse .9s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 20px rgba(255,0,51,.2)}50%{box-shadow:0 0 35px rgba(255,0,51,.5)}}
+.res-lbl{font-family:monospace;font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:7px}
+.res-val{font-size:26px;font-weight:900}
+.alarm{border-radius:12px;padding:14px 16px;margin-top:10px;display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700}
+.alarm-ok{background:rgba(96,255,96,.1);border:2px solid rgba(96,255,96,.5);color:#60ff60;box-shadow:0 0 16px rgba(96,255,96,.2)}
+.alarm-bad{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);color:#ff3355;box-shadow:0 0 20px rgba(255,0,51,.25);animation:pulse .9s ease infinite}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:16px}
+.tbl th{background:rgba(255,255,255,.06);padding:10px 12px;text-align:left;font-size:11px;letter-spacing:2px;color:#7090aa;border-bottom:1px solid rgba(255,255,255,.08);font-weight:700}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.tbl-wrap{overflow-x:auto}
+
+/* INPUTS */
+.row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.inp{flex:1;min-width:140px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:11px;padding:12px 16px;color:#e8f0ff;font-size:17px;font-weight:700;outline:none;font-family:inherit;transition:border-color .2s}
+.inp:focus{border-color:rgba(64,208,255,.7);box-shadow:0 0 10px rgba(64,208,255,.2)}
+.inp::placeholder{color:#7090aa;font-weight:400}
+.btn{padding:12px 22px;border-radius:11px;border:none;cursor:pointer;font-size:16px;font-weight:900;letter-spacing:.5px;transition:transform .15s;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.95)}
+.btn-g{background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)}
+select.inp{cursor:pointer}
+
+/* TOGGLE */
+.eq-row{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:10px;margin-bottom:3px;transition:background .2s}
+.eq-row.inop{background:rgba(255,0,51,.08)}
+.eq-name{font-size:17px;flex:1;font-weight:700}
+.eq-req{font-family:monospace;font-size:12px;color:#7090aa;min-width:90px;text-align:right}
+.tog{position:relative;width:50px;height:28px;min-width:50px}
+.tog input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:28px;cursor:pointer;transition:.3s;border:1.5px solid rgba(255,255,255,.15)}
+.sl::before{content:'';position:absolute;width:22px;height:22px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+input:checked+.sl{background:rgba(255,0,51,.6);border-color:rgba(255,0,51,.7);box-shadow:0 0 10px rgba(255,0,51,.4)}
+input:checked+.sl::before{transform:translateX(22px)}
+
+/* CHIP */
+.chip{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:800}
+.c-ok{background:rgba(96,255,96,.15);color:#60ff60;border:1.5px solid rgba(96,255,96,.4)}
+.c-warn{background:rgba(255,224,64,.15);color:#ffe040;border:1.5px solid rgba(255,224,64,.4)}
+.c-bad{background:rgba(255,0,51,.15);color:#ff3355;border:1.5px solid rgba(255,0,51,.4)}
+
+/* NOTES */
+.notes-ta{width:100%;min-height:200px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;color:#e8f0ff;font-size:17px;font-weight:600;resize:vertical;outline:none;font-family:inherit}
+.notes-ta:focus{border-color:rgba(64,208,255,.5)}
+
+/* RCAM rows */
+.rcam-row{border-radius:12px;padding:13px 16px;margin-bottom:9px;border:2px solid;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+
+/* MOTNE decode result */
+.mf{display:flex;align-items:flex-start;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.mf-lbl{font-family:monospace;font-size:12px;color:#7090aa;min-width:170px;padding-top:3px;letter-spacing:.5px}
+.mf-val{font-size:19px;font-weight:800}
+
+/* Install banner */
+#ibanner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(26,26,46,.97);border:2px solid rgba(96,255,96,.5);border-radius:16px;padding:14px 40px 14px 18px;color:#60ff60;font-size:14px;font-weight:700;text-align:center;z-index:9999;box-shadow:0 0 30px rgba(96,255,96,.3);max-width:320px;width:calc(100% - 32px);animation:slideUp .4s ease}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+#ibanner p{margin:3px 0 0;color:#b0c8e0;font-size:13px;font-weight:400}
+#ibanner .ib-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#60ff60;font-size:20px;cursor:pointer;padding:0;line-height:1}
+
+@media(min-width:768px){html{font-size:19px}.block-name{font-size:19px}.ck-txt{font-size:19px}}
+@media(min-width:1024px){html{font-size:21px}.pg-title{font-size:34px}}
+</style>
+
+<script>
+// Generate PNG icon via canvas for iOS homescreen
+(function() {
+  try {
+    var canvas = document.createElement('canvas');
+    canvas.width = 180; canvas.height = 180;
+    var ctx = canvas.getContext('2d');
+    
+    // Background
+    var bgGrad = ctx.createLinearGradient(0,0,180,180);
+    bgGrad.addColorStop(0, '#1a1a3e');
+    bgGrad.addColorStop(1, '#0d0d1a');
+    ctx.fillStyle = bgGrad;
+    roundRect(ctx, 0, 0, 180, 180, 40);
+    ctx.fill();
+    
+    // Green border
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.7;
+    roundRect(ctx, 1.5, 1.5, 177, 177, 39);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    
+    // Draw airplane
+    ctx.save();
+    ctx.translate(90, 70);
+    ctx.rotate(-35 * Math.PI / 180);
+    
+    // Fuselage
+    var gr = ctx.createLinearGradient(-35,0,35,0);
+    gr.addColorStop(0,'#00cc66'); gr.addColorStop(1,'#00ff88');
+    ctx.fillStyle = gr;
+    ellipse(ctx, 0, 0, 35, 7.5);
+    ctx.fill();
+    
+    // Wings
+    ctx.fillStyle = '#40d0ff';
+    ctx.beginPath(); ctx.moveTo(4,-5); ctx.lineTo(-15,-30); ctx.lineTo(-23,-27); ctx.lineTo(-7,5); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(4,5); ctx.lineTo(-15,30); ctx.lineTo(-23,27); ctx.lineTo(-7,-5); ctx.closePath(); ctx.fill();
+    
+    // Tail
+    ctx.fillStyle = '#df80ff';
+    ctx.beginPath(); ctx.moveTo(-27,-4); ctx.lineTo(-38,-19); ctx.lineTo(-42,-17); ctx.lineTo(-33,0); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-27,4); ctx.lineTo(-38,19); ctx.lineTo(-42,17); ctx.lineTo(-33,0); ctx.closePath(); ctx.fill();
+    
+    // Engines
+    ctx.fillStyle = '#ffe040';
+    ellipse(ctx, -7, -25, 5.5, 3.5); ctx.fill();
+    ellipse(ctx, -7, 25, 5.5, 3.5); ctx.fill();
+    
+    ctx.restore();
+    
+    // Text
+    ctx.fillStyle = '#00ff88';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('AIR ALGERIE', 90, 118);
+    
+    ctx.fillStyle = '#40d0ff';
+    ctx.font = 'bold 27px Arial';
+    ctx.fillText('B737', 90, 143);
+    
+    ctx.fillStyle = '#df80ff';
+    ctx.font = 'bold 10px Arial';
+    ctx.fillText('OPS INFO QR', 90, 161);
+    
+    // Set as apple-touch-icon
+    var pngUrl = canvas.toDataURL('image/png');
+    var link = document.querySelector('link[rel="apple-touch-icon"]') || document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = pngUrl;
+    document.head.appendChild(link);
+    
+    // Also set multiple sizes
+    ['152x152','167x167','180x180'].forEach(function(sz) {
+      var l = document.createElement('link');
+      l.rel = 'apple-touch-icon';
+      l.sizes = sz;
+      l.href = pngUrl;
+      document.head.appendChild(l);
+    });
+    
+  } catch(e) { console.log('Icon generation error:', e); }
+  
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);
+    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r);
+    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h);
+    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r);
+    ctx.quadraticCurveTo(x, y, x+r, y);
+    ctx.closePath();
+  }
+  function ellipse(ctx, cx, cy, rx, ry) {
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+  }
+})();
+</script>
+
+</head>
+<body>
+<div class="app" id="app">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;color:#60ff60;font-size:20px">
+    Chargement…
+  </div>
+</div>
+
+<div id="ibanner">
+  <button class="ib-close" onclick="closeInstall()">✕</button>
+  ✈️ <strong>Installer B737 OPS QR</strong>
+  <p>Partager ➜ "Sur l'écran d'accueil"</p>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id);
+const el = (tag,cls,html,style) => {
+  const e=document.createElement(tag);
+  if(cls)e.className=cls;
+  if(html)e.innerHTML=html;
+  if(style)Object.assign(e.style,style);
+  return e;
+};
+const h = (tag,props,...children) => {
+  const e=document.createElement(tag);
+  if(props)Object.keys(props).forEach(k=>{
+    if(k==='class')e.className=props[k];
+    else if(k==='style')Object.assign(e.style,props[k]);
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2).toLowerCase(),props[k]);
+    else e.setAttribute(k,props[k]);
+  });
+  children.flat(Infinity).forEach(c=>{
+    if(c==null||c===false)return;
+    e.appendChild(typeof c==='string'?document.createTextNode(c):c);
+  });
+  return e;
+};
+
+// State management
+let STATE = { page: null, sub: null };
+const render = () => { $('app').innerHTML=''; $('app').appendChild(buildApp()); };
+
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+
+const FLEET = {"7T-VJJ":"0A0018","7T-VJK":"0A0019","7T-VJL":"0A001A","7T-VJM":"0A001B","7T-VJN":"0A0020","7T-VJO":"0A0021","7T-VJP":"0A0022","7T-VJQ":"0A0024","7T-VJR":"0A0025","7T-VJS":"0A0026","7T-VJT":"0A0027","7T-VJU":"0A0028","7T-VKA":"0A0049","7T-VKB":"0A004A","7T-VKC":"0A004B","7T-VKD":"0A0074","7T-VKE":"0A0075","7T-VKF":"0A0076","7T-VKG":"0A0077","7T-VKH":"0A0078","7T-VKI":"0A0079","7T-VKJ":"0A007A","7T-VKK":"0A008A","7T-VKL":"0A008B","7T-VKM":"0A008C","7T-VKN":"0A008D","7T-VKO":"0A008E","7T-VKP":"0A008F","7T-VKQ":"0A0090","7T-VKR":"0A0091","7T-VKS":"0A0092","7T-VKT":"0A0093"};
+
+const RCAM_DATA = [
+  {rwycc:6,desc:"Piste sèche",braking:"—",clr:"#39ff14",tkof:"36/33*",ldg:"36/33*"},
+  {rwycc:5,desc:"Givre · Humide · Gadoue ≤3mm · Neige sèche/mouillée",braking:"BON",clr:"#00ff88",tkof:"25",ldg:"36/33*"},
+  {rwycc:4,desc:"Neige compactée (≤−15°C OAT)",braking:"BON À MOYEN",clr:"#ffe600",tkof:"22",ldg:"30"},
+  {rwycc:3,desc:"Glissante mouillée · Neige >3mm · Compactée >−15°C",braking:"MOYEN",clr:"#ff9900",tkof:"20",ldg:"25"},
+  {rwycc:2,desc:"Eau ou gadoue >3mm",braking:"MOYEN À MAUVAIS",clr:"#ff4400",tkof:"15",ldg:"17"},
+  {rwycc:1,desc:"Glace",braking:"MAUVAIS",clr:"#ff0033",tkof:"13",ldg:"15"},
+  {rwycc:0,desc:"Glace mouillée · Eau sur neige compactée · Neige sur glace",braking:"NUL",clr:"#990000",tkof:"NIL",ldg:"NIL"},
+];
+
+const SNOWT = {"0":"Sec et dégagé","1":"Humide","2":"Mouillé/Flaques d'eau","3":"Givre/Gelée <1mm","4":"Neige sèche","5":"Neige mouillée","6":"Gadoue (Slush)","7":"Glace","8":"Neige compactée","9":"Ornières gelées","/":"Non signalé"};
+const SNOWE = {"1":"10% ou moins","2":"11–25%","5":"26–50%","9":"51–100%","/":"Non signalé"};
+
+const COLD_TBL = [
+  {alt:200,m10:0,m20:10,m30:10,m40:20,m50:20,m60:30},
+  {alt:300,m10:10,m20:10,m30:20,m40:30,m50:40,m60:50},
+  {alt:400,m10:10,m20:20,m30:30,m40:40,m50:60,m60:70},
+  {alt:500,m10:10,m20:20,m30:40,m40:60,m50:70,m60:90},
+  {alt:600,m10:10,m20:30,m30:50,m40:70,m50:90,m60:110},
+  {alt:700,m10:10,m20:30,m30:60,m40:80,m50:100,m60:130},
+  {alt:800,m10:20,m20:40,m30:60,m40:90,m50:120,m60:150},
+  {alt:900,m10:20,m20:40,m30:70,m40:100,m50:130,m60:170},
+  {alt:1000,m10:20,m20:50,m30:80,m40:120,m50:150,m60:190},
+  {alt:1500,m10:30,m20:80,m30:120,m40:170,m50:220,m60:280},
+  {alt:2000,m10:40,m20:100,m30:160,m40:230,m50:300,m60:380},
+  {alt:3000,m10:60,m20:150,m30:240,m40:340,m50:450,m60:570},
+  {alt:4000,m10:90,m20:200,m30:330,m40:460,m50:610,m60:770},
+  {alt:5000,m10:110,m20:260,m30:420,m40:590,m50:790,m60:980},
+];
+function getCorr(a,o){
+  const row=COLD_TBL.reduce((p,c)=>Math.abs(c.alt-a)<Math.abs(p.alt-a)?c:p);
+  const cols=[[10,'m10'],[20,'m20'],[30,'m30'],[40,'m40'],[50,'m50'],[60,'m60']];
+  const [,k]=cols.reduce((p,[v,kk])=>Math.abs(v-Math.abs(o))<Math.abs(p[0]-Math.abs(o))?[v,kk]:p,[0,'m10']);
+  return row[k];
+}
+
+const LVP_EQ=[
+  {n:"A/P AUTOLAND",c2:"1",c3:"1"},{n:"ALL ENGINES",c2:"X",c3:"X"},{n:"FLAPS 30/40",c2:"X",c3:"X"},
+  {n:"HYDRAULIC A+B",c2:"X",c3:"X"},{n:"AUTO SPEEDBRAKES",c2:"X",c3:"X"},{n:"EFIS CONTROL PANEL",c2:"1",c3:"2"},
+  {n:"ANTISKID",c2:"X",c3:"X"},{n:"GENERATOR",c2:"2",c3:"2"},{n:"TR1 + TR2/TR3",c2:"X",c3:"X"},
+  {n:"AUTOPILOT APP MODE",c2:"1",c3:"2"},{n:"A/P DISENGAGE SW",c2:"1",c3:"2"},{n:"A/P AURAL WARNING",c2:"X",c3:"X"},
+  {n:"FD BARS PFD",c2:"PF",c3:"2"},{n:"AUTOTHROTTLE A/T",c2:"R",c3:"R"},{n:"TO/GA SWITCHES",c2:"1",c3:"2"},
+  {n:"ADIRU NAV MODE",c2:"2",c3:"2"},{n:"ILS RECEIVER",c2:"PF",c3:"2"},{n:"GS VALIDITY CHECK",c2:"X",c3:"X"},
+  {n:"DEU",c2:"1",c3:"2"},{n:"STANDBY HORIZON",c2:"—",c3:"X"},{n:"PFD ND DISPLAYS",c2:"4",c3:"4"},
+  {n:"ATTITUDE PFD",c2:"2",c3:"2"},{n:"FMA PFD",c2:"2",c3:"2"},{n:"RADIO ALTIMETER",c2:"1",c3:"2"},
+  {n:"DH DISPLAY PFD",c2:"—",c3:"2"},{n:"ANGLE OF ATTACK",c2:"1",c3:"2"},{n:"WINDSHIELD WIPERS",c2:"X",c3:"X"},
+];
+
+const CPDLC_FIR={
+  "🇩🇿 ALGÉRIE":[{c:"DAAA",n:"Alger FIR (DAAA)"}],
+  "🇫🇷 FRANCE":[{c:"LFBB",n:"Bordeaux (LFBB)"},{c:"LFFF",n:"Paris (LFFF)"},{c:"LFMM",n:"Marseille (LFMM)"},{c:"LFRR",n:"Brest (LFRR)"},{c:"LFEE",n:"Reims (LFEE)"}],
+  "🇪🇸 ESPAGNE":[{c:"LECB",n:"Barcelona (LECB)"},{c:"LECM",n:"Madrid (LECM)"},{c:"LECS",n:"Sevilla (LECS)"},{c:"LEVC",n:"Valencia (LEVC)"},{c:"GCCC",n:"Canarias (GCCC)"}],
+  "🇮🇹 ITALIE":[{c:"LIMM",n:"Milano (LIMM)"},{c:"LIRR",n:"Roma (LIRR)"},{c:"LIBB",n:"Brindisi (LIBB)"}],
+  "🇩🇪 ALLEMAGNE":[{c:"EDGG",n:"Langen FIR (EDGG)"},{c:"EDMM",n:"München FIR (EDMM)"},{c:"EDWW",n:"Bremen FIR (EDWW)"},{c:"EDUU",n:"Rhein UIR (EDUU)"}],
+  "🇨🇭 SUISSE":[{c:"LSAS",n:"Switzerland (LSAS)"}],
+  "🇬🇧 ANGLETERRE":[{c:"EGTT",n:"London (EGTT)"},{c:"EGPX",n:"Scottish (EGPX)"}],
+  "🇵🇹 PORTUGAL":[{c:"LPPC",n:"Lisboa (LPPC)"}],
+  "🇲🇦 MAROC":[{c:"GMMM",n:"Casablanca (GMMM)"}],
+  "🇹🇳 TUNISIE":[{c:"DTTC",n:"Tunis (DTTC)"}],
+};
+
+const CONTACTS=[
+  {f:"🇫🇷",city:"PARIS CDG",co:"ALYZIA",freq:"131.915",sita:"CDGKAXH"},
+  {f:"🇫🇷",city:"PARIS ORLY",co:"ALYZIA",freq:"131.935",sita:"ORYKAXH"},
+  {f:"🇫🇷",city:"MARSEILLE",co:"AVIAPARTNER",freq:"131.9",sita:"MRSATXH"},
+  {f:"🇫🇷",city:"LYON",co:"AVIAPARTNER",freq:"130.5",sita:"LYSATXH"},
+  {f:"🇫🇷",city:"TOULOUSE",co:"ALYZIA",freq:"131.44",sita:"TLSKAXH"},
+  {f:"🇫🇷",city:"NICE",co:"AVIAPARTNER",freq:"131.625",sita:"NCEATXH"},
+  {f:"🇫🇷",city:"LILLE",co:"AVIAPARTNER",freq:"131.485",sita:"LILATXH"},
+  {f:"🇫🇷",city:"BORDEAUX",co:"ALYSIA",freq:"131.78",sita:"BODKAXH"},
+  {f:"🇫🇷",city:"MONTPELLIER",co:"AVIAPARTNER",freq:"131.4",sita:"MPLKFXH"},
+  {f:"🇫🇷",city:"METZ",co:"SWISSPORT",freq:"131.570",sita:""},
+  {f:"🇫🇷",city:"BASLE-MULHOUSE",co:"SWISSPORT",freq:"131.755",sita:""},
+  {f:"🇫🇷",city:"NANTES",co:"AVIAPARTNER",freq:"131.6",sita:""},
+  {f:"🇪🇸",city:"BARCELONA",co:"IBERIA",freq:"131.6",sita:"BCNKZIB"},
+  {f:"🇪🇸",city:"MADRID",co:"IBERIA",freq:"131.6",sita:"MADKZIB"},
+  {f:"🇪🇸",city:"ALICANTE",co:"IBERIA",freq:"131.870",sita:"ALCKZIB"},
+  {f:"🇪🇸",city:"BILBAO",co:"IBERIA",freq:"131.87",sita:"BIOKZIB"},
+  {f:"🇪🇸",city:"MALAGA",co:"IBERIA",freq:"131.425",sita:"AGPKZIB"},
+  {f:"🇪🇸",city:"PALMA",co:"IBERIA",freq:"131.75",sita:"PMIKZIB"},
+  {f:"🇪🇸",city:"OVIEDO",co:"IBERIA",freq:"131.475",sita:"OVDKKIB"},
+  {f:"🇪🇸",city:"VALENCE",co:"IBERIA",freq:"131.6",sita:""},
+  {f:"🇪🇸",city:"SÉVILLE",co:"IBERIA",freq:"131.6",sita:""},
+  {f:"🇮🇹",city:"ROME",co:"AVIAPARTNER",freq:"131.465",sita:"FCOATXH"},
+  {f:"🇮🇹",city:"MILAN",co:"AVIAPARTNER",freq:"131.605",sita:"MXPATXH"},
+  {f:"🇮🇹",city:"VENISE",co:"AVIAPARTNER",freq:"131.6",sita:""},
+  {f:"🇩🇪",city:"FRANKFURT",co:"WISAG",freq:"131.705",sita:"FRAOCXH"},
+  {f:"🇩🇪",city:"MUNICH",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇩🇪",city:"BERLIN",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇩🇪",city:"HAMBOURG",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇬🇧",city:"LONDON LHR",co:"ASC LHR",freq:"131.585",sita:""},
+  {f:"🇬🇧",city:"LONDON LGW",co:"DNATA",freq:"131.6",sita:""},
+  {f:"🇬🇧",city:"MANCHESTER",co:"MENZIES",freq:"131.6",sita:""},
+  {f:"🇧🇪",city:"BRUSSELS",co:"SWISSPORT",freq:"131.455",sita:""},
+  {f:"🇨🇭",city:"GENEVA",co:"SWISSPORT",freq:"129.705",sita:""},
+  {f:"🇨🇭",city:"ZURICH",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇳🇱",city:"AMSTERDAM",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇵🇹",city:"LISBON",co:"GROUND FORCE",freq:"131.475",sita:"LISEXXH"},
+  {f:"🇲🇦",city:"CASABLANCA",co:"RAM",freq:"131.7",sita:""},
+  {f:"🇹🇳",city:"TUNIS",co:"TUNISAIR",freq:"131.7",sita:""},
+  {f:"🇹🇷",city:"ISTANBUL",co:"HAVAS",freq:"131.45",sita:"ISTUSXH"},
+  {f:"🇪🇬",city:"CAIRO",co:"CAIRO GND NORTH",freq:"131.85",sita:""},
+  {f:"🇱🇧",city:"BEIRUT",co:"LAT",freq:"131.6",sita:""},
+  {f:"🇶🇦",city:"DOHA",co:"QAS",freq:"121.05",sita:""},
+  {f:"🇦🇪",city:"DUBAI",co:"DNATA",freq:"131.6",sita:""},
+  {f:"🇸🇦",city:"JEDDAH",co:"SGS",freq:"131.475",sita:""},
+  {f:"🇸🇳",city:"DAKAR",co:"2 AS",freq:"131.9",sita:""},
+  {f:"🇲🇱",city:"BAMAKO",co:"ASAM",freq:"131.60",sita:""},
+  {f:"🇷🇺",city:"MOSCOW SVO",co:"SVO",freq:"131.6",sita:""},
+  {f:"🇭🇺",city:"BUDAPEST",co:"MENZIES",freq:"131.850",sita:""},
+  {f:"🇦🇹",city:"VIENNA",co:"CELEBI",freq:"131.675",sita:""},
+  {f:"🇨🇦",city:"MONTREAL",co:"SWISSPORT",freq:"122.95",sita:""},
+];
+
+const DELAY_CODES={"11":"PD – LATE CHECK-IN : Check-in rouvert passagers en retard","12":"PL – LATE CHECK-IN : Non terminé avant fermeture","13":"PE – CHECK-IN ERROR : Erreur passager/bagages","14":"PO – OVERSALES : Erreurs réservation","15":"PH – BOARDING : Passagers manquants","16":"PS – COMMERCIAL/VIP","17":"PC – CATERING : Commande tardive","18":"PD – BAGGAGE : Bagages mal triés","21":"CD – CARGO DOCS : Documentation tardive","22":"CP – CARGO LATE POSITIONING","23":"CC – CARGO LATE ACCEPTANCE","24":"CI – INADEQUATE PACKING","25":"CO – CARGO OVERSALES","31":"GD – LATE AIRCRAFT DOCS : Masse/centrage","32":"GL – LOADING/UNLOADING","33":"GE – LOADING EQUIPMENT","34":"GS – SERVICING EQUIPMENT","35":"GC – AIRCRAFT CLEANING","36":"GF – FUELLING/DEFUELLING","37":"GB – CATERING","38":"GU – ULD","39":"GT – TECHNICAL EQUIPMENT/dégivrage","41":"TD – TECHNICAL DEFECTS : MEL","42":"TM – SCHEDULED MAINTENANCE","43":"TN – NON-SCHEDULED MAINTENANCE","44":"TS – SPARES AND MAINTENANCE","45":"TA – AOG SPARES","46":"TC – AIRCRAFT CHANGE","47":"TL – STANDBY AIRCRAFT","51":"DF – DAMAGE FLIGHT OPS : Bird strike","52":"DG – DAMAGE GROUND OPS","55":"ED – DEPARTURE CONTROL FAILURE","56":"EC – CARGO SYSTEM FAILURE","57":"EF – FLIGHT PLAN SYSTEM FAILURE","61":"FP – FLIGHT PLAN : Tardif ou modifié","62":"FF – OPERATIONAL REQUIREMENT","63":"FT – LATE CREW BOARDING","64":"FS – FLIGHT DECK CREW SHORTAGE","65":"FR – FLIGHT DECK CREW SPECIAL REQUEST","66":"FL – LATE CABIN CREW BOARDING","67":"FC – CABIN CREW SHORTAGE","68":"FA – CABIN CREW ERROR","69":"FB – CAPTAIN SECURITY CHECK","71":"WO – WEATHER DEPARTURE : Sous minima","72":"WT – WEATHER DESTINATION : Sous minima","73":"WR – WEATHER EN-ROUTE/ALTERNATE","75":"WI – DE-ICING AVION","76":"WS – SNOW/ICE PISTE","77":"WG – GROUND HANDLING MÉTÉO","81":"AT – ATFM ENROUTE","82":"AX – ATFM ATC STAFF/EQUIPMENT","83":"AE – ATFM RESTRICTION DEST","84":"AW – ATFM WEATHER DEST","85":"AS – MANDATORY SECURITY","86":"AG – IMMIGRATION/CUSTOMS/HEALTH","87":"AF – AIRPORT FACILITIES","88":"AD – RESTRICTIONS DESTINATION","89":"AM – RESTRICTIONS DEPARTURE","91":"RL – LOAD CONNECTION","92":"RT – THROUGH CHECK-IN ERROR","93":"RA – AIRCRAFT ROTATION : Secteur précédent tardif","94":"RS – CABIN CREW ROTATION","95":"RC – CREW ROTATION","96":"RO – OPERATIONS CONTROL","97":"MI – GRÈVE INTERNE","98":"MO – GRÈVE EXTERNE","99":"MX – DIVERS"};
+
+// ═══════════════════════════════════════════════════════════════
+// COLORS
+// ═══════════════════════════════════════════════════════════════
+
+const C={
+  rnp:  {n:"#00ffcc",g:"rgba(0,255,204,.4)",  d:"#004d40",m:"#00bfa5"},
+  lvp:  {n:"#df80ff",g:"rgba(223,128,255,.4)",d:"#4a0072",m:"#aa00ff"},
+  cpdlc:{n:"#ff9040",g:"rgba(255,144,64,.4)", d:"#6d2a00",m:"#ff6d00"},
+  cold: {n:"#40c8ff",g:"rgba(64,200,255,.4)", d:"#00386b",m:"#0288d1"},
+  grf:  {n:"#ffe040",g:"rgba(255,224,64,.4)", d:"#5c4000",m:"#f9a825"},
+  brnav:{n:"#60ff60",g:"rgba(96,255,96,.4)",  d:"#1b5e20",m:"#2e7d32"},
+  util: {n:"#40d0ff",g:"rgba(64,208,255,.35)",d:"#003040",m:"#0097a7"},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// CHECKLIST STATE
+// ═══════════════════════════════════════════════════════════════
+
+const CK_STATE = {};
+function ckToggle(key, id, onUpdate) {
+  if(!CK_STATE[key]) CK_STATE[key]={};
+  CK_STATE[key][id] = !CK_STATE[key][id];
+  onUpdate();
+}
+function ckReset(key, onUpdate) {
+  CK_STATE[key]={};
+  onUpdate();
+}
+function ckDone(key) {
+  if(!CK_STATE[key])return 0;
+  return Object.values(CK_STATE[key]).filter(Boolean).length;
+}
+
+// Build checklist
+function buildChecklist(items, color, ckKey) {
+  const wrapper = el('div');
+  const done = ()=>ckDone(ckKey);
+  const total = items.length;
+
+  const progressRow = el('div','prog-row');
+  const progressLbl = el('div','prog-lbl');
+  const rstBtn = el('button','rst-btn','↺ Réinitialiser');
+  progressRow.appendChild(progressLbl);
+  progressRow.appendChild(rstBtn);
+  const progWrap = el('div','prog-wrap');
+  const progFill = el('div','prog-fill');
+  progFill.style.background = color;
+  progFill.style.boxShadow = `0 0 8px ${color}`;
+  progWrap.appendChild(progFill);
+
+  const updateProgress = () => {
+    const d=done(), pct=Math.round(d/total*100);
+    progressLbl.textContent = `${d}/${total} COMPLÉTÉ`;
+    progFill.style.width = pct+'%';
+  };
+
+  rstBtn.addEventListener('click',()=>{ ckReset(ckKey, ()=>{ rebuildItems(); updateProgress(); }); });
+
+  wrapper.appendChild(progressRow);
+  wrapper.appendChild(progWrap);
+
+  const itemsContainer = el('div');
+  wrapper.appendChild(itemsContainer);
+
+  function rebuildItems() {
+    itemsContainer.innerHTML='';
+    items.forEach(item=>{
+      const checked = !!(CK_STATE[ckKey]&&CK_STATE[ckKey][item.id]);
+      const row = el('div', `ck${checked?' done':''}`);
+
+      const box = el('div', `ck-box${checked?' ticked':''}`, checked?'✓':'');
+      box.style.borderColor = color;
+      if(checked){ box.style.background=color; box.style.color='#000'; }
+
+      const textWrap = el('div',null);
+      textWrap.style.flex='1';
+      const txt = el('div','ck-txt', item.label);
+      textWrap.appendChild(txt);
+      if(item.sub){ const sub=el('div','ck-sub',item.sub); textWrap.appendChild(sub); }
+
+      row.appendChild(box);
+      row.appendChild(textWrap);
+      if(item.action){ const act=el('div','ck-act',item.action); act.style.color=color; row.appendChild(act); }
+
+      row.addEventListener('click',()=>{
+        ckToggle(ckKey, item.id, ()=>{ rebuildItems(); updateProgress(); });
+      });
+      itemsContainer.appendChild(row);
+    });
+  }
+
+  rebuildItems();
+  updateProgress();
+  return wrapper;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION BUILDERS
+// ═══════════════════════════════════════════════════════════════
+
+function buildBackBtn(label, onClick) {
+  const b = el('button','back', '← '+(label||'RETOUR'));
+  b.addEventListener('click', onClick);
+  return b;
+}
+
+function buildCard(title, color, ...children) {
+  const card = el('div','card');
+  const ttl = el('div','card-ttl', title);
+  ttl.style.color = color;
+  ttl.style.textShadow = `0 0 14px ${color}`;
+  card.appendChild(ttl);
+  children.forEach(c=>{ if(c) card.appendChild(c); });
+  return card;
+}
+
+function buildSubgrid(items, color, onPick) {
+  const g = el('div','subgrid');
+  items.forEach(item=>{
+    const sb = el('div','subblock');
+    sb.style.borderColor = color+'55';
+    sb.style.background = color+'08';
+    const ico = el('div','subblock-ico', item.icon);
+    const info = el('div');
+    const name = el('div','subblock-name', item.label);
+    name.style.color = color;
+    name.style.textShadow = `0 0 10px ${color}80`;
+    const desc = el('div','subblock-desc', item.desc);
+    info.appendChild(name); info.appendChild(desc);
+    sb.appendChild(ico); sb.appendChild(info);
+    sb.addEventListener('click', ()=>onPick(item.id));
+    g.appendChild(sb);
+  });
+  return g;
+}
+
+// ── RNP ──
+function buildRNP(sub) {
+  const c=C.rnp; const wrap=el('div','page');
+  if(!sub) {
+    const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>CAUTION :</b> RNP &lt; 0.3 ou "Special Authorization Required" → INTERDIT.</div>';
+    wrap.appendChild(warn);
+
+    // Temp warning
+    const tempCard=el('div','card');
+    const tempTtl=el('div','card-ttl','🌡️ VÉRIFICATION TEMPÉRATURE'); tempTtl.style.color=c.n; tempCard.appendChild(tempTtl);
+    const tempRow=el('div','row');
+    const tempInp=el('input','inp'); tempInp.placeholder='TAE (°C) ex: -12'; tempInp.type='number';
+    tempRow.appendChild(tempInp);
+    const tempAlarm=el('div');
+    tempInp.addEventListener('input',()=>{
+      const v=parseFloat(tempInp.value);
+      if(isNaN(v)){tempAlarm.innerHTML='';return;}
+      if(v<-15) tempAlarm.innerHTML='<div class="alarm alarm-bad">🌡️ TEMPÉRATURE CRITIQUE – Corrections altimétriques sur TOUTE approche + 50 ft obligatoires</div>';
+      else if(v<0) tempAlarm.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.1);border:2px solid rgba(255,224,64,.5);color:#ffe040">⚠️ Température négative – Appliquer corrections Cold Temp</div>';
+      else tempAlarm.innerHTML='';
+    });
+    tempCard.appendChild(tempRow); tempCard.appendChild(tempAlarm);
+    wrap.appendChild(tempCard);
+
+    wrap.appendChild(buildSubgrid([
+      {id:'dispatch',icon:'📋',label:'Dispatch',desc:'RAIM · Qualifications · ALTN'},
+      {id:'equip',icon:'⚙️',label:'Équipements',desc:'LNAV / LNAV-VNAV · MEL'},
+      {id:'prep',icon:'📝',label:'Préparation',desc:'Briefing · CDU · Minima'},
+      {id:'contingence',icon:'🚨',label:'Contingences',desc:'Remise de gaz · Déclencheurs'},
+    ], c.n, id=>{ STATE.sub=id; render(); }));
+    return wrap;
+  }
+
+  wrap.appendChild(buildBackBtn('RETOUR', ()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='dispatch') {
+    wrap.appendChild(buildCard('CHECKS DISPATCH', c.n, buildChecklist([
+      {id:'d1',label:'RAIM disponibilité complétée par dispatch (OFP sans mention = OK)'},
+      {id:'d2',label:'Outage RAIM à l\'ETA → NE PAS effectuer approche RNAV (GNSS)'},
+      {id:'d3',label:'Alternant avec approche conventionnelle si DEST n\'a que du RNP'},
+      {id:'d4',label:'Les deux pilotes formés et qualifiés RNP'},
+    ], c.n, 'rnp-dispatch')));
+  }
+
+  if(sub==='equip') {
+    const card=el('div','card');
+    const ttl=el('div','card-ttl','ÉQUIPEMENTS RNP'); ttl.style.color=c.n; card.appendChild(ttl);
+    const minimaRow=el('div','row');
+    let minima='lnav';
+    const b1=el('button','btn','LNAV'); b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const b2=el('button','btn btn-g','LNAV/VNAV (NPS requis)');
+    const updateMinima=()=>{
+      if(minima==='lnav'){b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b2.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+      else{b2.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b1.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+      rebuildEquip();
+    };
+    b1.addEventListener('click',()=>{minima='lnav';updateMinima();});
+    b2.addEventListener('click',()=>{minima='vnav';updateMinima();});
+    minimaRow.appendChild(b1); minimaRow.appendChild(b2);
+    card.appendChild(minimaRow);
+
+    const infoBox=el('div','info','Activez le toggle pour chaque équipement <b>INOPÉRANT</b> (panne ou MEL INOP)'); card.appendChild(infoBox);
+    const eqContainer=el('div'); card.appendChild(eqContainer);
+    const resultDiv=el('div'); card.appendChild(resultDiv);
+
+    const failed={};
+    function rebuildEquip(){
+      const baseEquip=[
+        {id:'e1',label:'AP / FD',req:'1 ou 2'},{id:'e2',label:'FMC',req:'2 requis'},{id:'e3',label:'CDU/MCDU',req:'2 requis'},
+        {id:'e4',label:'GPS',req:'1 requis'},{id:'e5',label:'FMC Database',req:'CURRENT'},{id:'e6',label:'IRS/ADIRU en NAV',req:'2 requis'},
+        {id:'e7',label:'ND (mode MAP)',req:'2 requis'},{id:'e8',label:'FMC Alert Light',req:'1 requis'},{id:'e9',label:'EGPWS',req:'1 requis'},
+        {id:'e10',label:'Radio Altimètre',req:'1 requis'},{id:'e11',label:'PFD/ND sans flags invalides',req:'Requis'},
+        ...(minima==='vnav'?[{id:'v1',label:'NPS (Nav Performance Scales)',req:'Installé & opérationnel'},{id:'v2',label:'Radio Alt même côté AP actif',req:'Requis'}]:[]),
+      ];
+      eqContainer.innerHTML='';
+      baseEquip.forEach(eq=>{
+        const row=el('div',`eq-row${failed[eq.id]?' inop':''}`);
+        const name=el('div','eq-name',eq.label);
+        if(failed[eq.id]){name.style.textDecoration='line-through';name.style.color='#ff3355';}
+        const req=el('div','eq-req',eq.req);
+        const tog=el('label','tog');
+        const input=el('input'); input.type='checkbox'; input.checked=!!failed[eq.id];
+        const sl=el('span','sl');
+        tog.appendChild(input); tog.appendChild(sl);
+        input.addEventListener('change',()=>{ failed[eq.id]=!failed[eq.id]; rebuildEquip(); });
+        row.appendChild(name); row.appendChild(req); row.appendChild(tog);
+        eqContainer.appendChild(row);
+      });
+      const failCount=baseEquip.filter(e=>failed[e.id]).length;
+      if(failCount===0) resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">RÉSULTAT</div><div class="res-val" style="color:#60ff60">✅ APPROCHE RNP AUTORISÉE</div></div>`;
+      else resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">RÉSULTAT</div><div class="res-val" style="color:#ff3355">🚨 RNP INTERDITE – ${failCount} équipement(s) inopérant(s)</div></div>`;
+    }
+    rebuildEquip();
+    wrap.appendChild(card);
+  }
+
+  if(sub==='prep') {
+    wrap.appendChild(buildCard('PRÉPARATION & BRIEFING', c.n, buildChecklist([
+      {id:'p1',label:'MEL – implications approche GNSS vérifiées'},
+      {id:'p2',label:'Approche GNSS chargée depuis BDD PAR NOM'},
+      {id:'p3',label:'Base de données nav À JOUR'},
+      {id:'p4',label:'Moyens nav suffisants DEST & ALTN en cas perte RNP'},
+      {id:'p5',label:'Météo DEST et ALTN – T° et QNH obtenus'},
+      {id:'p6',label:'NAV STATUS → NAV OPTIONS 2/2 → GPS UPDATE = ON'},
+      {id:'p7',label:'Si LNAV/VNAV : entrer RNP vertical = 125',sub:'LNAV/VNAV uniquement'},
+      {id:'p8',label:'Ajouter 50 ft aux minima publiés (exigence Jeppesen / Air Algérie)'},
+      {id:'p9',label:'Correction T° froide sur MDA EN PLUS des 50 ft'},
+      {id:'p10',label:'Approche non modifiée depuis FAF (sauf corrections T° froide)'},
+      {id:'p11',label:'CDU : PF = LEGS · PM = PROG 4/4'},
+      {id:'p12',label:'< 10 000 ft : PF en TERR · ND ≤10 NM au FACF/IF'},
+      {id:'p13',label:'PM : TERR ou WX'},
+      {id:'p14',label:'Cross-check ALT au FAF – écart max 100 FT'},
+      {id:'p15',label:'⛔ Ne PAS accepter direct-to-FAF depuis l\'ATC'},
+    ], c.n, 'rnp-prep')));
+  }
+
+  if(sub==='contingence') {
+    const card=buildCard('REMISE DE GAZ – DÉCLENCHEURS', c.n);
+    const info=el('div','info','Sauf référence visuelle établie, initier remise de gaz si :'); card.appendChild(info);
+    ['Panne instrument de vol affectant la sécurité',
+     'Désaccord significatif des instruments de navigation',
+     '"UNABLE REQD NAV PERF-RNP" → ANP dépasse le RNP',
+     'Message FMC "VERIFY POSITION"','Panne FMC','Désaccord FMC',
+     'Double panne FMC','Voyant maître GPS (IRS light)'].forEach(it=>{
+      const row=el('div',null); row.style.cssText='display:flex;gap:12px;padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04)';
+      row.innerHTML=`<div style="color:#ff3355;font-size:22px;line-height:1.5">→</div><div style="font-size:17px;line-height:1.55">${it}</div>`;
+      card.appendChild(row);
+    });
+    const w=el('div','warn'); w.style.marginTop='14px'; w.innerHTML='🔴 <b>DOUBLE PANNE GPS :</b> Remise de gaz IMMÉDIATE quelle que soit la valeur ANP.'; card.appendChild(w);
+    wrap.appendChild(card);
+  }
+
+  return wrap;
+}
+
+// ── LVP ──
+function buildLVP(sub) {
+  const c=C.lvp; const wrap=el('div','page');
+  if(!sub){
+    wrap.appendChild(buildSubgrid([
+      {id:'briefing',icon:'📋',label:'Briefing',desc:'Checklist pré-approche CAT II/IIIA'},
+      {id:'equip',icon:'⚙️',label:'Équipements',desc:'Recherche instrument · Alarme'},
+      {id:'limites',icon:'💨',label:'Conditions LVP',desc:'Vent · Piste · Visibilité'},
+      {id:'tableau',icon:'📊',label:'Tableau CAT 2/3A',desc:'Exigences complètes B737'},
+    ], c.n, id=>{ STATE.sub=id; render(); }));
+    return wrap;
+  }
+  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='briefing'){
+    wrap.appendChild(buildCard('CHECKLIST BRIEFING CAT II/IIIA', c.n, buildChecklist([
+      {id:'b1',label:'Les deux pilotes qualifiés CAT II/IIIA'},{id:'b2',label:'Avion apte CAT II/IIIA'},
+      {id:'b3',label:'Piste opérationnelle CAT II/IIIA (LVP en vigueur)'},{id:'b4',label:'Météo DEST et ALTN vérifiée'},
+      {id:'b5',label:'LVP en vigueur · Piste opérationnelle CAT II/IIIA'},{id:'b6',label:'Qualifications équipage en cours de validité'},
+      {id:'b7',label:'Statut systèmes avion vérifié'},
+      {id:'b8',label:'SET Minimums BARO : THR elevation + 500 ft'},{id:'b9',label:'SET Minimums RADIO : minima CAT II/IIIA – sélecteur sur RADIO'},
+      {id:'b10',label:'Capitaine UNIQUEMENT PF'},{id:'b11',label:'OPL surveille instruments jusqu\'à vitesse de roulage'},
+      {id:'b12',label:'Revue procédure d\'approche et partage des tâches'},{id:'b13',label:'Revue procédures en cas de pannes'},
+      {id:'b14',label:'Briefing route de roulage détaillée'},{id:'b15',label:'Diagramme roulage visible – PAS de paperasse pendant le roulage'},
+    ], c.n, 'lvp-brief')));
+  }
+
+  if(sub==='equip'){
+    const card=el('div','card');
+    const ttl=el('div','card-ttl','ÉQUIPEMENT EN PANNE – IMPACT LVP'); ttl.style.color=c.n; card.appendChild(ttl);
+    card.appendChild(el('div','info','Entrez l\'équipement <b>en panne</b> ou dispatché MEL INOP.<br>L\'app indique si le LVP CAT 2 / CAT 3A est encore autorisé.'));
+
+    const inp=el('input','inp');
+    inp.placeholder='Équipement en panne ex: ANTISKID, FD, ILS, RADIO ALT...';
+    inp.style.cssText='width:100%;margin-bottom:12px';
+    card.appendChild(inp);
+
+    const alarmDiv=el('div');
+    card.appendChild(alarmDiv);
+
+    // Matched results list
+    const matchList=el('div');
+    card.appendChild(matchList);
+
+    inp.addEventListener('input',()=>{
+      const q=inp.value.trim().toUpperCase();
+      alarmDiv.innerHTML=''; matchList.innerHTML='';
+      if(q.length<2) return;
+
+      // Find ALL matching items
+      const matches=LVP_EQ.filter(e=>e.n.includes(q)||e.n.split(' ').some(w=>w.startsWith(q)));
+
+      if(!matches.length){
+        alarmDiv.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.08);border:2px solid rgba(255,224,64,.4);color:#ffe040;font-size:16px">⚠️ Équipement non trouvé dans la liste LVP</div>';
+        return;
+      }
+
+      // Helper: render CAT badge
+      function catBadge(val, isXReq, isQtyReq){
+        var bg,brd,col,label;
+        if(isXReq){bg='rgba(255,0,51,.2)';brd='rgba(255,0,51,.6)';col='#ff3355';label='REQUIS (X)';}
+        else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label='QUANTITÉ MIN';}
+        else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label='RECOMMANDÉ';}
+        else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label='NON REQUIS';}
+        return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:900;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
+      }
+
+      // For each match, show alarm
+      matches.forEach(function(found){
+        var isReqCat2 = found.c2 === 'X';
+        var isReqCat3 = found.c3 === 'X';
+        var isQtyCat2 = !isNaN(parseInt(found.c2)) && found.c2 !== '—';
+        var isQtyCat3 = !isNaN(parseInt(found.c3)) && found.c3 !== '—';
+
+        var d=el('div');
+        d.style.cssText='border-radius:14px;padding:18px 20px;margin-bottom:12px;border:2px solid;';
+
+        var html='';
+        var borderColor='';
+
+        var c2Badge = catBadge(found.c2, isReqCat2, isQtyCat2);
+        var c3Badge = catBadge(found.c3, isReqCat3, isQtyCat3);
+
+        // Determine overall verdict
+        var blockedC2 = isReqCat2;
+        var blockedC3 = isReqCat3;
+        var warnC2 = isQtyCat2;
+        var warnC3 = isQtyCat3;
+
+        // Color the card
+        if(blockedC2 && blockedC3){
+          borderColor='rgba(255,0,51,.6)';
+          d.style.background='rgba(255,0,51,.1)';
+          d.style.boxShadow='0 0 24px rgba(255,0,51,.3)';
+          d.style.animation='pulse .9s ease infinite';
+        } else if(blockedC2 || blockedC3){
+          borderColor='rgba(255,100,0,.6)';
+          d.style.background='rgba(255,100,0,.08)';
+          d.style.boxShadow='0 0 18px rgba(255,100,0,.2)';
+        } else if(warnC2 || warnC3){
+          borderColor='rgba(255,150,0,.5)';
+          d.style.background='rgba(255,150,0,.07)';
+          d.style.boxShadow='0 0 14px rgba(255,150,0,.15)';
+        } else {
+          borderColor='rgba(96,255,96,.4)';
+          d.style.background='rgba(96,255,96,.06)';
+        }
+
+        // Build verdict line
+        var verdictC2='', verdictC3='';
+        if(blockedC2) verdictC2='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900">&#x1F6A8; LVP CAT 2 NON AUTORISE</div>';
+        else if(warnC2) verdictC2='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700">&#9888; CAT 2 - Verifier MEL min '+found.c2+' requis</div>';
+        else verdictC2='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700">&#10003; CAT 2 - Non impacte</div>';
+        if(blockedC3) verdictC3='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900;margin-top:6px">&#x1F6A8; LVP CAT 3A NON AUTORISE</div>';
+        else if(warnC3) verdictC3='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#9888; CAT 3A - Verifier MEL min '+found.c3+' requis</div>';
+        else verdictC3='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#10003; CAT 3A - Non impacte</div>';
+        var headerColor = (blockedC2||blockedC3)?'#ff3355':(warnC2||warnC3)?'#ff9900':'#60ff60';
+        var headerIcon  = (blockedC2||blockedC3)?'&#x1F6A8;':(warnC2||warnC3)?'&#9888;':'&#10003;';
+        html = '<div style="font-size:20px;font-weight:900;color:'+headerColor+';margin-bottom:14px">'+headerIcon+' '+found.n+' EN PANNE</div>'
+             + '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">'
+             + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 2</div>'+c2Badge+'</div>'
+             + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 3A</div>'+c3Badge+'</div>'
+             + '</div>' + verdictC2 + verdictC3;
+        
+        d.style.borderColor=borderColor;
+        d.innerHTML=html;
+        matchList.appendChild(d);
+      });
+    });
+    wrap.appendChild(card);
+  }
+
+  if(sub==='limites'){
+    const card=el('div','card'); const ttl=el('div','card-ttl','VÉRIFICATEUR CONDITIONS LVP'); ttl.style.color=c.n; card.appendChild(ttl);
+    const info=el('div','info','Entrez les conditions actuelles pour vérifier si LVP possible.'); card.appendChild(info);
+    const row=el('div','row');
+    const wInp=el('input','inp'); wInp.placeholder='Vent traversier (kt)'; wInp.type='number';
+    const rInp=el('input','inp'); rInp.placeholder='RWYCC (0-6)'; rInp.type='number';
+    const vInp=el('input','inp'); vInp.placeholder='Visibilité (m)'; vInp.type='number';
+    row.appendChild(wInp); row.appendChild(rInp); row.appendChild(vInp);
+    card.appendChild(row);
+    const checkBtn=el('button','btn','VÉRIFIER LVP');
+    checkBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 18px ${c.g};margin-bottom:14px;font-weight:900`;
+    const resDiv=el('div');
+    checkBtn.addEventListener('click',()=>{
+      const wind=parseFloat(wInp.value), rwycc=parseInt(rInp.value), vis=parseInt(vInp.value);
+      const issues=[];
+      if(!isNaN(wind)&&wind>20)issues.push(`Vent traversier ${wind} kt > 20 kt limite LVP`);
+      if(!isNaN(rwycc)&&rwycc<=1)issues.push(`RWYCC ${rwycc} – Piste trop glissante (PAUVRE ou NUL)`);
+      if(!isNaN(vis)&&vis<75)issues.push(`Visibilité ${vis} m < 75 m (limite CAT IIIA)`);
+      if(issues.length===0) resDiv.innerHTML='<div class="ok-box"><div class="res-val" style="color:#60ff60">✅ CONDITIONS LVP ACCEPTABLES</div></div>';
+      else resDiv.innerHTML=`<div class="err-box"><div class="res-val" style="color:#ff3355">🚨 LVP NON AUTORISÉ</div>${issues.map(i=>`<div style="margin-top:8px;font-size:16px;color:#ff9090">• ${i}</div>`).join('')}</div>`;
+    });
+    card.appendChild(checkBtn); card.appendChild(resDiv);
+    // Limits table
+    const lCard=el('div','card'); const lt=el('div','card-ttl','LIMITES OFFICIELLES'); lt.style.color=c.n; lCard.appendChild(lt);
+    [['Vent de face max','25 kt'],['Vent traversier max','20 kt *'],['Vent arrière max','10 kt'],['Volets','40 (non-std: 30)'],['Moteurs','DEUX OPÉRATIONNELS'],['Angle de plan','2.5°–3.25°']].forEach(([k,v])=>{
+      const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
+      r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 12px ${c.g}">${v}</span>`;
+      lCard.appendChild(r);
+    });
+    wrap.appendChild(card); wrap.appendChild(lCard);
+  }
+
+  if(sub==='tableau'){
+    const card=el('div','card'); const ttl=el('div','card-ttl','EXIGENCES COMPLÈTES B737-NG'); ttl.style.color=c.n; card.appendChild(ttl);
+    card.appendChild(el('div','info','X = Requis · R = Recommandé · — = Non requis · PF = Pilote en Fonction'));
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>ÉQUIPEMENT</th><th>CAT 2</th><th>CAT 3A</th></tr></thead>`;
+    const tb=el('tbody');
+    LVP_EQ.forEach(e=>{
+      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700">${e.n}</td><td style="font-family:monospace;font-size:18px;font-weight:700;color:${e.c2==='X'?c.n:'var(--text)'}">${e.c2}</td><td style="font-family:monospace;font-size:18px;font-weight:700;color:${e.c3==='X'?c.n:'var(--text)'}">${e.c3}</td>`;
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    const wrap2=el('div','tbl-wrap'); wrap2.appendChild(tbl); card.appendChild(wrap2);
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+// ── CPDLC ──
+function buildCPDLC(sub) {
+  const c=C.cpdlc; const wrap=el('div','page');
+  if(!sub){
+    wrap.appendChild(buildSubgrid([
+      {id:'logon',icon:'🔗',label:'Procédure Logon',desc:'Étapes connexion ATC'},
+      {id:'code',icon:'🔢',label:'Code HEX Avion',desc:'Lookup immatriculation'},
+      {id:'fp',icon:'📄',label:'Plan de Vol',desc:'Items 10a et 18'},
+      {id:'fir',icon:'🗺️',label:'Codes FIR',desc:'France · Espagne · Algérie · +'},
+    ], c.n, id=>{ STATE.sub=id; render(); }));
+    return wrap;
+  }
+  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='logon'){
+    wrap.appendChild(buildCard('PROCÉDURE LOGON CPDLC', c.n, buildChecklist([
+      {id:'l1',label:'Aller au menu CPDLC'},
+      {id:'l2',label:'Vérifier CPDLC-ATN LINK STATUS → FOR THIS FLIGHT CPDLC USE IS ENABLED'},
+      {id:'l3',label:'CPDLC-LOGON/STATUS → LOGON TO : FIR concerné'},
+      {id:'l4',label:'Appuyer SEND LOGON'},
+      {id:'l5',label:'Si connecté : ATC MSG sur MCDU + ATC sur DU supérieur'},
+      {id:'l6',label:'Suivre instructions ATC : WILCO, UNABLE ou STANBY'},
+      {id:'l7',label:'Changement FIR non automatique → LOG OFF puis reprendre étape 3'},
+    ], c.n, 'cpdlc-logon')));
+    // Responses
+    const rCard=buildCard('RÉPONSES ATC', c.n);
+    [['WILCO','Compris et exécuté'],['UNABLE','Impossible d\'exécuter'],['STANBY','Attente – suivre de WILCO/UNABLE'],['ROGER','Message reçu (info seulement)']].forEach(([r,d])=>{
+      const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
+      row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};text-shadow:0 0 10px ${c.g};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
+      rCard.appendChild(row);
+    });
+    wrap.appendChild(rCard);
+  }
+
+  if(sub==='code'){
+    const card=buildCard('CODE HEX PAR IMMATRICULATION', c.n);
+    const row=el('div','row');
+    const sel=el('select','inp'); sel.innerHTML='<option value="">— Sélectionner immatriculation —</option>';
+    Object.keys(FLEET).forEach(r=>{ const o=el('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
+    const btn=el('button','btn','CHERCHER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    row.appendChild(sel); row.appendChild(btn); card.appendChild(row);
+    const res=el('div');
+    btn.addEventListener('click',()=>{
+      const r=sel.value;
+      if(r&&FLEET[r]) res.innerHTML=`<div class="ok-box"><div class="res-lbl">IMMATRICULATION</div><div style="font-family:monospace;font-size:24px;font-weight:700;color:${c.n};margin-bottom:12px">${r}</div><div class="res-lbl">CODE CPDLC – ITEM 18</div><div class="res-val" style="color:#60ff60;font-size:42px;letter-spacing:8px">${FLEET[r]}</div><div style="margin-top:10px;font-family:monospace;font-size:14px;color:#7090aa">Item 18 : <span style="color:${c.n}">CODE/${FLEET[r]}</span></div></div>`;
+      else res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Immatriculation non trouvée</div></div>';
+    });
+    card.appendChild(res);
+    // Table
+    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>IMMAT.</th><th>CODE HEX</th><th>IMMAT.</th><th>CODE HEX</th></tr></thead>';
+    const tb=el('tbody');
+    const entries=Object.entries(FLEET);
+    for(let i=0;i<entries.length;i+=2){
+      const tr=el('tr');
+      tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:700">${entries[i][0]}</td><td style="font-family:monospace">${entries[i][1]}</td><td style="font-family:monospace;color:${c.n};font-weight:700">${entries[i+1]?entries[i+1][0]:''}</td><td style="font-family:monospace">${entries[i+1]?entries[i+1][1]:''}</td>`;
+      tb.appendChild(tr);
+    }
+    tbl.appendChild(tb);
+    const tw=el('div','tbl-wrap'); tw.style.marginTop='16px'; tw.appendChild(tbl); card.appendChild(tw);
+    wrap.appendChild(card);
+  }
+
+  if(sub==='fp'){
+    wrap.appendChild(buildCard('EXIGENCES PLAN DE VOL', c.n, buildChecklist([
+      {id:'f1',label:'Item 10a : saisir "J1" → CPDLC ATN VDL Mode 2'},
+      {id:'f2',label:'Item 18 : saisir "CODE/" + code hexadécimal 6 caractères'},
+      {id:'f3',label:'Vérifier immatriculation et identifiant de vol'},
+    ], c.n, 'cpdlc-fp')));
+    const infoCard=buildCard('EXEMPLE PLAN DE VOL', c.n);
+    infoCard.appendChild(el('div','info',`Item 10a : <span style="font-family:monospace;color:${c.n}">SDEIFGHJ J1 K1RWY/LB1</span><br>Item 18 : <span style="font-family:monospace;color:${c.n}">PBN/B1C1D1O1S2 CODE/0A008E</span>`));
+    wrap.appendChild(infoCard);
+  }
+
+  if(sub==='fir'){
+    const card=buildCard('CODES LOGON FIR', c.n);
+    Object.entries(CPDLC_FIR).forEach(([pays,firs])=>{
+      const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:900;color:${c.n};text-shadow:0 0 10px ${c.g};margin:18px 0 10px`;
+      ptitle.textContent=pays; card.appendChild(ptitle);
+      firs.forEach(fir=>{
+        const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;margin-bottom:6px';
+        row.innerHTML=`<div style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};min-width:70px">${fir.c}</div><div style="font-size:17px">${fir.n}</div>`;
+        card.appendChild(row);
+      });
+    });
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+// ── GRF ──
+function buildGRF(sub) {
+  const c=C.grf; const wrap=el('div','page');
+  const warndiv=el('div','warn'); warndiv.innerHTML='<span style="font-size:20px">📋</span><div>AIREP requis si freinage inférieur aux prévisions. Remise de gaz ≤ 1000\' AGL si perf non recalculées.</div>';
+  if(!sub){ wrap.appendChild(warndiv); wrap.appendChild(buildSubgrid([
+    {id:'rcam',icon:'📊',label:'Tableau RCAM',desc:'Conditions piste · XW limits'},
+    {id:'rcr',icon:'🔍',label:'Décodeur RCR',desc:'RWYCC → résultat complet'},
+    {id:'motne',icon:'🌨️',label:'Décodeur MOTNE',desc:'Format METAR Russie R28R/290050'},
+    {id:'opt',icon:'💻',label:'Guide OPT',desc:'Sélections takeoff · landing'},
+  ], c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
+  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='rcam'){
+    const card=buildCard('RCAM – MATRICE ÉTAT PISTE', c.n);
+    RCAM_DATA.forEach(r=>{
+      const row=el('div','rcam-row'); row.style.cssText=`border-color:${r.clr}44;background:${r.clr}08`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 18px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${r.desc}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${r.braking}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
+      card.appendChild(row);
+    });
+    card.appendChild(el('div','tip','* 36/33 kt avec winglets'));
+    wrap.appendChild(card);
+  }
+
+  if(sub==='rcr'){
+    const card=buildCard('DÉCODEUR RCR / RWYCC', c.n);
+    card.appendChild(el('div','info','Entrez un code unique (ex: <b>2</b>) ou les trois tiers (ex: <b>5/2/2</b>)'));
+    const row=el('div','row');
+    const inp=el('input','inp'); inp.placeholder='ex : 5/2/2 ou 3';
+    const btn=el('button','btn','DÉCODER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const clr=el('button','btn btn-g','EFFACER');
+    row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
+    card.appendChild(row);
+    const res=el('div');
+    const doRCR=()=>{
+      const v=inp.value.trim().toUpperCase();
+      const m=v.match(/(\d)\/(\d)\/(\d)/);
+      let rows=[];
+      if(m) rows=[m[1],m[2],m[3]].map((x,i)=>({third:['1er tiers','2e tiers','3e tiers'][i],...(RCAM_DATA.find(r=>r.rwycc===parseInt(x))||{rwycc:parseInt(x),desc:'?',braking:'?',clr:'#888',tkof:'?',ldg:'?'})}));
+      else{const n=parseInt(v);const r=RCAM_DATA.find(x=>x.rwycc===n);if(r)rows=[{third:'Piste entière',...r}];}
+      if(!rows.length){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Format non reconnu</div></div>';return;}
+      res.innerHTML='';
+      rows.forEach(t=>{
+        const d=el('div'); d.style.cssText=`border:2px solid ${t.clr}55;border-radius:14px;padding:16px 20px;margin-bottom:12px;background:${t.clr}08`;
+        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 18px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${t.desc}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${t.braking}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
+        res.appendChild(d);
+      });
+      if(rows.some(t=>t.rwycc<=2)){const w=el('div','warn');w.innerHTML='⚠️ <b>ATTENTION :</b> Condition piste MOYEN À MAUVAIS ou pire. Vérifier performances.';res.appendChild(w);}
+    };
+    btn.addEventListener('click',doRCR);
+    clr.addEventListener('click',()=>{inp.value='';res.innerHTML='';});
+    card.appendChild(res); wrap.appendChild(card);
+  }
+
+  if(sub==='motne'){
+    const card=buildCard('DÉCODEUR MOTNE (METAR RUSSIE)', c.n);
+    card.appendChild(el('div','info',`<b>Format METAR Russie :</b> après le QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure : <span style="font-family:monospace">R[PISTE]/[E][T][DD][BB]</span><br><b>E</b>=étendue · <b>T</b>=type · <b>DD</b>=profondeur · <b>BB</b>=freinage (ou coeff µ)`));
+    const row=el('div','row');
+    const inp=el('input','inp'); inp.placeholder='ex : R28R/290050 ou 059200';
+    const btn=el('button','btn','DÉCODER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g};font-weight:900`;
+    const clr=el('button','btn btn-g','EFFACER');
+    row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
+    card.appendChild(row);
+    const res=el('div');
+
+    btn.addEventListener('click',()=>{
+      const raw=inp.value.trim().toUpperCase().replace(/\s/g,'');
+      let rwy='',body='';
+      const rm=raw.match(/^R([0-9]{2}[LCR]?)\/(.+)$/);
+      if(rm){rwy=rm[1];body=rm[2];}
+      else if(/^\d{6,8}$/.test(raw)){
+        const RR=raw.substring(0,2);const n=parseInt(RR);
+        rwy=RR==='88'?'TOUTES PISTES':RR==='99'?'RAPPORT PRÉCÉDENT RÉPÉTÉ':n>50?`${n-50}R`:`${n}`;
+        body=raw.substring(2);
+      }
+      if(!body||body.length<4){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Format non reconnu – ex: R28R/290050</div></div>';return;}
+
+      const E=body[0], T=body[1], DD=body.substring(2,4), BB=body.length>=6?body.substring(4,6):null;
+
+      // Depth decode
+      let depth='Non significatif';
+      const nDD=parseInt(DD,10);
+      if(DD==='00')depth='< 1 mm';
+      else if(DD==='99')depth='Piste inutilisable / dégagement en cours';
+      else if(DD=='//')depth='Non significatif (ex: glace) ou non mesurable';
+      else if(nDD>=1&&nDD<=90)depth=`${nDD} mm`;
+      else if(nDD===92)depth='100 mm';else if(nDD===93)depth='150 mm';
+      else if(nDD===94)depth='200 mm';else if(nDD===95)depth='250 mm';
+      else if(nDD===96)depth='300 mm';else if(nDD===97)depth='350 mm';else if(nDD===98)depth='400 mm';
+
+      // Braking + RCAM mapping
+      let brText='Non fourni', brColor='#7090aa', brBg='rgba(112,144,170,.1)', brBorder='rgba(112,144,170,.3)';
+      let rwycc='—', xwTkof='—', xwLdg='—', brakingLabel='—', perf='';
+      const nBB=BB?parseInt(BB,10):null;
+      if(BB){
+        if(BB==='95'){brText='BON (GOOD)';brColor='#00ff88';brBg='rgba(0,255,136,.1)';brBorder='rgba(0,255,136,.4)';rwycc='5';xwTkof='25 kt';xwLdg='36/33* kt';brakingLabel='BON';}
+        else if(BB==='94'){brText='MOYEN À BON';brColor='#ffe600';brBg='rgba(255,230,0,.1)';brBorder='rgba(255,230,0,.4)';rwycc='4';xwTkof='22 kt';xwLdg='30 kt';brakingLabel='BON À MOYEN';}
+        else if(BB==='93'){brText='MOYEN';brColor='#ff9900';brBg='rgba(255,153,0,.1)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel='MOYEN';}
+        else if(BB==='92'){brText='MOYEN À MAUVAIS';brColor='#ff4400';brBg='rgba(255,68,0,.1)';brBorder='rgba(255,68,0,.5)';rwycc='2';xwTkof='15 kt';xwLdg='17 kt';brakingLabel='MOYEN À MAUVAIS';}
+        else if(BB==='91'){brText='MAUVAIS (POOR)';brColor='#ff0033';brBg='rgba(255,0,51,.1)';brBorder='rgba(255,0,51,.5)';rwycc='1';xwTkof='13 kt';xwLdg='15 kt';brakingLabel='MAUVAIS';}
+        else if(BB==='99'){brText='Non fiable / Non mesurable';brColor='#ffe040';brBg='rgba(255,224,64,.08)';brBorder='rgba(255,224,64,.4)';}
+        else if(nBB>=36&&nBB<=90){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#00ff88';brBg='rgba(0,255,136,.08)';brBorder='rgba(0,255,136,.35)';rwycc='≥5';xwTkof='25 kt';xwLdg='36 kt';brakingLabel='BON';}
+        else if(nBB>=26&&nBB<=35){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#ff9900';brBg='rgba(255,153,0,.08)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel='MOYEN';}
+        else if(nBB>=1&&nBB<=25){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#ff0033';brBg='rgba(255,0,51,.08)';brBorder='rgba(255,0,51,.4)';rwycc='≤2';xwTkof='≤15 kt';xwLdg='≤17 kt';brakingLabel='MAUVAIS À NUL';}
+      }
+
+      // Type color coding
+      const typeColors={'0':'#00ff88','1':'#ffe040','2':'#ffe040','3':'#ff9900','4':'#40d0ff','5':'#40d0ff','6':'#ff9900','7':'#ff0033','8':'#ff4400','9':'#ff0033','/':'#7090aa'};
+      const typeColor=typeColors[T]||'#e8f0ff';
+
+      // Extent color
+      const extColor=E==='9'?'#ff4400':E==='5'?'#ff9900':E==='2'?'#ffe040':'#00ff88';
+
+      // Performance impact warning
+      if(rwycc==='1'||rwycc==='0'||rwycc==='≤2'){
+        perf=`<div style="margin-top:14px;background:rgba(255,0,51,.12);border:2px solid rgba(255,0,51,.5);border-radius:12px;padding:14px 16px;animation:pulse .9s ease infinite">
+          <div style="font-size:18px;font-weight:900;color:#ff3355;margin-bottom:6px">🚨 PERFORMANCES CRITIQUES</div>
+          <div style="font-size:15px;color:#ff9090;line-height:1.6">• Vérifier calculs de performance LDG avec RWYCC ${rwycc}<br>• Remise de gaz ≤ 1000' AGL si perf non recalculées [OM A 8.3.1.5]<br>• AIREP requis si freinage inférieur aux prévisions</div>
+        </div>`;
+      } else if(rwycc==='2'||rwycc==='3'){
+        perf=`<div style="margin-top:14px;background:rgba(255,153,0,.08);border:1.5px solid rgba(255,153,0,.4);border-radius:12px;padding:12px 16px">
+          <div style="font-size:16px;font-weight:700;color:#ff9900">⚠️ Recalculer performances LDG · RWYCC ${rwycc} · Piste contaminée</div>
+        </div>`;
+      }
+
+      res.innerHTML=`
+        <!-- Main result card -->
+        <div style="border:2px solid ${brBorder};border-radius:16px;padding:0;overflow:hidden;margin-bottom:0">
+
+          <!-- Header: runway -->
+          <div style="background:rgba(255,255,255,.06);padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="font-size:13px;color:#7090aa;letter-spacing:2px;font-family:monospace">PISTE</div>
+            <div style="font-family:monospace;font-size:28px;font-weight:900;color:${c.n};text-shadow:0 0 14px ${c.g}">RWY ${rwy}</div>
+            <div style="margin-left:auto;font-family:monospace;font-size:13px;color:#7090aa">${raw}</div>
+          </div>
+
+          <!-- 2-col grid: Type + Extent -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,.06)">
+              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">TYPE DE DÉPÔT (T=${T})</div>
+              <div style="font-size:20px;font-weight:900;color:${typeColor};line-height:1.3">${SNOWT[T]||T}</div>
+              <div style="font-size:13px;color:#7090aa;margin-top:6px">Code ${T}</div>
+            </div>
+            <div style="padding:16px 20px">
+              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">ÉTENDUE (E=${E})</div>
+              <div style="font-size:20px;font-weight:900;color:${extColor};line-height:1.3">${SNOWE[E]||E}</div>
+              <div style="font-size:13px;color:#7090aa;margin-top:6px">de la piste couverte</div>
+            </div>
+          </div>
+
+          <!-- Depth -->
+          <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:6px;font-family:monospace">PROFONDEUR (DD=${DD})</div>
+            <div style="font-size:22px;font-weight:900;color:#e8f0ff">${depth}</div>
+          </div>
+
+          <!-- Braking + RCAM -->
+          <div style="padding:16px 20px;background:${brBg}">
+            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:12px;font-family:monospace">FREINAGE / ACTION FREINAGE (BB=${BB||'—'})</div>
+            <div style="font-size:26px;font-weight:900;color:${brColor};text-shadow:0 0 16px ${brColor};margin-bottom:14px">${brText}</div>
+
+            ${rwycc!=='—'?`
+            <!-- RCAM Impact -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px">
+              <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
+                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">RWYCC</div>
+                <div style="font-family:monospace;font-size:32px;font-weight:900;color:${brColor};text-shadow:0 0 14px ${brColor}">${rwycc}</div>
+              </div>
+              <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
+                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">XW T/O MAX</div>
+                <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwTkof}</div>
+              </div>
+              <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
+                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">XW LDG MAX</div>
+                <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwLdg}</div>
+              </div>
+            </div>` : ''}
+          </div>
+        </div>
+        ${perf}
+      `;
+    });
+
+    clr.addEventListener('click',()=>{inp.value='';res.innerHTML='';});
+    card.appendChild(res);
+
+    // Reference card with color coding
+    const refCard=buildCard('GUIDE DE DÉCODAGE MOTNE', c.n);
+    refCard.appendChild(el('div','tip','Chaque champ est codé par position. Exemple : <span style="font-family:monospace;font-size:15px">R28R / 2 9 00 50</span><br>→ Piste 28R · Étendue 11-25% · Ornières gelées · &lt;1mm · Coeff 0.50'));
+
+    // Type codes with colors
+    const typeSection=el('div'); typeSection.style.marginBottom='16px';
+    typeSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">TYPE DE DÉPÔT (T)</div>`;
+    const typeGrid=el('div'); typeGrid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px';
+    const typeData=[['0','Sec et dégagé','#00ff88'],['1','Humide','#ffe040'],['2','Mouillé/Flaques','#ffe040'],['3','Givre/Gelée <1mm','#ff9900'],['4','Neige sèche','#40d0ff'],['5','Neige mouillée','#40d0ff'],['6','Gadoue (Slush)','#ff9900'],['7','Glace','#ff0033'],['8','Neige compactée','#ff4400'],['9','Ornières gelées','#ff0033'],['/','Non signalé','#7090aa']];
+    typeData.forEach(([k,v,col])=>{
+      const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:900;color:${col}">${k}</div><div style="font-size:12px;color:#b0c8e0;margin-top:4px;line-height:1.3">${v}</div>`;
+      typeGrid.appendChild(d);
+    });
+    typeSection.appendChild(typeGrid); refCard.appendChild(typeSection);
+
+    // Extent codes
+    const extSection=el('div'); extSection.style.marginBottom='16px';
+    extSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">ÉTENDUE DE CONTAMINATION (E)</div>`;
+    const extGrid=el('div'); extGrid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:8px';
+    [['1','≤ 10%','#00ff88'],['2','11–25%','#ffe040'],['5','26–50%','#ff9900'],['9','51–100%','#ff4400']].forEach(([k,v,col])=>{
+      const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:900;color:${col}">${k}</div><div style="font-size:13px;color:#b0c8e0;margin-top:4px">${v}</div>`;
+      extGrid.appendChild(d);
+    });
+    extSection.appendChild(extGrid); refCard.appendChild(extSection);
+
+    // Braking codes with RCAM
+    const brSection=el('div');
+    brSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">FREINAGE (BB) → RWYCC & LIMITES XW</div>`;
+    const brData=[
+      {bb:'95',label:'BON',rwycc:'5',tkof:'25',ldg:'36',col:'#00ff88'},
+      {bb:'94',label:'BON À MOYEN',rwycc:'4',tkof:'22',ldg:'30',col:'#ffe600'},
+      {bb:'93',label:'MOYEN',rwycc:'3',tkof:'20',ldg:'25',col:'#ff9900'},
+      {bb:'92',label:'MOYEN À MAUVAIS',rwycc:'2',tkof:'15',ldg:'17',col:'#ff4400'},
+      {bb:'91',label:'MAUVAIS',rwycc:'1',tkof:'13',ldg:'15',col:'#ff0033'},
+      {bb:'01-35',label:'Coeff µ 0.01→0.35',rwycc:'1–3',tkof:'13–20',ldg:'15–25',col:'#ff6600'},
+      {bb:'36-90',label:'Coeff µ 0.36→0.90',rwycc:'5–6',tkof:'25–36',ldg:'36',col:'#00ff88'},
+      {bb:'99',label:'Non fiable',rwycc:'—',tkof:'—',ldg:'—',col:'#ffe040'},
+    ];
+    brData.forEach(item=>{
+      const d=el('div'); d.style.cssText=`background:${item.col}10;border:1.5px solid ${item.col}44;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;flex-wrap:wrap`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:20px;font-weight:900;color:${item.col};min-width:60px">${item.bb}</div><div style="flex:1"><div style="font-size:16px;font-weight:900;color:${item.col}">${item.label}</div></div><div style="text-align:center;min-width:50px"><div style="font-size:10px;color:#7090aa">RWYCC</div><div style="font-family:monospace;font-size:20px;font-weight:900;color:${item.col}">${item.rwycc}</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.tkof} kt</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.ldg} kt</div></div>`;
+      brSection.appendChild(d);
+    });
+    refCard.appendChild(brSection);
+    wrap.appendChild(card); wrap.appendChild(refCard);
+  }
+
+  if(sub==='opt'){
+    const card=buildCard('GUIDE SÉLECTIONS OPT', c.n);
+    [['🛫 DÉCOLLAGE','Entrer type de contaminant + profondeur (mm). Plusieurs contaminants → calculer séparément, utiliser le plus limitant.'],
+     ['📊 DISPATCH ATTERRISSAGE','Entrer le type de contaminant (ex: Slush). Profondeur si applicable.'],
+     ['✈️ ATTERRISSAGE EN VOL','Entrer le RWYCC le plus bas (braking action) pour les calculs de performance en vol. Ex: MEDIUM TO POOR = 2.']
+    ].forEach(([phase,txt])=>{
+      const d=el('div'); d.style.cssText='background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:12px';
+      d.innerHTML=`<div style="font-size:18px;font-weight:900;color:${c.n};margin-bottom:8px">${phase}</div><div style="font-size:17px;line-height:1.6">${txt}</div>`;
+      card.appendChild(d);
+    });
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+// ── COLD ──
+function buildCold(sub) {
+  const c=C.cold; const wrap=el('div','page');
+  const phases=[
+    {id:'preflight',icon:'🔍',name:'PRÉ-VOL',items:[{id:'c1',label:'Commutateurs PROBE HEAT',action:'ON – OPL',sub:'Vérifier extinction voyants probe heat'}]},
+    {id:'avantdemarrage',icon:'📋',name:'AVANT DÉMARRAGE',items:[
+      {id:'c2',label:'Données de décollage – calculer. ATM interdit sur piste contaminée'},
+      {id:'c3',label:'Vent traversier max – vérifier RCAM'},{id:'c4',label:'Temps de protection antigel (HOT) – obtenir OM A'},{id:'c5',label:'Dégivrage à la porte si possible'},
+    ]},
+    {id:'demarrage',icon:'⚠️',name:'DÉMARRAGE MOTEURS',items:[
+      {id:'c6',label:'TAE < -40°C & moteur refroidi >1h → NE PAS DÉMARRER',action:'⛔ NO START'},
+      {id:'c7',label:'TAE < -40°C & moteur refroidi >3h → NE PAS DÉMARRER',action:'⛔ NO START'},
+      {id:'c8',label:'TAE < -35°C → 2 min ralenti avant modification manette gaz'},
+      {id:'c9',label:'Après démarrage : ENGINE START switches',action:'CONT – OPL'},
+      {id:'c10',label:'Après démarrage : ENGINE ANTI-ICE switches',action:'ON – OPL'},
+    ]},
+    {id:'roulage',icon:'🛞',name:'ROULAGE',items:[
+      {id:'c11',label:'Informer PNC et passagers avant dégivrage'},
+      {id:'c12',label:'VOLETS RENTRÉS avant dégivrage',action:'UP – OPL'},
+      {id:'c13',label:'BLEED moteurs',action:'OFF – OPL'},{id:'c14',label:'APU BLEED',action:'OFF – OPL'},
+      {id:'c15',label:'Après dégivrage : ~1 min attente puis BLEED ON'},
+      {id:'c16',label:'Vitesse réduite · distances augmentées · poussée minimum · pas inverseurs'},
+      {id:'c17',label:'TAE ≤ 3°C : run-up 70% N1 pendant 30s toutes 30 min max'},
+    ]},
+    {id:'avantdecollage',icon:'🛫',name:'AVANT DÉCOLLAGE',items:[
+      {id:'c18',label:'HOT – toujours dans les limites ?'},
+      {id:'c19',label:'TAE ≤ 3°C + A/I moteurs : informer ATC + static run-up'},
+      {id:'c20',label:'Run-up N1 70% min · stable 30s → lâcher frein + TOGA'},
+    ]},
+    {id:'approche',icon:'🛬',name:'APPROCHE & ATTERRISSAGE',items:[
+      {id:'c21',label:'Corrections altimétriques T° froide → APPLIQUER (onglet Corrections)'},
+      {id:'c22',label:'Vent traversier max – vérifier RCAM'},
+      {id:'c23',label:'Attente en givre → INTERDIT volets sortis'},
+      {id:'c24',label:'Crab angle vent traversier → maintenir sur piste glissante'},
+      {id:'c25',label:'Freinage automatique → RECOMMANDÉ'},
+      {id:'c26',label:'Volets 15 + VREF ICE → VREF15 +10 kt (additif vent ≤ 5 kt)'},
+    ]},
+    {id:'apres',icon:'🏁',name:'APRÈS ATTERRISSAGE',items:[
+      {id:'c27',label:'VOLETS → rentrer à 15°. Pas < 15° avant zones libres de contaminants'},
+      {id:'c28',label:'Anti-glace moteurs ON pour toutes opérations sol en givre'},
+      {id:'c29',label:'ENGINE START switches',action:'CONT – OPL'},
+      {id:'c30',label:'ENGINE ANTI-ICE switches',action:'ON – OPL'},
+    ]},
+  ];
+  const subItems=[...phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:`${p.items.length} actions`})),{id:'corr',icon:'🌡️',label:'Corrections Altimétriques',desc:'Calcul T° froide automatique'}];
+  if(!sub){ wrap.appendChild(buildSubgrid(subItems, c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
+  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='corr'){
+    const card=buildCard('CORRECTIONS ALTIMÉTRIQUES TEMPÉRATURE FROIDE', c.n);
+    card.appendChild(el('div','info','<b>IMPORTANT :</b> Pour approche RNP, la correction est EN PLUS des 50 ft obligatoires.'));
+    const row=el('div','row');
+    const aInp=el('input','inp'); aInp.placeholder='Altitude publiée (ft)'; aInp.type='number';
+    const oInp=el('input','inp'); oInp.placeholder='TAE (°C) ex: -20'; oInp.type='number';
+    const btn=el('button','btn','CALCULER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    row.appendChild(aInp); row.appendChild(oInp); row.appendChild(btn); card.appendChild(row);
+    const res=el('div');
+    btn.addEventListener('click',()=>{
+      const a=parseInt(aInp.value),o=parseInt(oInp.value);
+      if(isNaN(a)||isNaN(o)){res.innerHTML='';return;}
+      const corr=getCorr(a,o);
+      res.innerHTML=`<div class="ok-box"><div class="res-lbl">CORRECTION À AJOUTER</div><div class="res-val" style="color:#60ff60;font-size:52px">+${corr} ft</div><div style="margin-top:10px;font-size:17px;color:#7090aa">Altitude publiée : <b style="color:#e8f0ff">${a} ft</b> &nbsp;|&nbsp; TAE : <b style="color:#e8f0ff">${o}°C</b> &nbsp;→&nbsp; Altitude corrigée : <b style="color:${c.n};font-size:22px">${a+corr} ft</b></div></div>`;
+    });
+    card.appendChild(res);
+    // Table
+    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>ALT (ft)</th><th>-10°C</th><th>-20°C</th><th>-30°C</th><th>-40°C</th><th>-50°C</th><th>-60°C</th></tr></thead>';
+    const tb=el('tbody');
+    COLD_TBL.forEach(r=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;font-weight:700;color:${c.n}">${r.alt}</td><td>${r.m10}</td><td>${r.m20}</td><td>${r.m30}</td><td>${r.m40}</td><td>${r.m50}</td><td>${r.m60}</td>`;tb.appendChild(tr);});
+    tbl.appendChild(tb); const tw=el('div','tbl-wrap');tw.appendChild(tbl); card.appendChild(tw);
+    wrap.appendChild(card); return wrap;
+  }
+
+  const phase=phases.find(p=>p.id===sub);
+  if(phase) wrap.appendChild(buildCard(`${phase.icon} ${phase.name}`, c.n, buildChecklist(phase.items, c.n, `cold-${sub}`)));
+  return wrap;
+}
+
+// ── BRNAV ──
+function buildBRNAV() {
+  const c=C.brnav; const wrap=el('div','page');
+  const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>NE PAS CONFONDRE :</b> RNAV 1 ≠ RNP 1. Spécifications de navigation différentes.</div>';
+  wrap.appendChild(warn);
+  const expCard=buildCard('QU\'EST-CE QUE BRNAV / PRNAV ?', c.n);
+  expCard.appendChild(el('div',null,null,{fontSize:'17px',lineHeight:'1.8'}));
+  [
+    [`<b style="color:${c.n}">BRNAV (RNAV 5)</b>`,`= Basic Area Navigation. Précision latérale ±5 NM (95% du temps). Utilisé en route, espace aérien inférieur et supérieur.`],
+    [`<b style="color:#a5d6a7">PRNAV (RNAV 1)</b>`,`= Precision Area Navigation. Précision ±1 NM (95% du temps). Requis sur SID, STAR, approches RNAV dans certains espaces aériens.`],
+    [`<b style="color:#c8ffc8">RNAV 2</b>`,`= Précision ±2 NM. Utilisé sur certaines routes US et espaces spécifiques.`],
+  ].forEach(([title,text])=>{
+    const d=el('div'); d.style.cssText='margin-bottom:14px;font-size:17px;line-height:1.7';
+    d.innerHTML=`${title} ${text}`; expCard.appendChild(d);
+  });
+  expCard.appendChild(el('div','tip','* Pour PRNAV, toute combinaison de deux capteurs est acceptable (DME/DME, GPS/IRS, GPS/DME).'));
+  wrap.appendChild(expCard);
+  const eqCard=buildCard('ÉQUIPEMENTS REQUIS', c.n);
+  eqCard.appendChild(el('div','info','X = Requis &nbsp;|&nbsp; Chiffres = quantité min &nbsp;|&nbsp; (PF) = Pilote en Fonction'));
+  const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>SYSTÈME</th><th>BRNAV RNAV 5</th><th>PRNAV RNAV 1&2</th></tr></thead>';
+  const tb=el('tbody');
+  [['DME ou GPS *','1','2'],['VOR','1','1'],['ADIRU (mode NAV)','MEL 34-35','2'],['FMC','1','1'],['MCDU','1','1'],['FMS NAV DATABASE','Voir MEL','Voir MEL'],['FCC','—','1'],['Pilote automatique et/ou FD','—','1 (PF)'],['ND MODE MAP','1 (PF)','1 (PF)'],['Panneau EFIS','1 (PF)','1 (PF)'],['Mode LNAV','—','X']].forEach(([s,b,p])=>{
+    const tr=el('tr'); tr.innerHTML=`<td style="font-size:17px;font-weight:700">${s}</td><td style="font-family:monospace;font-size:20px;font-weight:700;color:${b==='X'?c.n:b==='—'?'#7090aa':'#e8f0ff'}">${b}</td><td style="font-family:monospace;font-size:20px;font-weight:700;color:${p==='X'?c.n:p==='—'?'#7090aa':'#e8f0ff'}">${p}</td>`;
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); const tw=el('div','tbl-wrap');tw.appendChild(tbl); eqCard.appendChild(tw);
+  wrap.appendChild(eqCard); return wrap;
+}
+
+// ── CONTACTS ──
+function buildContacts() {
+  const c=C.util; const wrap=el('div','page');
+  const card=buildCard('COMMUNICATIONS COMPAGNIE VHF/ACARS', c.n);
+  const inp=el('input','inp'); inp.placeholder='🔍 Rechercher station, pays, prestataire...'; inp.style.cssText='width:100%;margin-bottom:16px';
+  const tblWrap=el('div','tbl-wrap');
+  const buildTable=(data)=>{
+    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>STATION</th><th>PRESTATAIRE</th><th>VHF</th><th>SITA/ACARS</th></tr></thead>';
+    const tb=el('tbody');
+    data.forEach(ct=>{
+      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px;text-shadow:0 0 8px ${c.g}">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); return tbl;
+  };
+  tblWrap.appendChild(buildTable(CONTACTS));
+  inp.addEventListener('input',()=>{
+    const q=inp.value.toLowerCase();
+    const f=CONTACTS.filter(ct=>ct.city.toLowerCase().includes(q)||ct.co.toLowerCase().includes(q));
+    tblWrap.innerHTML=''; tblWrap.appendChild(buildTable(f));
+  });
+  card.appendChild(inp); card.appendChild(tblWrap);
+  // Domestic
+  const dc=buildCard('RÉSEAU DOMESTIQUE ACARS', c.n);
+  [['VHF','131.850'],['DGAH','ALGDGAH'],['CCO','ALGOWAH / ALGJMAH'],['TECHNIQUE','ALGTTAH'],['OPS','XXXKKAH'],['PVD','XXXKLAH']].forEach(([k,v])=>{
+    const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)';
+    r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px;text-shadow:0 0 8px ${c.g}">${v}</span>`;
+    dc.appendChild(r);
+  });
+  wrap.appendChild(card); wrap.appendChild(dc); return wrap;
+}
+
+// ── DELAY ──
+function buildDelay() {
+  const c=C.util; const wrap=el('div','page');
+  const card=buildCard('RECHERCHE CODE DE RETARD', c.n);
+  const row=el('div','row');
+  const inp=el('input','inp'); inp.placeholder='Entrer le code (ex: 93)'; inp.type='number'; inp.min='1'; inp.max='99';
+  const btn=el('button','btn','CHERCHER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+  const clr=el('button','btn btn-g','✕');
+  row.appendChild(inp); row.appendChild(btn); row.appendChild(clr); card.appendChild(row);
+  const res=el('div');
+  btn.addEventListener('click',()=>{const d=DELAY_CODES[inp.value];res.innerHTML=d?`<div class="ok-box"><div class="res-lbl">CODE ${inp.value}</div><div style="font-size:20px;font-weight:700;margin-top:6px">${d}</div></div>`:'<div class="err-box"><div class="res-val" style="color:#ff3355">Code introuvable</div></div>';});
+  clr.addEventListener('click',()=>{inp.value='';res.innerHTML='';});
+  card.appendChild(res);
+  const allCard=buildCard('TOUS LES CODES DE RETARD', c.n);
+  const sinp=el('input','inp'); sinp.placeholder='🔍 Rechercher code ou description...'; sinp.style.cssText='width:100%;margin-bottom:16px';
+  const tblWrap=el('div','tbl-wrap');
+  const buildDT=(data)=>{
+    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th style="width:60px">CODE</th><th>DESCRIPTION</th></tr></thead>';
+    const tb=el('tbody');
+    data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:900;font-size:22px;text-shadow:0 0 8px ${c.g}">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
+    tbl.appendChild(tb); return tbl;
+  };
+  tblWrap.appendChild(buildDT(Object.entries(DELAY_CODES)));
+  sinp.addEventListener('input',()=>{
+    const q=sinp.value.toLowerCase();
+    const f=Object.entries(DELAY_CODES).filter(([k,v])=>k.includes(sinp.value)||v.toLowerCase().includes(q));
+    tblWrap.innerHTML=''; tblWrap.appendChild(buildDT(f));
+  });
+  allCard.appendChild(sinp); allCard.appendChild(tblWrap);
+  wrap.appendChild(card); wrap.appendChild(allCard); return wrap;
+}
+
+// ── NOTES ──
+function buildNotes() {
+  const c=C.util; const wrap=el('div','page');
+  const card=buildCard('📝 NOTES DE VOL', c.n);
+  card.appendChild(el('div','info','Notes sauvegardées pour cette session uniquement.'));
+  const ta=el('textarea','notes-ta'); ta.placeholder='Saisir notes, remarques, procédures spéciales...'; ta.rows=12;
+  try{ta.value=sessionStorage.getItem('b737_notes')||'';}catch{}
+  ta.addEventListener('input',()=>{try{sessionStorage.setItem('b737_notes',ta.value);}catch{}});
+  const btnRow=el('div','row'); btnRow.style.marginTop='12px';
+  const clrBtn=el('button','btn btn-g','🗑️ Effacer');
+  const expBtn=el('button','btn','📥 Exporter'); expBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 14px ${c.g}`;
+  clrBtn.addEventListener('click',()=>{if(window.confirm('Effacer ?')){ta.value='';try{sessionStorage.removeItem('b737_notes');}catch{}}});
+  expBtn.addEventListener('click',()=>{const b=new Blob([ta.value],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`notes-vol-${new Date().toISOString().slice(0,10)}.txt`;a.click();});
+  btnRow.appendChild(clrBtn); btnRow.appendChild(expBtn);
+  card.appendChild(ta); card.appendChild(btnRow); wrap.appendChild(card); return wrap;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTIONS CONFIG
+// ═══════════════════════════════════════════════════════════════
+
+const SECTIONS=[
+  {id:'rnp',  icon:'📡',name:'RNP',   sub:'APPROACH',      col:C.rnp},
+  {id:'lvp',  icon:'🛬',name:'LVP',   sub:'CAT II/IIIA',   col:C.lvp},
+  {id:'cpdlc',icon:'🔀',name:'CPDLC', sub:'DATALINK',      col:C.cpdlc},
+  {id:'cold', icon:'🌨️',name:'COLD',  sub:'WEATHER',       col:C.cold},
+  {id:'grf',  icon:'📊',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
+  {id:'brnav',icon:'🧭',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
+];
+const UTILS=[
+  {id:'contacts',icon:'📻',name:'CONTACTS',col:C.util},
+  {id:'delay',   icon:'⏱️',name:'CODES RETARD',col:C.util},
+  {id:'notes',   icon:'📝',name:'NOTES',col:C.util},
+];
+const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',cold:'COLD WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:'CODES DE RETARD',notes:'NOTES DE VOL'};
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD APP
+// ═══════════════════════════════════════════════════════════════
+
+function buildApp() {
+  const div=el('div','app');
+
+  // HEADER
+  const hdr=el('div','hdr');
+  const logoRow=el('div','logo-row');
+  const logoIcon=el('div','logo-icon');
+  logoIcon.innerHTML='<div class="plane">✈️</div><div class="txt">B737 OPS</div>';
+  const logoText=el('div');
+  const logoName=el('div','logo-name','AIR ALGÉRIE B737 OPS INFO QR');
+  const logoSub=el('div','logo-sub','DIRECTION DES OPÉRATIONS AÉRIENNES · QUICK REFERENCE');
+  logoText.appendChild(logoName); logoText.appendChild(logoSub);
+  logoRow.appendChild(logoIcon); logoRow.appendChild(logoText);
+  const tools=el('div','hdr-tools');
+  UTILS.forEach(u=>{
+    const b=el('button',`tool-btn${STATE.page===u.id?' on':''}`,u.icon+' '+u.name);
+    b.addEventListener('click',()=>{
+      if(STATE.page===u.id){STATE.page=null;STATE.sub=null;}else{STATE.page=u.id;STATE.sub=null;}
+      render();
+    });
+    tools.appendChild(b);
+  });
+  hdr.appendChild(logoRow); hdr.appendChild(tools); div.appendChild(hdr);
+
+  // CONTENT
+  if(!STATE.page) {
+    // HOME
+    const home=el('div','home');
+    const h1=el('h1',null,'B737 OPS CENTER'); home.appendChild(h1);
+    const sub=el('p','home-sub','SÉLECTIONNER UNE PROCÉDURE · AIR ALGÉRIE · DOA'); home.appendChild(sub);
+    const grid=el('div','grid');
+    SECTIONS.forEach(s=>{
+      const block=el('div','block');
+      block.style.cssText=`border-color:${s.col.d};background:rgba(26,26,46,.92);box-shadow:0 0 28px ${s.col.g}`;
+      const ico=el('div','block-ico',s.icon); ico.style.color=s.col.n; ico.style.filter=`drop-shadow(0 0 12px ${s.col.n})`;
+      const name=el('div','block-name',s.name); name.style.cssText=`color:${s.col.n};text-shadow:0 0 14px ${s.col.g}`;
+      const desc=el('div','block-sub',s.sub); desc.style.color=s.col.m;
+      block.appendChild(ico); block.appendChild(name); block.appendChild(desc);
+      block.addEventListener('click',()=>{ STATE.page=s.id; STATE.sub=null; render(); });
+      grid.appendChild(block);
+    });
+    home.appendChild(grid); div.appendChild(home);
+  } else {
+    // PAGE
+    const sec=[...SECTIONS,...UTILS].find(s=>s.id===STATE.page);
+    const c=sec?.col||C.util;
+    const pageWrap=el('div','page');
+    // Back to home
+    const backHome=el('button','back','← ACCUEIL');
+    backHome.addEventListener('click',()=>{ STATE.page=null; STATE.sub=null; render(); });
+    pageWrap.appendChild(backHome);
+    // Page header
+    const pgHdr=el('div','pg-hdr');
+    const pgIco=el('div','pg-ico',sec?.icon); pgIco.style.color=c.n; pgIco.style.filter=`drop-shadow(0 0 16px ${c.n})`;
+    const pgText=el('div');
+    const pgTitle=el('div','pg-title',TITLES[STATE.page]); pgTitle.style.cssText=`color:${c.n};text-shadow:0 0 18px ${c.g}`;
+    const pgSub=el('div','pg-sub','AIR ALGÉRIE B737 · QUICK REFERENCE · DOA');
+    pgText.appendChild(pgTitle); pgText.appendChild(pgSub);
+    pgHdr.appendChild(pgIco); pgHdr.appendChild(pgText);
+    pageWrap.appendChild(pgHdr);
+
+    let content=null;
+    if(STATE.page==='rnp')     content=buildRNP(STATE.sub);
+    if(STATE.page==='lvp')     content=buildLVP(STATE.sub);
+    if(STATE.page==='cpdlc')   content=buildCPDLC(STATE.sub);
+    if(STATE.page==='grf')     content=buildGRF(STATE.sub);
+    if(STATE.page==='cold')    content=buildCold(STATE.sub);
+    if(STATE.page==='brnav')   content=buildBRNAV();
+    if(STATE.page==='contacts')content=buildContacts();
+    if(STATE.page==='delay')   content=buildDelay();
+    if(STATE.page==='notes')   content=buildNotes();
+
+    if(content){
+      // Move children from content into pageWrap
+      Array.from(content.children).forEach(child=>pageWrap.appendChild(child));
+    }
+    div.appendChild(pageWrap);
+  }
+  return div;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
+render();
+
+// iOS install banner
+function closeInstall(){document.getElementById('ibanner').style.display='none';try{sessionStorage.setItem('install_dismissed','1');}catch{}}
+(function(){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.navigator.standalone===true;
+  try{if(sessionStorage.getItem('install_dismissed'))return;}catch{}
+  if(isIOS&&!isStandalone){
+    setTimeout(()=>{const b=document.getElementById('ibanner');if(b)b.style.display='block';},3000);
+  }
+})();
+</script>
+
+<!-- FOOTER -->
+<div id="app-footer" style="
+  background: rgba(6,8,16,0.97);
+  border-top: 1px solid rgba(96,255,96,0.2);
+  padding: 18px 24px;
+  text-align: center;
+  margin-top: 40px;
+">
+  <div style="
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    color: #60ff60;
+    text-shadow: 0 0 12px rgba(96,255,96,0.6);
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  ">
+    ✈️ CPT BOUCHENAFA MOHAMED AMINE
+  </div>
+  <div style="
+    font-family: monospace;
+    font-size: 11px;
+    color: #40d0ff;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  ">
+    AIR ALGÉRIE · B737 OPS INFO QR · QUICK REFERENCE SYSTEM
+  </div>
+  <div style="
+    font-family: monospace;
+    font-size: 11px;
+    color: #7090aa;
+    letter-spacing: 1px;
+  ">
+    © 2025 – Tous droits réservés · All rights reserved<br>
+    Document à usage interne exclusif – Air Algérie · Direction des Opérations Aériennes<br>
+    Toute reproduction, distribution ou modification non autorisée est strictement interdite.
+  </div>
+</div>
+
+</body>
+</html>
