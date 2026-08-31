@@ -274,14 +274,14 @@ input:checked+.sl::before{transform:translateX(22px)}
 <body>
 <div class="app" id="app">
   <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;color:#60ff60;font-size:20px">
-    Chargement…
+    Chargement… / Loading…
   </div>
 </div>
 
 <div id="ibanner">
   <button class="ib-close" onclick="closeInstall()">✕</button>
-  ✈️ <strong>Installer B737 OPS QR</strong>
-  <p>Partager ➜ "Sur l'écran d'accueil"</p>
+  ✈️ <strong id="ib-title">Installer B737 OPS QR</strong>
+  <p id="ib-text">Partager ➜ "Sur l'écran d'accueil"</p>
 </div>
 
 <script>
@@ -315,8 +315,10 @@ const h = (tag,props,...children) => {
 };
 
 // State management
-let STATE = { page: null, sub: null };
+let STATE = { page: null, sub: null, lang: (function(){ try{ return localStorage.getItem('b737_lang')||'fr'; }catch(e){ return 'fr'; } })() };
 const render = () => { $('app').innerHTML=''; $('app').appendChild(buildApp()); };
+const L = (fr, en) => STATE.lang==='en' ? en : fr;
+function setLang(lang){ STATE.lang=lang; try{ localStorage.setItem('b737_lang',lang); }catch(e){} render(); }
 
 // ═══════════════════════════════════════════════════════════════
 // DATA
@@ -325,17 +327,23 @@ const render = () => { $('app').innerHTML=''; $('app').appendChild(buildApp()); 
 const FLEET = {"7T-VJJ":"0A0018","7T-VJK":"0A0019","7T-VJL":"0A001A","7T-VJM":"0A001B","7T-VJN":"0A0020","7T-VJO":"0A0021","7T-VJP":"0A0022","7T-VJQ":"0A0024","7T-VJR":"0A0025","7T-VJS":"0A0026","7T-VJT":"0A0027","7T-VJU":"0A0028","7T-VKA":"0A0049","7T-VKB":"0A004A","7T-VKC":"0A004B","7T-VKD":"0A0074","7T-VKE":"0A0075","7T-VKF":"0A0076","7T-VKG":"0A0077","7T-VKH":"0A0078","7T-VKI":"0A0079","7T-VKJ":"0A007A","7T-VKK":"0A008A","7T-VKL":"0A008B","7T-VKM":"0A008C","7T-VKN":"0A008D","7T-VKO":"0A008E","7T-VKP":"0A008F","7T-VKQ":"0A0090","7T-VKR":"0A0091","7T-VKS":"0A0092","7T-VKT":"0A0093"};
 
 const RCAM_DATA = [
-  {rwycc:6,desc:"Piste sèche",braking:"—",clr:"#39ff14",tkof:"36/33*",ldg:"36/33*"},
-  {rwycc:5,desc:"Givre · Humide · Gadoue ≤3mm · Neige sèche/mouillée",braking:"BON",clr:"#00ff88",tkof:"25",ldg:"36/33*"},
-  {rwycc:4,desc:"Neige compactée (≤−15°C OAT)",braking:"BON À MOYEN",clr:"#ffe600",tkof:"22",ldg:"30"},
-  {rwycc:3,desc:"Glissante mouillée · Neige >3mm · Compactée >−15°C",braking:"MOYEN",clr:"#ff9900",tkof:"20",ldg:"25"},
-  {rwycc:2,desc:"Eau ou gadoue >3mm",braking:"MOYEN À MAUVAIS",clr:"#ff4400",tkof:"15",ldg:"17"},
-  {rwycc:1,desc:"Glace",braking:"MAUVAIS",clr:"#ff0033",tkof:"13",ldg:"15"},
-  {rwycc:0,desc:"Glace mouillée · Eau sur neige compactée · Neige sur glace",braking:"NUL",clr:"#990000",tkof:"NIL",ldg:"NIL"},
+  {rwycc:6,desc:"Piste sèche",descEn:"Dry runway",braking:"—",brakingEn:"—",clr:"#39ff14",tkof:"36/33*",ldg:"36/33*"},
+  {rwycc:5,desc:"Givre · Humide · Gadoue ≤3mm · Neige sèche/mouillée",descEn:"Frost · Wet · Slush ≤3mm · Dry/Wet Snow",braking:"BON",brakingEn:"GOOD",clr:"#00ff88",tkof:"25",ldg:"36/33*"},
+  {rwycc:4,desc:"Neige compactée (≤−15°C OAT)",descEn:"Compacted Snow (≤−15°C OAT)",braking:"BON À MOYEN",brakingEn:"GOOD TO MEDIUM",clr:"#ffe600",tkof:"22",ldg:"30"},
+  {rwycc:3,desc:"Glissante mouillée · Neige >3mm · Compactée >−15°C",descEn:"Slippery when wet · Snow >3mm · Compacted Snow >−15°C",braking:"MOYEN",brakingEn:"MEDIUM",clr:"#ff9900",tkof:"20",ldg:"25"},
+  {rwycc:2,desc:"Eau ou gadoue >3mm",descEn:"Water or Slush >3mm",braking:"MOYEN À MAUVAIS",brakingEn:"MEDIUM TO POOR",clr:"#ff4400",tkof:"15",ldg:"17"},
+  {rwycc:1,desc:"Glace",descEn:"Ice",braking:"MAUVAIS",brakingEn:"POOR",clr:"#ff0033",tkof:"13",ldg:"15"},
+  {rwycc:0,desc:"Glace mouillée · Eau sur neige compactée · Neige sur glace",descEn:"Wet Ice · Water on Compacted Snow · Snow on Ice",braking:"NUL",brakingEn:"NIL",clr:"#990000",tkof:"NIL",ldg:"NIL"},
 ];
+const rcamDesc = r => L(r.desc, r.descEn);
+const rcamBraking = r => L(r.braking, r.brakingEn);
 
 const SNOWT = {"0":"Sec et dégagé","1":"Humide","2":"Mouillé/Flaques d'eau","3":"Givre/Gelée <1mm","4":"Neige sèche","5":"Neige mouillée","6":"Gadoue (Slush)","7":"Glace","8":"Neige compactée","9":"Ornières gelées","/":"Non signalé"};
+const SNOWT_EN = {"0":"Dry and clear","1":"Damp","2":"Wet/Water patches","3":"Frost/Ice <1mm","4":"Dry snow","5":"Wet snow","6":"Slush","7":"Ice","8":"Compacted snow","9":"Frozen ruts","/":"Not reported"};
 const SNOWE = {"1":"10% ou moins","2":"11–25%","5":"26–50%","9":"51–100%","/":"Non signalé"};
+const SNOWE_EN = {"1":"10% or less","2":"11–25%","5":"26–50%","9":"51–100%","/":"Not reported"};
+const snowT = code => L(SNOWT[code], SNOWT_EN[code]);
+const snowE = code => L(SNOWE[code], SNOWE_EN[code]);
 
 const COLD_TBL = [
   {alt:200,m10:0,m20:10,m30:10,m40:20,m50:20,m60:30},
@@ -439,6 +447,8 @@ const CONTACTS=[
 ];
 
 const DELAY_CODES={"11":"PD – LATE CHECK-IN : Check-in rouvert passagers en retard","12":"PL – LATE CHECK-IN : Non terminé avant fermeture","13":"PE – CHECK-IN ERROR : Erreur passager/bagages","14":"PO – OVERSALES : Erreurs réservation","15":"PH – BOARDING : Passagers manquants","16":"PS – COMMERCIAL/VIP","17":"PC – CATERING : Commande tardive","18":"PD – BAGGAGE : Bagages mal triés","21":"CD – CARGO DOCS : Documentation tardive","22":"CP – CARGO LATE POSITIONING","23":"CC – CARGO LATE ACCEPTANCE","24":"CI – INADEQUATE PACKING","25":"CO – CARGO OVERSALES","31":"GD – LATE AIRCRAFT DOCS : Masse/centrage","32":"GL – LOADING/UNLOADING","33":"GE – LOADING EQUIPMENT","34":"GS – SERVICING EQUIPMENT","35":"GC – AIRCRAFT CLEANING","36":"GF – FUELLING/DEFUELLING","37":"GB – CATERING","38":"GU – ULD","39":"GT – TECHNICAL EQUIPMENT/dégivrage","41":"TD – TECHNICAL DEFECTS : MEL","42":"TM – SCHEDULED MAINTENANCE","43":"TN – NON-SCHEDULED MAINTENANCE","44":"TS – SPARES AND MAINTENANCE","45":"TA – AOG SPARES","46":"TC – AIRCRAFT CHANGE","47":"TL – STANDBY AIRCRAFT","51":"DF – DAMAGE FLIGHT OPS : Bird strike","52":"DG – DAMAGE GROUND OPS","55":"ED – DEPARTURE CONTROL FAILURE","56":"EC – CARGO SYSTEM FAILURE","57":"EF – FLIGHT PLAN SYSTEM FAILURE","61":"FP – FLIGHT PLAN : Tardif ou modifié","62":"FF – OPERATIONAL REQUIREMENT","63":"FT – LATE CREW BOARDING","64":"FS – FLIGHT DECK CREW SHORTAGE","65":"FR – FLIGHT DECK CREW SPECIAL REQUEST","66":"FL – LATE CABIN CREW BOARDING","67":"FC – CABIN CREW SHORTAGE","68":"FA – CABIN CREW ERROR","69":"FB – CAPTAIN SECURITY CHECK","71":"WO – WEATHER DEPARTURE : Sous minima","72":"WT – WEATHER DESTINATION : Sous minima","73":"WR – WEATHER EN-ROUTE/ALTERNATE","75":"WI – DE-ICING AVION","76":"WS – SNOW/ICE PISTE","77":"WG – GROUND HANDLING MÉTÉO","81":"AT – ATFM ENROUTE","82":"AX – ATFM ATC STAFF/EQUIPMENT","83":"AE – ATFM RESTRICTION DEST","84":"AW – ATFM WEATHER DEST","85":"AS – MANDATORY SECURITY","86":"AG – IMMIGRATION/CUSTOMS/HEALTH","87":"AF – AIRPORT FACILITIES","88":"AD – RESTRICTIONS DESTINATION","89":"AM – RESTRICTIONS DEPARTURE","91":"RL – LOAD CONNECTION","92":"RT – THROUGH CHECK-IN ERROR","93":"RA – AIRCRAFT ROTATION : Secteur précédent tardif","94":"RS – CABIN CREW ROTATION","95":"RC – CREW ROTATION","96":"RO – OPERATIONS CONTROL","97":"MI – GRÈVE INTERNE","98":"MO – GRÈVE EXTERNE","99":"MX – DIVERS"};
+const DELAY_CODES_EN={"11":"PD – LATE CHECK-IN: Check-in reopened for late passengers","12":"PL – LATE CHECK-IN: Not completed before closure","13":"PE – CHECK-IN ERROR: Passenger/baggage error","14":"PO – OVERSALES: Booking errors","15":"PH – BOARDING: Missing passengers","16":"PS – COMMERCIAL/VIP","17":"PC – CATERING: Late order","18":"PD – BAGGAGE: Baggage missorted","21":"CD – CARGO DOCS: Late documentation","22":"CP – CARGO LATE POSITIONING","23":"CC – CARGO LATE ACCEPTANCE","24":"CI – INADEQUATE PACKING","25":"CO – CARGO OVERSALES","31":"GD – LATE AIRCRAFT DOCS: Weight and balance","32":"GL – LOADING/UNLOADING","33":"GE – LOADING EQUIPMENT","34":"GS – SERVICING EQUIPMENT","35":"GC – AIRCRAFT CLEANING","36":"GF – FUELLING/DEFUELLING","37":"GB – CATERING","38":"GU – ULD","39":"GT – TECHNICAL EQUIPMENT/de-icing","41":"TD – TECHNICAL DEFECTS: MEL","42":"TM – SCHEDULED MAINTENANCE","43":"TN – NON-SCHEDULED MAINTENANCE","44":"TS – SPARES AND MAINTENANCE","45":"TA – AOG SPARES","46":"TC – AIRCRAFT CHANGE","47":"TL – STANDBY AIRCRAFT","51":"DF – DAMAGE FLIGHT OPS: Bird strike","52":"DG – DAMAGE GROUND OPS","55":"ED – DEPARTURE CONTROL FAILURE","56":"EC – CARGO SYSTEM FAILURE","57":"EF – FLIGHT PLAN SYSTEM FAILURE","61":"FP – FLIGHT PLAN: Late or amended","62":"FF – OPERATIONAL REQUIREMENT","63":"FT – LATE CREW BOARDING","64":"FS – FLIGHT DECK CREW SHORTAGE","65":"FR – FLIGHT DECK CREW SPECIAL REQUEST","66":"FL – LATE CABIN CREW BOARDING","67":"FC – CABIN CREW SHORTAGE","68":"FA – CABIN CREW ERROR","69":"FB – CAPTAIN SECURITY CHECK","71":"WO – WEATHER DEPARTURE: Below minima","72":"WT – WEATHER DESTINATION: Below minima","73":"WR – WEATHER EN-ROUTE/ALTERNATE","75":"WI – AIRCRAFT DE-ICING","76":"WS – RUNWAY SNOW/ICE","77":"WG – WEATHER GROUND HANDLING","81":"AT – ATFM ENROUTE","82":"AX – ATFM ATC STAFF/EQUIPMENT","83":"AE – ATFM RESTRICTION DEST","84":"AW – ATFM WEATHER DEST","85":"AS – MANDATORY SECURITY","86":"AG – IMMIGRATION/CUSTOMS/HEALTH","87":"AF – AIRPORT FACILITIES","88":"AD – RESTRICTIONS DESTINATION","89":"AM – RESTRICTIONS DEPARTURE","91":"RL – LOAD CONNECTION","92":"RT – THROUGH CHECK-IN ERROR","93":"RA – AIRCRAFT ROTATION: Previous sector late","94":"RS – CABIN CREW ROTATION","95":"RC – CREW ROTATION","96":"RO – OPERATIONS CONTROL","97":"MI – INTERNAL STRIKE","98":"MO – EXTERNAL STRIKE","99":"MX – MISCELLANEOUS"};
+const delayText = code => L(DELAY_CODES[code], DELAY_CODES_EN[code]);
 
 // ═══════════════════════════════════════════════════════════════
 // COLORS
@@ -481,7 +491,7 @@ function buildChecklist(items, color, ckKey) {
 
   const progressRow = el('div','prog-row');
   const progressLbl = el('div','prog-lbl');
-  const rstBtn = el('button','rst-btn','↺ Réinitialiser');
+  const rstBtn = el('button','rst-btn','↺ '+L('Réinitialiser','Reset'));
   progressRow.appendChild(progressLbl);
   progressRow.appendChild(rstBtn);
   const progWrap = el('div','prog-wrap');
@@ -492,7 +502,7 @@ function buildChecklist(items, color, ckKey) {
 
   const updateProgress = () => {
     const d=done(), pct=Math.round(d/total*100);
-    progressLbl.textContent = `${d}/${total} COMPLÉTÉ`;
+    progressLbl.textContent = L(`${d}/${total} COMPLÉTÉ`,`${d}/${total} COMPLETE`);
     progFill.style.width = pct+'%';
   };
 
@@ -541,7 +551,7 @@ function buildChecklist(items, color, ckKey) {
 // ═══════════════════════════════════════════════════════════════
 
 function buildBackBtn(label, onClick) {
-  const b = el('button','back', '← '+(label||'RETOUR'));
+  const b = el('button','back', '← '+(label||L('RETOUR','BACK')));
   b.addEventListener('click', onClick);
   return b;
 }
@@ -580,53 +590,53 @@ function buildSubgrid(items, color, onPick) {
 function buildRNP(sub) {
   const c=C.rnp; const wrap=el('div','page');
   if(!sub) {
-    const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>CAUTION :</b> RNP &lt; 0.3 ou "Special Authorization Required" → INTERDIT.</div>';
+    const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>'+L('CAUTION :','CAUTION:')+'</b> '+L('RNP &lt; 0.3 ou "Special Authorization Required" → INTERDIT.','RNP approaches with RNP lower than 0.3, or annotated "Special Aircraft and Aircrew Authorization Required", are PROHIBITED.')+'</div>';
     wrap.appendChild(warn);
 
     // Temp warning
     const tempCard=el('div','card');
-    const tempTtl=el('div','card-ttl','🌡️ VÉRIFICATION TEMPÉRATURE'); tempTtl.style.color=c.n; tempCard.appendChild(tempTtl);
+    const tempTtl=el('div','card-ttl','🌡️ '+L('VÉRIFICATION TEMPÉRATURE','TEMPERATURE CHECK')); tempTtl.style.color=c.n; tempCard.appendChild(tempTtl);
     const tempRow=el('div','row');
-    const tempInp=el('input','inp'); tempInp.placeholder='TAE (°C) ex: -12'; tempInp.type='number';
+    const tempInp=el('input','inp'); tempInp.placeholder=L('TAE (°C) ex: -12','OAT (°C) e.g. -12'); tempInp.type='number';
     tempRow.appendChild(tempInp);
     const tempAlarm=el('div');
     tempInp.addEventListener('input',()=>{
       const v=parseFloat(tempInp.value);
       if(isNaN(v)){tempAlarm.innerHTML='';return;}
-      if(v<-15) tempAlarm.innerHTML='<div class="alarm alarm-bad">🌡️ TEMPÉRATURE CRITIQUE – Corrections altimétriques sur TOUTE approche + 50 ft obligatoires</div>';
-      else if(v<0) tempAlarm.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.1);border:2px solid rgba(255,224,64,.5);color:#ffe040">⚠️ Température négative – Appliquer corrections Cold Temp</div>';
+      if(v<-15) tempAlarm.innerHTML='<div class="alarm alarm-bad">🌡️ '+L('TEMPÉRATURE CRITIQUE – Corrections altimétriques sur TOUTE approche + 50 ft obligatoires','CRITICAL TEMPERATURE – Altimeter corrections mandatory on ALL approaches, in addition to the 50 ft additive')+'</div>';
+      else if(v<0) tempAlarm.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.1);border:2px solid rgba(255,224,64,.5);color:#ffe040">⚠️ '+L('Température négative – Appliquer corrections Cold Temp','Negative temperature – Apply Cold Temp corrections')+'</div>';
       else tempAlarm.innerHTML='';
     });
     tempCard.appendChild(tempRow); tempCard.appendChild(tempAlarm);
     wrap.appendChild(tempCard);
 
     wrap.appendChild(buildSubgrid([
-      {id:'dispatch',icon:'📋',label:'Dispatch',desc:'RAIM · Qualifications · ALTN'},
-      {id:'equip',icon:'⚙️',label:'Équipements',desc:'LNAV / LNAV-VNAV · MEL'},
-      {id:'prep',icon:'📝',label:'Préparation',desc:'Briefing · CDU · Minima'},
-      {id:'contingence',icon:'🚨',label:'Contingences',desc:'Remise de gaz · Déclencheurs'},
+      {id:'dispatch',icon:'📋',label:'Dispatch',desc:'RAIM · '+L('Qualifications','Qualification')+' · ALTN'},
+      {id:'equip',icon:'⚙️',label:L('Équipements','Equipment'),desc:'LNAV / LNAV-VNAV · MEL'},
+      {id:'prep',icon:'📝',label:L('Préparation','Preparation'),desc:'Briefing · CDU · '+L('Minima','Minima')},
+      {id:'contingence',icon:'🚨',label:L('Contingences','Contingencies'),desc:L('Remise de gaz · Déclencheurs','Go-around · Triggers')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
 
-  wrap.appendChild(buildBackBtn('RETOUR', ()=>{ STATE.sub=null; render(); }));
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'), ()=>{ STATE.sub=null; render(); }));
 
   if(sub==='dispatch') {
-    wrap.appendChild(buildCard('CHECKS DISPATCH', c.n, buildChecklist([
-      {id:'d1',label:'RAIM disponibilité complétée par dispatch (OFP sans mention = OK)'},
-      {id:'d2',label:'Outage RAIM à l\'ETA → NE PAS effectuer approche RNAV (GNSS)'},
-      {id:'d3',label:'Alternant avec approche conventionnelle si DEST n\'a que du RNP'},
-      {id:'d4',label:'Les deux pilotes formés et qualifiés RNP'},
+    wrap.appendChild(buildCard(L('CHECKS DISPATCH','DISPATCH CHECKS'), c.n, buildChecklist([
+      {id:'d1',label:L('RAIM disponibilité complétée par dispatch (OFP sans mention = OK)','RAIM availability is completed by dispatch (no mention on OFP = valid RAIM check)')},
+      {id:'d2',label:L('Outage RAIM à l\'ETA → NE PAS effectuer approche RNAV (GNSS)','RAIM outage indicated at the ETA → do NOT fly the RNAV (GNSS) approach during the outage time')},
+      {id:'d3',label:L('Alternant avec approche conventionnelle si DEST n\'a que du RNP','Check that ALT A/D has a conventional approach in case DEST A/D has only an RNP approach')},
+      {id:'d4',label:L('Les deux pilotes formés et qualifiés RNP','Both crewmembers are trained and qualified to conduct the approach')},
     ], c.n, 'rnp-dispatch')));
   }
 
   if(sub==='equip') {
     const card=el('div','card');
-    const ttl=el('div','card-ttl','ÉQUIPEMENTS RNP'); ttl.style.color=c.n; card.appendChild(ttl);
+    const ttl=el('div','card-ttl',L('ÉQUIPEMENTS RNP','RNP EQUIPMENT')); ttl.style.color=c.n; card.appendChild(ttl);
     const minimaRow=el('div','row');
     let minima='lnav';
     const b1=el('button','btn','LNAV'); b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
-    const b2=el('button','btn btn-g','LNAV/VNAV (NPS requis)');
+    const b2=el('button','btn btn-g',L('LNAV/VNAV (NPS requis)','LNAV/VNAV (NPS required)'));
     const updateMinima=()=>{
       if(minima==='lnav'){b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b2.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
       else{b2.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b1.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
@@ -637,18 +647,18 @@ function buildRNP(sub) {
     minimaRow.appendChild(b1); minimaRow.appendChild(b2);
     card.appendChild(minimaRow);
 
-    const infoBox=el('div','info','Activez le toggle pour chaque équipement <b>INOPÉRANT</b> (panne ou MEL INOP)'); card.appendChild(infoBox);
+    const infoBox=el('div','info',L('Activez le toggle pour chaque équipement <b>INOPÉRANT</b> (panne ou MEL INOP)','Toggle each <b>INOPERATIVE</b> item (failed or dispatched MEL INOP)')); card.appendChild(infoBox);
     const eqContainer=el('div'); card.appendChild(eqContainer);
     const resultDiv=el('div'); card.appendChild(resultDiv);
 
     const failed={};
     function rebuildEquip(){
       const baseEquip=[
-        {id:'e1',label:'AP / FD',req:'1 ou 2'},{id:'e2',label:'FMC',req:'2 requis'},{id:'e3',label:'CDU/MCDU',req:'2 requis'},
-        {id:'e4',label:'GPS',req:'1 requis'},{id:'e5',label:'FMC Database',req:'CURRENT'},{id:'e6',label:'IRS/ADIRU en NAV',req:'2 requis'},
-        {id:'e7',label:'ND (mode MAP)',req:'2 requis'},{id:'e8',label:'FMC Alert Light',req:'1 requis'},{id:'e9',label:'EGPWS',req:'1 requis'},
-        {id:'e10',label:'Radio Altimètre',req:'1 requis'},{id:'e11',label:'PFD/ND sans flags invalides',req:'Requis'},
-        ...(minima==='vnav'?[{id:'v1',label:'NPS (Nav Performance Scales)',req:'Installé & opérationnel'},{id:'v2',label:'Radio Alt même côté AP actif',req:'Requis'}]:[]),
+        {id:'e1',label:'AP / FD',req:L('1 ou 2','1 or 2')},{id:'e2',label:'FMC',req:L('2 requis','2 required')},{id:'e3',label:'CDU/MCDU',req:L('2 requis','2 required')},
+        {id:'e4',label:'GPS',req:L('1 requis','1 required')},{id:'e5',label:'FMC Database',req:'CURRENT'},{id:'e6',label:L('IRS/ADIRU en NAV','IRS/ADIRU in NAV'),req:L('2 requis','2 required')},
+        {id:'e7',label:L('ND (mode MAP)','ND (MAP mode)'),req:L('2 requis','2 required')},{id:'e8',label:'FMC Alert Light',req:L('1 requis','1 required')},{id:'e9',label:'EGPWS',req:L('1 requis','1 required')},
+        {id:'e10',label:L('Radio Altimètre','Radio Altimeter'),req:L('1 requis','1 required')},{id:'e11',label:L('PFD/ND sans flags invalides','PFD/ND with no invalid flags'),req:L('Requis','Required')},
+        ...(minima==='vnav'?[{id:'v1',label:'NPS (Nav Performance Scales)',req:L('Installé & opérationnel','Installed & operative')},{id:'v2',label:L('Radio Alt même côté AP actif','Radio Alt on same side as active AP'),req:L('Requis','Required')}]:[]),
       ];
       eqContainer.innerHTML='';
       baseEquip.forEach(eq=>{
@@ -665,46 +675,54 @@ function buildRNP(sub) {
         eqContainer.appendChild(row);
       });
       const failCount=baseEquip.filter(e=>failed[e.id]).length;
-      if(failCount===0) resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">RÉSULTAT</div><div class="res-val" style="color:#60ff60">✅ APPROCHE RNP AUTORISÉE</div></div>`;
-      else resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">RÉSULTAT</div><div class="res-val" style="color:#ff3355">🚨 RNP INTERDITE – ${failCount} équipement(s) inopérant(s)</div></div>`;
+      if(failCount===0) resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#60ff60">✅ ${L('APPROCHE RNP AUTORISÉE','RNP APPROACH AUTHORIZED')}</div></div>`;
+      else resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#ff3355">🚨 ${L(`RNP INTERDITE – ${failCount} équipement(s) inopérant(s)`,`RNP PROHIBITED – ${failCount} item(s) inoperative`)}</div></div>`;
     }
     rebuildEquip();
     wrap.appendChild(card);
   }
 
   if(sub==='prep') {
-    wrap.appendChild(buildCard('PRÉPARATION & BRIEFING', c.n, buildChecklist([
-      {id:'p1',label:'MEL – implications approche GNSS vérifiées'},
-      {id:'p2',label:'Approche GNSS chargée depuis BDD PAR NOM'},
-      {id:'p3',label:'Base de données nav À JOUR'},
-      {id:'p4',label:'Moyens nav suffisants DEST & ALTN en cas perte RNP'},
-      {id:'p5',label:'Météo DEST et ALTN – T° et QNH obtenus'},
+    wrap.appendChild(buildCard(L('PRÉPARATION & BRIEFING','PREPARATION & BRIEFING'), c.n, buildChecklist([
+      {id:'p1',label:L('MEL – implications approche GNSS vérifiées','MEL – GNSS-based approach implications checked')},
+      {id:'p2',label:L('Approche GNSS chargée depuis BDD PAR NOM','GNSS-Based Approach retrieved from the database BY NAME')},
+      {id:'p3',label:L('Base de données nav À JOUR','Navigation database CURRENT')},
+      {id:'p4',label:L('Moyens nav suffisants DEST & ALTN en cas perte RNP','Sufficient means of navigation available at DEST and ALT A/D in case of loss of RNP capability')},
+      {id:'p5',label:L('Météo DEST et ALTN – T° et QNH obtenus','DEST and ALT weather checked – T° and QNH obtained')},
       {id:'p6',label:'NAV STATUS → NAV OPTIONS 2/2 → GPS UPDATE = ON'},
-      {id:'p7',label:'Si LNAV/VNAV : entrer RNP vertical = 125',sub:'LNAV/VNAV uniquement'},
-      {id:'p8',label:'Ajouter 50 ft aux minima publiés (exigence Jeppesen / Air Algérie)'},
-      {id:'p9',label:'Correction T° froide sur MDA EN PLUS des 50 ft'},
-      {id:'p10',label:'Approche non modifiée depuis FAF (sauf corrections T° froide)'},
-      {id:'p11',label:'CDU : PF = LEGS · PM = PROG 4/4'},
-      {id:'p12',label:'< 10 000 ft : PF en TERR · ND ≤10 NM au FACF/IF'},
-      {id:'p13',label:'PM : TERR ou WX'},
-      {id:'p14',label:'Cross-check ALT au FAF – écart max 100 FT'},
-      {id:'p15',label:'⛔ Ne PAS accepter direct-to-FAF depuis l\'ATC'},
+      {id:'p7',label:L('Si LNAV/VNAV : entrer RNP vertical = 125','If using LNAV/VNAV: enter vertical RNP = 125'),sub:L('LNAV/VNAV uniquement','LNAV/VNAV only')},
+      {id:'p8',label:L('Ajouter 50 ft aux minima publiés (exigence Jeppesen / Air Algérie)','Add 50 ft to published minima (Jeppesen-charted minima / Air Algérie requirement)')},
+      {id:'p9',label:L('Correction T° froide sur MDA EN PLUS des 50 ft','Cold weather correction to MDA IS IN ADDITION to the 50 ft additive')},
+      {id:'p10',label:L('Approche non modifiée depuis FAF (sauf corrections T° froide)','Approach must not be altered from the FAF inbound except for cold weather altitude corrections')},
+      {id:'p11',label:L('CDU : PF = LEGS · PM = PROG 4/4','CDU pages: PF = LEGS · PM = PROG 4/4')},
+      {id:'p12',label:L('< 10 000 ft : PF en TERR · ND ≤10 NM au FACF/IF','Below 10,000 ft: PF in TERR mode · ND scale ≤10 NM no later than FACF/IF')},
+      {id:'p13',label:L('PM : TERR ou WX','PM: TERR or WX')},
+      {id:'p14',label:L('Cross-check ALT au FAF – écart max 100 FT','Cross-check ALT at the FAF – max deviation 100 FT')},
+      {id:'p15',label:L('⛔ Ne PAS accepter direct-to-FAF depuis l\'ATC','⛔ Do NOT accept a direct-to-FAF from ATC')},
     ], c.n, 'rnp-prep')));
   }
 
   if(sub==='contingence') {
-    const card=buildCard('REMISE DE GAZ – DÉCLENCHEURS', c.n);
-    const info=el('div','info','Sauf référence visuelle établie, initier remise de gaz si :'); card.appendChild(info);
-    ['Panne instrument de vol affectant la sécurité',
+    const card=buildCard(L('REMISE DE GAZ – DÉCLENCHEURS','GO-AROUND – TRIGGERS'), c.n);
+    const info=el('div','info',L('Sauf référence visuelle établie, initier remise de gaz si :','Unless visual reference has been established, initiate a missed approach when:')); card.appendChild(info);
+    L([
+     'Panne instrument de vol affectant la sécurité',
      'Désaccord significatif des instruments de navigation',
      '"UNABLE REQD NAV PERF-RNP" → ANP dépasse le RNP',
      'Message FMC "VERIFY POSITION"','Panne FMC','Désaccord FMC',
-     'Double panne FMC','Voyant maître GPS (IRS light)'].forEach(it=>{
+     'Double panne FMC','Voyant maître GPS (IRS light)'],
+     [
+     'A flight instrument failure occurs which affects the ability to safely complete the approach',
+     'The navigation instruments show significant disagreement',
+     '"UNABLE REQD NAV PERF-RNP" indicates that ANP exceeds RNP',
+     'FMC "VERIFY POSITION" alerting message','FMC Fail','FMC Disagree',
+     'Dual FMC failure','GPS (IRS light) master caution']
+    ).forEach(it=>{
       const row=el('div',null); row.style.cssText='display:flex;gap:12px;padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04)';
       row.innerHTML=`<div style="color:#ff3355;font-size:22px;line-height:1.5">→</div><div style="font-size:17px;line-height:1.55">${it}</div>`;
       card.appendChild(row);
     });
-    const w=el('div','warn'); w.style.marginTop='14px'; w.innerHTML='🔴 <b>DOUBLE PANNE GPS :</b> Remise de gaz IMMÉDIATE quelle que soit la valeur ANP.'; card.appendChild(w);
+    const w=el('div','warn'); w.style.marginTop='14px'; w.innerHTML='🔴 <b>'+L('DOUBLE PANNE GPS :','DUAL GPS FAILURE:')+'</b> '+L('Remise de gaz IMMÉDIATE quelle que soit la valeur ANP.','Execute the missed approach IMMEDIATELY regardless of the ANP value.'); card.appendChild(w);
     wrap.appendChild(card);
   }
 
@@ -716,35 +734,35 @@ function buildLVP(sub) {
   const c=C.lvp; const wrap=el('div','page');
   if(!sub){
     wrap.appendChild(buildSubgrid([
-      {id:'briefing',icon:'📋',label:'Briefing',desc:'Checklist pré-approche CAT II/IIIA'},
-      {id:'equip',icon:'⚙️',label:'Équipements',desc:'Recherche instrument · Alarme'},
-      {id:'limites',icon:'💨',label:'Conditions LVP',desc:'Vent · Piste · Visibilité'},
-      {id:'tableau',icon:'📊',label:'Tableau CAT 2/3A',desc:'Exigences complètes B737'},
+      {id:'briefing',icon:'📋',label:'Briefing',desc:L('Checklist pré-approche CAT II/IIIA','CAT II/IIIA pre-approach checklist')},
+      {id:'equip',icon:'⚙️',label:L('Équipements','Equipment'),desc:L('Recherche instrument · Alarme','Instrument lookup · Alert')},
+      {id:'limites',icon:'💨',label:L('Conditions LVP','LVP Conditions'),desc:L('Vent · Piste · Visibilité','Wind · Runway · Visibility')},
+      {id:'tableau',icon:'📊',label:L('Tableau CAT 2/3A','CAT 2/3A Table'),desc:L('Exigences complètes B737','Full B737 requirements')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
-  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
   if(sub==='briefing'){
-    wrap.appendChild(buildCard('CHECKLIST BRIEFING CAT II/IIIA', c.n, buildChecklist([
-      {id:'b1',label:'Les deux pilotes qualifiés CAT II/IIIA'},{id:'b2',label:'Avion apte CAT II/IIIA'},
-      {id:'b3',label:'Piste opérationnelle CAT II/IIIA (LVP en vigueur)'},{id:'b4',label:'Météo DEST et ALTN vérifiée'},
-      {id:'b5',label:'LVP en vigueur · Piste opérationnelle CAT II/IIIA'},{id:'b6',label:'Qualifications équipage en cours de validité'},
-      {id:'b7',label:'Statut systèmes avion vérifié'},
-      {id:'b8',label:'SET Minimums BARO : THR elevation + 500 ft'},{id:'b9',label:'SET Minimums RADIO : minima CAT II/IIIA – sélecteur sur RADIO'},
-      {id:'b10',label:'Capitaine UNIQUEMENT PF'},{id:'b11',label:'OPL surveille instruments jusqu\'à vitesse de roulage'},
-      {id:'b12',label:'Revue procédure d\'approche et partage des tâches'},{id:'b13',label:'Revue procédures en cas de pannes'},
-      {id:'b14',label:'Briefing route de roulage détaillée'},{id:'b15',label:'Diagramme roulage visible – PAS de paperasse pendant le roulage'},
+    wrap.appendChild(buildCard(L('CHECKLIST BRIEFING CAT II/IIIA','CAT II/IIIA BRIEFING CHECKLIST'), c.n, buildChecklist([
+      {id:'b1',label:L('Les deux pilotes qualifiés CAT II/IIIA','Both pilots qualified CAT II/IIIA')},{id:'b2',label:L('Avion apte CAT II/IIIA','Aircraft serviceable CAT II/IIIA')},
+      {id:'b3',label:L('Piste opérationnelle CAT II/IIIA (LVP en vigueur)','Runway for landing operational for CAT II/IIIA (LVP in force)')},{id:'b4',label:L('Météo DEST et ALTN vérifiée','Destination and alternate weather checked')},
+      {id:'b5',label:L('LVP en vigueur · Piste opérationnelle CAT II/IIIA','Check airfield operational status (LVP in force and landing RWY operational to CAT II/IIIA)')},{id:'b6',label:L('Qualifications équipage en cours de validité','Crew qualifications current')},
+      {id:'b7',label:L('Statut systèmes avion vérifié','Aircraft systems status checked')},
+      {id:'b8',label:L('SET Minimums BARO : THR elevation + 500 ft','SET Minimums – BARO: RWY THR elevation + 500 ft')},{id:'b9',label:L('SET Minimums RADIO : minima CAT II/IIIA – sélecteur sur RADIO','SET Minimums – RADIO: CAT II/IIIA minimums, keep selector on RADIO')},
+      {id:'b10',label:L('Capitaine UNIQUEMENT PF','Captain only PF')},{id:'b11',label:L('OPL surveille instruments jusqu\'à vitesse de roulage','F/O monitors instruments until aircraft reaches taxi speed')},
+      {id:'b12',label:L('Revue procédure d\'approche et partage des tâches','Review approach procedure and task sharing')},{id:'b13',label:L('Revue procédures en cas de pannes','Brief review of procedures in case of malfunctions')},
+      {id:'b14',label:L('Briefing route de roulage détaillée','Brief taxi-in route in detail')},{id:'b15',label:L('Diagramme roulage visible – PAS de paperasse pendant le roulage','Taxi-in diagram in view at all times – no paperwork during taxi')},
     ], c.n, 'lvp-brief')));
   }
 
   if(sub==='equip'){
     const card=el('div','card');
-    const ttl=el('div','card-ttl','ÉQUIPEMENT EN PANNE – IMPACT LVP'); ttl.style.color=c.n; card.appendChild(ttl);
-    card.appendChild(el('div','info','Entrez l\'équipement <b>en panne</b> ou dispatché MEL INOP.<br>L\'app indique si le LVP CAT 2 / CAT 3A est encore autorisé.'));
+    const ttl=el('div','card-ttl',L('ÉQUIPEMENT EN PANNE – IMPACT LVP','FAILED EQUIPMENT – LVP IMPACT')); ttl.style.color=c.n; card.appendChild(ttl);
+    card.appendChild(el('div','info',L('Entrez l\'équipement <b>en panne</b> ou dispatché MEL INOP.<br>L\'app indique si le LVP CAT 2 / CAT 3A est encore autorisé.','Enter the <b>failed</b> equipment or item dispatched MEL INOP.<br>The app shows whether LVP CAT 2 / CAT 3A is still authorized.')));
 
     const inp=el('input','inp');
-    inp.placeholder='Équipement en panne ex: ANTISKID, FD, ILS, RADIO ALT...';
+    inp.placeholder=L('Équipement en panne ex: ANTISKID, FD, ILS, RADIO ALT...','Failed equipment e.g.: ANTISKID, FD, ILS, RADIO ALT...');
     inp.style.cssText='width:100%;margin-bottom:12px';
     card.appendChild(inp);
 
@@ -764,17 +782,17 @@ function buildLVP(sub) {
       const matches=LVP_EQ.filter(e=>e.n.includes(q)||e.n.split(' ').some(w=>w.startsWith(q)));
 
       if(!matches.length){
-        alarmDiv.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.08);border:2px solid rgba(255,224,64,.4);color:#ffe040;font-size:16px">⚠️ Équipement non trouvé dans la liste LVP</div>';
+        alarmDiv.innerHTML='<div class="alarm" style="background:rgba(255,224,64,.08);border:2px solid rgba(255,224,64,.4);color:#ffe040;font-size:16px">⚠️ '+L('Équipement non trouvé dans la liste LVP','Equipment not found in the LVP list')+'</div>';
         return;
       }
 
       // Helper: render CAT badge
       function catBadge(val, isXReq, isQtyReq){
         var bg,brd,col,label;
-        if(isXReq){bg='rgba(255,0,51,.2)';brd='rgba(255,0,51,.6)';col='#ff3355';label='REQUIS (X)';}
-        else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label='QUANTITÉ MIN';}
-        else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label='RECOMMANDÉ';}
-        else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label='NON REQUIS';}
+        if(isXReq){bg='rgba(255,0,51,.2)';brd='rgba(255,0,51,.6)';col='#ff3355';label=L('REQUIS (X)','REQUIRED (X)');}
+        else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label=L('QUANTITÉ MIN','MIN QUANTITY');}
+        else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label=L('RECOMMANDÉ','RECOMMENDED');}
+        else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label=L('NON REQUIS','NOT REQUIRED');}
         return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:900;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
       }
 
@@ -821,15 +839,15 @@ function buildLVP(sub) {
 
         // Build verdict line
         var verdictC2='', verdictC3='';
-        if(blockedC2) verdictC2='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900">&#x1F6A8; LVP CAT 2 NON AUTORISE</div>';
-        else if(warnC2) verdictC2='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700">&#9888; CAT 2 - Verifier MEL min '+found.c2+' requis</div>';
-        else verdictC2='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700">&#10003; CAT 2 - Non impacte</div>';
-        if(blockedC3) verdictC3='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900;margin-top:6px">&#x1F6A8; LVP CAT 3A NON AUTORISE</div>';
-        else if(warnC3) verdictC3='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#9888; CAT 3A - Verifier MEL min '+found.c3+' requis</div>';
-        else verdictC3='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#10003; CAT 3A - Non impacte</div>';
+        if(blockedC2) verdictC2='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900">&#x1F6A8; '+L('LVP CAT 2 NON AUTORISE','LVP CAT 2 NOT AUTHORIZED')+'</div>';
+        else if(warnC2) verdictC2='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700">&#9888; '+L('CAT 2 - Verifier MEL min '+found.c2+' requis','CAT 2 - Check MEL, min '+found.c2+' required')+'</div>';
+        else verdictC2='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700">&#10003; '+L('CAT 2 - Non impacte','CAT 2 - Not impacted')+'</div>';
+        if(blockedC3) verdictC3='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900;margin-top:6px">&#x1F6A8; '+L('LVP CAT 3A NON AUTORISE','LVP CAT 3A NOT AUTHORIZED')+'</div>';
+        else if(warnC3) verdictC3='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#9888; '+L('CAT 3A - Verifier MEL min '+found.c3+' requis','CAT 3A - Check MEL, min '+found.c3+' required')+'</div>';
+        else verdictC3='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#10003; '+L('CAT 3A - Non impacte','CAT 3A - Not impacted')+'</div>';
         var headerColor = (blockedC2||blockedC3)?'#ff3355':(warnC2||warnC3)?'#ff9900':'#60ff60';
         var headerIcon  = (blockedC2||blockedC3)?'&#x1F6A8;':(warnC2||warnC3)?'&#9888;':'&#10003;';
-        html = '<div style="font-size:20px;font-weight:900;color:'+headerColor+';margin-bottom:14px">'+headerIcon+' '+found.n+' EN PANNE</div>'
+        html = '<div style="font-size:20px;font-weight:900;color:'+headerColor+';margin-bottom:14px">'+headerIcon+' '+found.n+' '+L('EN PANNE','FAILED')+'</div>'
              + '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">'
              + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 2</div>'+c2Badge+'</div>'
              + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 3A</div>'+c3Badge+'</div>'
@@ -844,30 +862,32 @@ function buildLVP(sub) {
   }
 
   if(sub==='limites'){
-    const card=el('div','card'); const ttl=el('div','card-ttl','VÉRIFICATEUR CONDITIONS LVP'); ttl.style.color=c.n; card.appendChild(ttl);
-    const info=el('div','info','Entrez les conditions actuelles pour vérifier si LVP possible.'); card.appendChild(info);
+    const card=el('div','card'); const ttl=el('div','card-ttl',L('VÉRIFICATEUR CONDITIONS LVP','LVP CONDITIONS CHECKER')); ttl.style.color=c.n; card.appendChild(ttl);
+    const info=el('div','info',L('Entrez les conditions actuelles pour vérifier si LVP possible.','Enter current conditions to check whether LVP is possible.')); card.appendChild(info);
     const row=el('div','row');
-    const wInp=el('input','inp'); wInp.placeholder='Vent traversier (kt)'; wInp.type='number';
+    const wInp=el('input','inp'); wInp.placeholder=L('Vent traversier (kt)','Crosswind (kt)'); wInp.type='number';
     const rInp=el('input','inp'); rInp.placeholder='RWYCC (0-6)'; rInp.type='number';
-    const vInp=el('input','inp'); vInp.placeholder='Visibilité (m)'; vInp.type='number';
+    const vInp=el('input','inp'); vInp.placeholder=L('Visibilité (m)','Visibility (m)'); vInp.type='number';
     row.appendChild(wInp); row.appendChild(rInp); row.appendChild(vInp);
     card.appendChild(row);
-    const checkBtn=el('button','btn','VÉRIFIER LVP');
+    const checkBtn=el('button','btn',L('VÉRIFIER LVP','CHECK LVP'));
     checkBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 18px ${c.g};margin-bottom:14px;font-weight:900`;
     const resDiv=el('div');
     checkBtn.addEventListener('click',()=>{
       const wind=parseFloat(wInp.value), rwycc=parseInt(rInp.value), vis=parseInt(vInp.value);
       const issues=[];
-      if(!isNaN(wind)&&wind>20)issues.push(`Vent traversier ${wind} kt > 20 kt limite LVP`);
-      if(!isNaN(rwycc)&&rwycc<=1)issues.push(`RWYCC ${rwycc} – Piste trop glissante (PAUVRE ou NUL)`);
-      if(!isNaN(vis)&&vis<75)issues.push(`Visibilité ${vis} m < 75 m (limite CAT IIIA)`);
-      if(issues.length===0) resDiv.innerHTML='<div class="ok-box"><div class="res-val" style="color:#60ff60">✅ CONDITIONS LVP ACCEPTABLES</div></div>';
-      else resDiv.innerHTML=`<div class="err-box"><div class="res-val" style="color:#ff3355">🚨 LVP NON AUTORISÉ</div>${issues.map(i=>`<div style="margin-top:8px;font-size:16px;color:#ff9090">• ${i}</div>`).join('')}</div>`;
+      if(!isNaN(wind)&&wind>20)issues.push(L(`Vent traversier ${wind} kt > 20 kt limite LVP`,`Crosswind ${wind} kt > 20 kt LVP limit`));
+      if(!isNaN(rwycc)&&rwycc<=1)issues.push(L(`RWYCC ${rwycc} – Piste trop glissante (PAUVRE ou NUL)`,`RWYCC ${rwycc} – Runway too slippery (POOR or NIL)`));
+      if(!isNaN(vis)&&vis<75)issues.push(L(`Visibilité ${vis} m < 75 m (limite CAT IIIA)`,`Visibility ${vis} m < 75 m (CAT IIIA limit)`));
+      if(issues.length===0) resDiv.innerHTML='<div class="ok-box"><div class="res-val" style="color:#60ff60">✅ '+L('CONDITIONS LVP ACCEPTABLES','LVP CONDITIONS ACCEPTABLE')+'</div></div>';
+      else resDiv.innerHTML=`<div class="err-box"><div class="res-val" style="color:#ff3355">🚨 ${L('LVP NON AUTORISÉ','LVP NOT AUTHORIZED')}</div>${issues.map(i=>`<div style="margin-top:8px;font-size:16px;color:#ff9090">• ${i}</div>`).join('')}</div>`;
     });
     card.appendChild(checkBtn); card.appendChild(resDiv);
     // Limits table
-    const lCard=el('div','card'); const lt=el('div','card-ttl','LIMITES OFFICIELLES'); lt.style.color=c.n; lCard.appendChild(lt);
-    [['Vent de face max','25 kt'],['Vent traversier max','20 kt *'],['Vent arrière max','10 kt'],['Volets','40 (non-std: 30)'],['Moteurs','DEUX OPÉRATIONNELS'],['Angle de plan','2.5°–3.25°']].forEach(([k,v])=>{
+    const lCard=el('div','card'); const lt=el('div','card-ttl',L('LIMITES OFFICIELLES','OFFICIAL LIMITS')); lt.style.color=c.n; lCard.appendChild(lt);
+    L([['Vent de face max','25 kt'],['Vent traversier max','20 kt *'],['Vent arrière max','10 kt'],['Volets','40 (non-std: 30)'],['Moteurs','DEUX OPÉRATIONNELS'],['Angle de plan','2.5°–3.25°']],
+      [['Max headwind','25 kt'],['Max crosswind','20 kt *'],['Max tailwind','10 kt'],['Flaps','40 (non-standard: 30)'],['Engines','BOTH ENGINES OPERATIVE'],['Glideslope angle','2.5°–3.25°']]
+    ).forEach(([k,v])=>{
       const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
       r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 12px ${c.g}">${v}</span>`;
       lCard.appendChild(r);
@@ -876,9 +896,9 @@ function buildLVP(sub) {
   }
 
   if(sub==='tableau'){
-    const card=el('div','card'); const ttl=el('div','card-ttl','EXIGENCES COMPLÈTES B737-NG'); ttl.style.color=c.n; card.appendChild(ttl);
-    card.appendChild(el('div','info','X = Requis · R = Recommandé · — = Non requis · PF = Pilote en Fonction'));
-    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>ÉQUIPEMENT</th><th>CAT 2</th><th>CAT 3A</th></tr></thead>`;
+    const card=el('div','card'); const ttl=el('div','card-ttl',L('EXIGENCES COMPLÈTES B737-NG','FULL B737-NG REQUIREMENTS')); ttl.style.color=c.n; card.appendChild(ttl);
+    card.appendChild(el('div','info',L('X = Requis · R = Recommandé · — = Non requis · PF = Pilote en Fonction','X = Required · R = Recommended · — = Not required · PF = Pilot Flying')));
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('ÉQUIPEMENT','EQUIPMENT')}</th><th>CAT 2</th><th>CAT 3A</th></tr></thead>`;
     const tb=el('tbody');
     LVP_EQ.forEach(e=>{
       const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700">${e.n}</td><td style="font-family:monospace;font-size:18px;font-weight:700;color:${e.c2==='X'?c.n:'var(--text)'}">${e.c2}</td><td style="font-family:monospace;font-size:18px;font-weight:700;color:${e.c3==='X'?c.n:'var(--text)'}">${e.c3}</td>`;
@@ -896,28 +916,30 @@ function buildCPDLC(sub) {
   const c=C.cpdlc; const wrap=el('div','page');
   if(!sub){
     wrap.appendChild(buildSubgrid([
-      {id:'logon',icon:'🔗',label:'Procédure Logon',desc:'Étapes connexion ATC'},
-      {id:'code',icon:'🔢',label:'Code HEX Avion',desc:'Lookup immatriculation'},
-      {id:'fp',icon:'📄',label:'Plan de Vol',desc:'Items 10a et 18'},
-      {id:'fir',icon:'🗺️',label:'Codes FIR',desc:'France · Espagne · Algérie · +'},
+      {id:'logon',icon:'🔗',label:L('Procédure Logon','Logon Procedure'),desc:L('Étapes connexion ATC','ATC connection steps')},
+      {id:'code',icon:'🔢',label:L('Code HEX Avion','Aircraft HEX Code'),desc:L('Lookup immatriculation','Registration lookup')},
+      {id:'fp',icon:'📄',label:L('Plan de Vol','Flight Plan'),desc:L('Items 10a et 18','Items 10a and 18')},
+      {id:'fir',icon:'🗺️',label:L('Codes FIR','FIR Codes'),desc:L('France · Espagne · Algérie · +','France · Spain · Algeria · +')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
-  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
   if(sub==='logon'){
-    wrap.appendChild(buildCard('PROCÉDURE LOGON CPDLC', c.n, buildChecklist([
-      {id:'l1',label:'Aller au menu CPDLC'},
-      {id:'l2',label:'Vérifier CPDLC-ATN LINK STATUS → FOR THIS FLIGHT CPDLC USE IS ENABLED'},
-      {id:'l3',label:'CPDLC-LOGON/STATUS → LOGON TO : FIR concerné'},
-      {id:'l4',label:'Appuyer SEND LOGON'},
-      {id:'l5',label:'Si connecté : ATC MSG sur MCDU + ATC sur DU supérieur'},
-      {id:'l6',label:'Suivre instructions ATC : WILCO, UNABLE ou STANBY'},
-      {id:'l7',label:'Changement FIR non automatique → LOG OFF puis reprendre étape 3'},
+    wrap.appendChild(buildCard(L('PROCÉDURE LOGON CPDLC','CPDLC LOGON PROCEDURE'), c.n, buildChecklist([
+      {id:'l1',label:L('Aller au menu CPDLC','Go to CPDLC Menu')},
+      {id:'l2',label:L('Vérifier CPDLC-ATN LINK STATUS → FOR THIS FLIGHT CPDLC USE IS ENABLED','Check CPDLC-ATN LINK STATUS → FOR THIS FLIGHT CPDLC USE IS ENABLED')},
+      {id:'l3',label:L('CPDLC-LOGON/STATUS → LOGON TO : FIR concerné','Go to CPDLC-LOGON/STATUS → choose the concerned FIR on LOGON TO')},
+      {id:'l4',label:L('Appuyer SEND LOGON','Press SEND LOGON')},
+      {id:'l5',label:L('Si connecté : ATC MSG sur MCDU + ATC sur DU supérieur','If connected: ATC MSG advisory on MCDU and ATC notification on the upper DU')},
+      {id:'l6',label:L('Suivre instructions ATC : WILCO, UNABLE ou STANBY','Follow ATC instructions by responding WILCO, UNABLE or STANBY')},
+      {id:'l7',label:L('Changement FIR non automatique → LOG OFF puis reprendre étape 3','If FIR switching is not automatic when exiting the CDA FIR, press LOG OFF and start from step 3')},
     ], c.n, 'cpdlc-logon')));
     // Responses
-    const rCard=buildCard('RÉPONSES ATC', c.n);
-    [['WILCO','Compris et exécuté'],['UNABLE','Impossible d\'exécuter'],['STANBY','Attente – suivre de WILCO/UNABLE'],['ROGER','Message reçu (info seulement)']].forEach(([r,d])=>{
+    const rCard=buildCard(L('RÉPONSES ATC','ATC RESPONSES'), c.n);
+    L([['WILCO','Compris et exécuté'],['UNABLE','Impossible d\'exécuter'],['STANBY','Attente – suivre de WILCO/UNABLE'],['ROGER','Message reçu (info seulement)']],
+      [['WILCO','Understood and will comply'],['UNABLE','Cannot comply'],['STANBY','Standby – to be followed by WILCO/UNABLE'],['ROGER','Message received (information only)']]
+    ).forEach(([r,d])=>{
       const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
       row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};text-shadow:0 0 10px ${c.g};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
       rCard.appendChild(row);
@@ -926,21 +948,21 @@ function buildCPDLC(sub) {
   }
 
   if(sub==='code'){
-    const card=buildCard('CODE HEX PAR IMMATRICULATION', c.n);
+    const card=buildCard(L('CODE HEX PAR IMMATRICULATION','HEX CODE BY REGISTRATION'), c.n);
     const row=el('div','row');
-    const sel=el('select','inp'); sel.innerHTML='<option value="">— Sélectionner immatriculation —</option>';
+    const sel=el('select','inp'); sel.innerHTML='<option value="">'+L('— Sélectionner immatriculation —','— Select registration —')+'</option>';
     Object.keys(FLEET).forEach(r=>{ const o=el('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
-    const btn=el('button','btn','CHERCHER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
     row.appendChild(sel); row.appendChild(btn); card.appendChild(row);
     const res=el('div');
     btn.addEventListener('click',()=>{
       const r=sel.value;
-      if(r&&FLEET[r]) res.innerHTML=`<div class="ok-box"><div class="res-lbl">IMMATRICULATION</div><div style="font-family:monospace;font-size:24px;font-weight:700;color:${c.n};margin-bottom:12px">${r}</div><div class="res-lbl">CODE CPDLC – ITEM 18</div><div class="res-val" style="color:#60ff60;font-size:42px;letter-spacing:8px">${FLEET[r]}</div><div style="margin-top:10px;font-family:monospace;font-size:14px;color:#7090aa">Item 18 : <span style="color:${c.n}">CODE/${FLEET[r]}</span></div></div>`;
-      else res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Immatriculation non trouvée</div></div>';
+      if(r&&FLEET[r]) res.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('IMMATRICULATION','REGISTRATION')}</div><div style="font-family:monospace;font-size:24px;font-weight:700;color:${c.n};margin-bottom:12px">${r}</div><div class="res-lbl">${L('CODE CPDLC – ITEM 18','CPDLC CODE – ITEM 18')}</div><div class="res-val" style="color:#60ff60;font-size:42px;letter-spacing:8px">${FLEET[r]}</div><div style="margin-top:10px;font-family:monospace;font-size:14px;color:#7090aa">Item 18 : <span style="color:${c.n}">CODE/${FLEET[r]}</span></div></div>`;
+      else res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">'+L('Immatriculation non trouvée','Registration not found')+'</div></div>';
     });
     card.appendChild(res);
     // Table
-    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>IMMAT.</th><th>CODE HEX</th><th>IMMAT.</th><th>CODE HEX</th></tr></thead>';
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('IMMAT.','REG.')}</th><th>${L('CODE HEX','HEX CODE')}</th><th>${L('IMMAT.','REG.')}</th><th>${L('CODE HEX','HEX CODE')}</th></tr></thead>`;
     const tb=el('tbody');
     const entries=Object.entries(FLEET);
     for(let i=0;i<entries.length;i+=2){
@@ -954,21 +976,22 @@ function buildCPDLC(sub) {
   }
 
   if(sub==='fp'){
-    wrap.appendChild(buildCard('EXIGENCES PLAN DE VOL', c.n, buildChecklist([
-      {id:'f1',label:'Item 10a : saisir "J1" → CPDLC ATN VDL Mode 2'},
-      {id:'f2',label:'Item 18 : saisir "CODE/" + code hexadécimal 6 caractères'},
-      {id:'f3',label:'Vérifier immatriculation et identifiant de vol'},
+    wrap.appendChild(buildCard(L('EXIGENCES PLAN DE VOL','FLIGHT PLAN REQUIREMENTS'), c.n, buildChecklist([
+      {id:'f1',label:L('Item 10a : saisir "J1" → CPDLC ATN VDL Mode 2','Item 10a: enter "J1" to indicate CPDLC ATN VDL Mode 2 Equipment')},
+      {id:'f2',label:L('Item 18 : saisir "CODE/" + code hexadécimal 6 caractères','Item 18: enter "CODE/" followed by the 6-character hexadecimal code')},
+      {id:'f3',label:L('Vérifier immatriculation et identifiant de vol','Check aircraft registration and flight identifier')},
     ], c.n, 'cpdlc-fp')));
-    const infoCard=buildCard('EXEMPLE PLAN DE VOL', c.n);
+    const infoCard=buildCard(L('EXEMPLE PLAN DE VOL','FLIGHT PLAN EXAMPLE'), c.n);
     infoCard.appendChild(el('div','info',`Item 10a : <span style="font-family:monospace;color:${c.n}">SDEIFGHJ J1 K1RWY/LB1</span><br>Item 18 : <span style="font-family:monospace;color:${c.n}">PBN/B1C1D1O1S2 CODE/0A008E</span>`));
     wrap.appendChild(infoCard);
   }
 
   if(sub==='fir'){
-    const card=buildCard('CODES LOGON FIR', c.n);
+    const card=buildCard(L('CODES LOGON FIR','FIR LOGON CODES'), c.n);
+    const COUNTRY_EN={'🇩🇿 ALGÉRIE':'🇩🇿 ALGERIA','🇫🇷 FRANCE':'🇫🇷 FRANCE','🇪🇸 ESPAGNE':'🇪🇸 SPAIN','🇮🇹 ITALIE':'🇮🇹 ITALY','🇩🇪 ALLEMAGNE':'🇩🇪 GERMANY','🇨🇭 SUISSE':'🇨🇭 SWITZERLAND','🇬🇧 ANGLETERRE':'🇬🇧 UNITED KINGDOM','🇵🇹 PORTUGAL':'🇵🇹 PORTUGAL','🇲🇦 MAROC':'🇲🇦 MOROCCO','🇹🇳 TUNISIE':'🇹🇳 TUNISIA'};
     Object.entries(CPDLC_FIR).forEach(([pays,firs])=>{
       const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:900;color:${c.n};text-shadow:0 0 10px ${c.g};margin:18px 0 10px`;
-      ptitle.textContent=pays; card.appendChild(ptitle);
+      ptitle.textContent=L(pays, COUNTRY_EN[pays]||pays); card.appendChild(ptitle);
       firs.forEach(fir=>{
         const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;margin-bottom:6px';
         row.innerHTML=`<div style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};min-width:70px">${fir.c}</div><div style="font-size:17px">${fir.n}</div>`;
@@ -983,33 +1006,33 @@ function buildCPDLC(sub) {
 // ── GRF ──
 function buildGRF(sub) {
   const c=C.grf; const wrap=el('div','page');
-  const warndiv=el('div','warn'); warndiv.innerHTML='<span style="font-size:20px">📋</span><div>AIREP requis si freinage inférieur aux prévisions. Remise de gaz ≤ 1000\' AGL si perf non recalculées.</div>';
+  const warndiv=el('div','warn'); warndiv.innerHTML='<span style="font-size:20px">📋</span><div>'+L('AIREP requis si freinage inférieur aux prévisions. Remise de gaz ≤ 1000\' AGL si perf non recalculées.','AIREP required if braking action is less than expected. Go-around ≤ 1000\' AGL if performance not recalculated.')+'</div>';
   if(!sub){ wrap.appendChild(warndiv); wrap.appendChild(buildSubgrid([
-    {id:'rcam',icon:'📊',label:'Tableau RCAM',desc:'Conditions piste · XW limits'},
-    {id:'rcr',icon:'🔍',label:'Décodeur RCR',desc:'RWYCC → résultat complet'},
-    {id:'motne',icon:'🌨️',label:'Décodeur MOTNE',desc:'Format METAR Russie R28R/290050'},
-    {id:'opt',icon:'💻',label:'Guide OPT',desc:'Sélections takeoff · landing'},
+    {id:'rcam',icon:'📊',label:L('Tableau RCAM','RCAM Table'),desc:L('Conditions piste · XW limits','Runway condition · XW limits')},
+    {id:'rcr',icon:'🔍',label:L('Décodeur RCR','RCR Decoder'),desc:L('RWYCC → résultat complet','RWYCC → full result')},
+    {id:'motne',icon:'🌨️',label:L('Décodeur MOTNE','MOTNE Decoder'),desc:L('Format METAR Russie R28R/290050','Russian METAR format R28R/290050')},
+    {id:'opt',icon:'💻',label:'Guide OPT',desc:L('Sélections takeoff · landing','Takeoff · landing selections')},
   ], c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
-  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
   if(sub==='rcam'){
-    const card=buildCard('RCAM – MATRICE ÉTAT PISTE', c.n);
+    const card=buildCard(L('RCAM – MATRICE ÉTAT PISTE','RCAM – RUNWAY CONDITION MATRIX'), c.n);
     RCAM_DATA.forEach(r=>{
       const row=el('div','rcam-row'); row.style.cssText=`border-color:${r.clr}44;background:${r.clr}08`;
-      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 18px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${r.desc}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${r.braking}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 18px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${rcamDesc(r)}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${rcamBraking(r)}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
       card.appendChild(row);
     });
-    card.appendChild(el('div','tip','* 36/33 kt avec winglets'));
+    card.appendChild(el('div','tip',L('* 36/33 kt avec winglets','* 36/33 kt with winglets')));
     wrap.appendChild(card);
   }
 
   if(sub==='rcr'){
-    const card=buildCard('DÉCODEUR RCR / RWYCC', c.n);
-    card.appendChild(el('div','info','Entrez un code unique (ex: <b>2</b>) ou les trois tiers (ex: <b>5/2/2</b>)'));
+    const card=buildCard(L('DÉCODEUR RCR / RWYCC','RCR / RWYCC DECODER'), c.n);
+    card.appendChild(el('div','info',L('Entrez un code unique (ex: <b>2</b>) ou les trois tiers (ex: <b>5/2/2</b>)','Enter a single code (e.g. <b>2</b>) or the three thirds (e.g. <b>5/2/2</b>)')));
     const row=el('div','row');
-    const inp=el('input','inp'); inp.placeholder='ex : 5/2/2 ou 3';
-    const btn=el('button','btn','DÉCODER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
-    const clr=el('button','btn btn-g','EFFACER');
+    const inp=el('input','inp'); inp.placeholder=L('ex : 5/2/2 ou 3','e.g.: 5/2/2 or 3');
+    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
     card.appendChild(row);
     const res=el('div');
@@ -1017,16 +1040,16 @@ function buildGRF(sub) {
       const v=inp.value.trim().toUpperCase();
       const m=v.match(/(\d)\/(\d)\/(\d)/);
       let rows=[];
-      if(m) rows=[m[1],m[2],m[3]].map((x,i)=>({third:['1er tiers','2e tiers','3e tiers'][i],...(RCAM_DATA.find(r=>r.rwycc===parseInt(x))||{rwycc:parseInt(x),desc:'?',braking:'?',clr:'#888',tkof:'?',ldg:'?'})}));
-      else{const n=parseInt(v);const r=RCAM_DATA.find(x=>x.rwycc===n);if(r)rows=[{third:'Piste entière',...r}];}
-      if(!rows.length){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Format non reconnu</div></div>';return;}
+      if(m) rows=[m[1],m[2],m[3]].map((x,i)=>({third:L(['1er tiers','2e tiers','3e tiers'],['1st third','2nd third','3rd third'])[i],...(RCAM_DATA.find(r=>r.rwycc===parseInt(x))||{rwycc:parseInt(x),desc:'?',descEn:'?',braking:'?',brakingEn:'?',clr:'#888',tkof:'?',ldg:'?'})}));
+      else{const n=parseInt(v);const r=RCAM_DATA.find(x=>x.rwycc===n);if(r)rows=[{third:L('Piste entière','Full runway'),...r}];}
+      if(!rows.length){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">'+L('Format non reconnu','Format not recognized')+'</div></div>';return;}
       res.innerHTML='';
       rows.forEach(t=>{
         const d=el('div'); d.style.cssText=`border:2px solid ${t.clr}55;border-radius:14px;padding:16px 20px;margin-bottom:12px;background:${t.clr}08`;
-        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 18px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${t.desc}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${t.braking}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
+        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 18px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${rcamDesc(t)}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${rcamBraking(t)}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
         res.appendChild(d);
       });
-      if(rows.some(t=>t.rwycc<=2)){const w=el('div','warn');w.innerHTML='⚠️ <b>ATTENTION :</b> Condition piste MOYEN À MAUVAIS ou pire. Vérifier performances.';res.appendChild(w);}
+      if(rows.some(t=>t.rwycc<=2)){const w=el('div','warn');w.innerHTML='⚠️ <b>'+L('ATTENTION :','WARNING:')+'</b> '+L('Condition piste MOYEN À MAUVAIS ou pire. Vérifier performances.','Runway condition MEDIUM TO POOR or worse. Check performance.');res.appendChild(w);}
     };
     btn.addEventListener('click',doRCR);
     clr.addEventListener('click',()=>{inp.value='';res.innerHTML='';});
@@ -1034,12 +1057,12 @@ function buildGRF(sub) {
   }
 
   if(sub==='motne'){
-    const card=buildCard('DÉCODEUR MOTNE (METAR RUSSIE)', c.n);
-    card.appendChild(el('div','info',`<b>Format METAR Russie :</b> après le QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure : <span style="font-family:monospace">R[PISTE]/[E][T][DD][BB]</span><br><b>E</b>=étendue · <b>T</b>=type · <b>DD</b>=profondeur · <b>BB</b>=freinage (ou coeff µ)`));
+    const card=buildCard(L('DÉCODEUR MOTNE (METAR RUSSIE)','MOTNE DECODER (RUSSIAN METAR)'), c.n);
+    card.appendChild(el('div','info',L(`<b>Format METAR Russie :</b> après le QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure : <span style="font-family:monospace">R[PISTE]/[E][T][DD][BB]</span><br><b>E</b>=étendue · <b>T</b>=type · <b>DD</b>=profondeur · <b>BB</b>=freinage (ou coeff µ)`,`<b>Russian METAR format:</b> after the QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure: <span style="font-family:monospace">R[RUNWAY]/[E][T][DD][BB]</span><br><b>E</b>=extent · <b>T</b>=type · <b>DD</b>=depth · <b>BB</b>=braking (or µ coefficient)`)));
     const row=el('div','row');
-    const inp=el('input','inp'); inp.placeholder='ex : R28R/290050 ou 059200';
-    const btn=el('button','btn','DÉCODER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g};font-weight:900`;
-    const clr=el('button','btn btn-g','EFFACER');
+    const inp=el('input','inp'); inp.placeholder=L('ex : R28R/290050 ou 059200','e.g.: R28R/290050 or 059200');
+    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g};font-weight:900`;
+    const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
     card.appendChild(row);
     const res=el('div');
@@ -1054,35 +1077,36 @@ function buildGRF(sub) {
         rwy=RR==='88'?'TOUTES PISTES':RR==='99'?'RAPPORT PRÉCÉDENT RÉPÉTÉ':n>50?`${n-50}R`:`${n}`;
         body=raw.substring(2);
       }
-      if(!body||body.length<4){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">Format non reconnu – ex: R28R/290050</div></div>';return;}
+      if(!body||body.length<4){res.innerHTML='<div class="err-box"><div class="res-val" style="color:#ff3355">'+L('Format non reconnu – ex: R28R/290050','Format not recognized – e.g. R28R/290050')+'</div></div>';return;}
 
       const E=body[0], T=body[1], DD=body.substring(2,4), BB=body.length>=6?body.substring(4,6):null;
 
       // Depth decode
-      let depth='Non significatif';
+      let depth=L('Non significatif','Not significant');
       const nDD=parseInt(DD,10);
       if(DD==='00')depth='< 1 mm';
-      else if(DD==='99')depth='Piste inutilisable / dégagement en cours';
-      else if(DD=='//')depth='Non significatif (ex: glace) ou non mesurable';
+      else if(DD==='99')depth=L('Piste inutilisable / dégagement en cours','Runway unusable / clearance in progress');
+      else if(DD=='//')depth=L('Non significatif (ex: glace) ou non mesurable','Not significant (e.g. ice) or not measurable');
       else if(nDD>=1&&nDD<=90)depth=`${nDD} mm`;
       else if(nDD===92)depth='100 mm';else if(nDD===93)depth='150 mm';
       else if(nDD===94)depth='200 mm';else if(nDD===95)depth='250 mm';
       else if(nDD===96)depth='300 mm';else if(nDD===97)depth='350 mm';else if(nDD===98)depth='400 mm';
 
       // Braking + RCAM mapping
-      let brText='Non fourni', brColor='#7090aa', brBg='rgba(112,144,170,.1)', brBorder='rgba(112,144,170,.3)';
+      let brText=L('Non fourni','Not provided'), brColor='#7090aa', brBg='rgba(112,144,170,.1)', brBorder='rgba(112,144,170,.3)';
       let rwycc='—', xwTkof='—', xwLdg='—', brakingLabel='—', perf='';
       const nBB=BB?parseInt(BB,10):null;
+      const muLabel = v => L(`Coeff µ : 0.${v}`,`µ coeff: 0.${v}`);
       if(BB){
-        if(BB==='95'){brText='BON (GOOD)';brColor='#00ff88';brBg='rgba(0,255,136,.1)';brBorder='rgba(0,255,136,.4)';rwycc='5';xwTkof='25 kt';xwLdg='36/33* kt';brakingLabel='BON';}
-        else if(BB==='94'){brText='MOYEN À BON';brColor='#ffe600';brBg='rgba(255,230,0,.1)';brBorder='rgba(255,230,0,.4)';rwycc='4';xwTkof='22 kt';xwLdg='30 kt';brakingLabel='BON À MOYEN';}
-        else if(BB==='93'){brText='MOYEN';brColor='#ff9900';brBg='rgba(255,153,0,.1)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel='MOYEN';}
-        else if(BB==='92'){brText='MOYEN À MAUVAIS';brColor='#ff4400';brBg='rgba(255,68,0,.1)';brBorder='rgba(255,68,0,.5)';rwycc='2';xwTkof='15 kt';xwLdg='17 kt';brakingLabel='MOYEN À MAUVAIS';}
-        else if(BB==='91'){brText='MAUVAIS (POOR)';brColor='#ff0033';brBg='rgba(255,0,51,.1)';brBorder='rgba(255,0,51,.5)';rwycc='1';xwTkof='13 kt';xwLdg='15 kt';brakingLabel='MAUVAIS';}
-        else if(BB==='99'){brText='Non fiable / Non mesurable';brColor='#ffe040';brBg='rgba(255,224,64,.08)';brBorder='rgba(255,224,64,.4)';}
-        else if(nBB>=36&&nBB<=90){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#00ff88';brBg='rgba(0,255,136,.08)';brBorder='rgba(0,255,136,.35)';rwycc='≥5';xwTkof='25 kt';xwLdg='36 kt';brakingLabel='BON';}
-        else if(nBB>=26&&nBB<=35){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#ff9900';brBg='rgba(255,153,0,.08)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel='MOYEN';}
-        else if(nBB>=1&&nBB<=25){brText=`Coeff µ : 0.${String(nBB).padStart(2,'0')}`;brColor='#ff0033';brBg='rgba(255,0,51,.08)';brBorder='rgba(255,0,51,.4)';rwycc='≤2';xwTkof='≤15 kt';xwLdg='≤17 kt';brakingLabel='MAUVAIS À NUL';}
+        if(BB==='95'){brText=L('BON (GOOD)','GOOD');brColor='#00ff88';brBg='rgba(0,255,136,.1)';brBorder='rgba(0,255,136,.4)';rwycc='5';xwTkof='25 kt';xwLdg='36/33* kt';brakingLabel=L('BON','GOOD');}
+        else if(BB==='94'){brText=L('MOYEN À BON','GOOD TO MEDIUM');brColor='#ffe600';brBg='rgba(255,230,0,.1)';brBorder='rgba(255,230,0,.4)';rwycc='4';xwTkof='22 kt';xwLdg='30 kt';brakingLabel=L('BON À MOYEN','GOOD TO MEDIUM');}
+        else if(BB==='93'){brText=L('MOYEN','MEDIUM');brColor='#ff9900';brBg='rgba(255,153,0,.1)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel=L('MOYEN','MEDIUM');}
+        else if(BB==='92'){brText=L('MOYEN À MAUVAIS','MEDIUM TO POOR');brColor='#ff4400';brBg='rgba(255,68,0,.1)';brBorder='rgba(255,68,0,.5)';rwycc='2';xwTkof='15 kt';xwLdg='17 kt';brakingLabel=L('MOYEN À MAUVAIS','MEDIUM TO POOR');}
+        else if(BB==='91'){brText=L('MAUVAIS (POOR)','POOR');brColor='#ff0033';brBg='rgba(255,0,51,.1)';brBorder='rgba(255,0,51,.5)';rwycc='1';xwTkof='13 kt';xwLdg='15 kt';brakingLabel=L('MAUVAIS','POOR');}
+        else if(BB==='99'){brText=L('Non fiable / Non mesurable','Unreliable / Not measurable');brColor='#ffe040';brBg='rgba(255,224,64,.08)';brBorder='rgba(255,224,64,.4)';}
+        else if(nBB>=36&&nBB<=90){brText=muLabel(String(nBB).padStart(2,'0'));brColor='#00ff88';brBg='rgba(0,255,136,.08)';brBorder='rgba(0,255,136,.35)';rwycc='≥5';xwTkof='25 kt';xwLdg='36 kt';brakingLabel=L('BON','GOOD');}
+        else if(nBB>=26&&nBB<=35){brText=muLabel(String(nBB).padStart(2,'0'));brColor='#ff9900';brBg='rgba(255,153,0,.08)';brBorder='rgba(255,153,0,.4)';rwycc='3';xwTkof='20 kt';xwLdg='25 kt';brakingLabel=L('MOYEN','MEDIUM');}
+        else if(nBB>=1&&nBB<=25){brText=muLabel(String(nBB).padStart(2,'0'));brColor='#ff0033';brBg='rgba(255,0,51,.08)';brBorder='rgba(255,0,51,.4)';rwycc='≤2';xwTkof='≤15 kt';xwLdg='≤17 kt';brakingLabel=L('MAUVAIS À NUL','POOR TO NIL');}
       }
 
       // Type color coding
@@ -1095,12 +1119,12 @@ function buildGRF(sub) {
       // Performance impact warning
       if(rwycc==='1'||rwycc==='0'||rwycc==='≤2'){
         perf=`<div style="margin-top:14px;background:rgba(255,0,51,.12);border:2px solid rgba(255,0,51,.5);border-radius:12px;padding:14px 16px;animation:pulse .9s ease infinite">
-          <div style="font-size:18px;font-weight:900;color:#ff3355;margin-bottom:6px">🚨 PERFORMANCES CRITIQUES</div>
-          <div style="font-size:15px;color:#ff9090;line-height:1.6">• Vérifier calculs de performance LDG avec RWYCC ${rwycc}<br>• Remise de gaz ≤ 1000' AGL si perf non recalculées [OM A 8.3.1.5]<br>• AIREP requis si freinage inférieur aux prévisions</div>
+          <div style="font-size:18px;font-weight:900;color:#ff3355;margin-bottom:6px">🚨 ${L('PERFORMANCES CRITIQUES','CRITICAL PERFORMANCE')}</div>
+          <div style="font-size:15px;color:#ff9090;line-height:1.6">${L(`• Vérifier calculs de performance LDG avec RWYCC ${rwycc}<br>• Remise de gaz ≤ 1000' AGL si perf non recalculées [OM A 8.3.1.5]<br>• AIREP requis si freinage inférieur aux prévisions`,`• Check LDG performance calculations with RWYCC ${rwycc}<br>• Go-around ≤ 1000' AGL if performance not recalculated [OM A 8.3.1.5]<br>• AIREP required if braking action is less than expected`)}</div>
         </div>`;
       } else if(rwycc==='2'||rwycc==='3'){
         perf=`<div style="margin-top:14px;background:rgba(255,153,0,.08);border:1.5px solid rgba(255,153,0,.4);border-radius:12px;padding:12px 16px">
-          <div style="font-size:16px;font-weight:700;color:#ff9900">⚠️ Recalculer performances LDG · RWYCC ${rwycc} · Piste contaminée</div>
+          <div style="font-size:16px;font-weight:700;color:#ff9900">⚠️ ${L(`Recalculer performances LDG · RWYCC ${rwycc} · Piste contaminée`,`Recalculate LDG performance · RWYCC ${rwycc} · Contaminated runway`)}</div>
         </div>`;
       }
 
@@ -1110,7 +1134,7 @@ function buildGRF(sub) {
 
           <!-- Header: runway -->
           <div style="background:rgba(255,255,255,.06);padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.06)">
-            <div style="font-size:13px;color:#7090aa;letter-spacing:2px;font-family:monospace">PISTE</div>
+            <div style="font-size:13px;color:#7090aa;letter-spacing:2px;font-family:monospace">${L('PISTE','RUNWAY')}</div>
             <div style="font-family:monospace;font-size:28px;font-weight:900;color:${c.n};text-shadow:0 0 14px ${c.g}">RWY ${rwy}</div>
             <div style="margin-left:auto;font-family:monospace;font-size:13px;color:#7090aa">${raw}</div>
           </div>
@@ -1118,26 +1142,26 @@ function buildGRF(sub) {
           <!-- 2-col grid: Type + Extent -->
           <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.06)">
             <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,.06)">
-              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">TYPE DE DÉPÔT (T=${T})</div>
-              <div style="font-size:20px;font-weight:900;color:${typeColor};line-height:1.3">${SNOWT[T]||T}</div>
-              <div style="font-size:13px;color:#7090aa;margin-top:6px">Code ${T}</div>
+              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">${L('TYPE DE DÉPÔT','DEPOSIT TYPE')} (T=${T})</div>
+              <div style="font-size:20px;font-weight:900;color:${typeColor};line-height:1.3">${snowT(T)||T}</div>
+              <div style="font-size:13px;color:#7090aa;margin-top:6px">${L('Code','Code')} ${T}</div>
             </div>
             <div style="padding:16px 20px">
-              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">ÉTENDUE (E=${E})</div>
-              <div style="font-size:20px;font-weight:900;color:${extColor};line-height:1.3">${SNOWE[E]||E}</div>
-              <div style="font-size:13px;color:#7090aa;margin-top:6px">de la piste couverte</div>
+              <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">${L('ÉTENDUE','EXTENT')} (E=${E})</div>
+              <div style="font-size:20px;font-weight:900;color:${extColor};line-height:1.3">${snowE(E)||E}</div>
+              <div style="font-size:13px;color:#7090aa;margin-top:6px">${L('de la piste couverte','of runway covered')}</div>
             </div>
           </div>
 
           <!-- Depth -->
           <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06)">
-            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:6px;font-family:monospace">PROFONDEUR (DD=${DD})</div>
+            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:6px;font-family:monospace">${L('PROFONDEUR','DEPTH')} (DD=${DD})</div>
             <div style="font-size:22px;font-weight:900;color:#e8f0ff">${depth}</div>
           </div>
 
           <!-- Braking + RCAM -->
           <div style="padding:16px 20px;background:${brBg}">
-            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:12px;font-family:monospace">FREINAGE / ACTION FREINAGE (BB=${BB||'—'})</div>
+            <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:12px;font-family:monospace">${L('FREINAGE / ACTION FREINAGE','BRAKING / BRAKING ACTION')} (BB=${BB||'—'})</div>
             <div style="font-size:26px;font-weight:900;color:${brColor};text-shadow:0 0 16px ${brColor};margin-bottom:14px">${brText}</div>
 
             ${rwycc!=='—'?`
@@ -1148,11 +1172,11 @@ function buildGRF(sub) {
                 <div style="font-family:monospace;font-size:32px;font-weight:900;color:${brColor};text-shadow:0 0 14px ${brColor}">${rwycc}</div>
               </div>
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
-                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">XW T/O MAX</div>
+                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">${L('XW T/O MAX','MAX XW T/O')}</div>
                 <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwTkof}</div>
               </div>
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
-                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">XW LDG MAX</div>
+                <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">${L('XW LDG MAX','MAX XW LDG')}</div>
                 <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwLdg}</div>
               </div>
             </div>` : ''}
@@ -1166,14 +1190,17 @@ function buildGRF(sub) {
     card.appendChild(res);
 
     // Reference card with color coding
-    const refCard=buildCard('GUIDE DE DÉCODAGE MOTNE', c.n);
-    refCard.appendChild(el('div','tip','Chaque champ est codé par position. Exemple : <span style="font-family:monospace;font-size:15px">R28R / 2 9 00 50</span><br>→ Piste 28R · Étendue 11-25% · Ornières gelées · &lt;1mm · Coeff 0.50'));
+    const refCard=buildCard(L('GUIDE DE DÉCODAGE MOTNE','MOTNE DECODING GUIDE'), c.n);
+    refCard.appendChild(el('div','tip',L('Chaque champ est codé par position. Exemple : <span style="font-family:monospace;font-size:15px">R28R / 2 9 00 50</span><br>→ Piste 28R · Étendue 11-25% · Ornières gelées · &lt;1mm · Coeff 0.50','Each field is coded by position. Example: <span style="font-family:monospace;font-size:15px">R28R / 2 9 00 50</span><br>→ Runway 28R · Extent 11-25% · Frozen ruts · &lt;1mm · Coeff 0.50')));
 
     // Type codes with colors
     const typeSection=el('div'); typeSection.style.marginBottom='16px';
-    typeSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">TYPE DE DÉPÔT (T)</div>`;
+    typeSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">${L('TYPE DE DÉPÔT (T)','DEPOSIT TYPE (T)')}</div>`;
     const typeGrid=el('div'); typeGrid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:8px';
-    const typeData=[['0','Sec et dégagé','#00ff88'],['1','Humide','#ffe040'],['2','Mouillé/Flaques','#ffe040'],['3','Givre/Gelée <1mm','#ff9900'],['4','Neige sèche','#40d0ff'],['5','Neige mouillée','#40d0ff'],['6','Gadoue (Slush)','#ff9900'],['7','Glace','#ff0033'],['8','Neige compactée','#ff4400'],['9','Ornières gelées','#ff0033'],['/','Non signalé','#7090aa']];
+    const typeData=L(
+      [['0','Sec et dégagé','#00ff88'],['1','Humide','#ffe040'],['2','Mouillé/Flaques','#ffe040'],['3','Givre/Gelée <1mm','#ff9900'],['4','Neige sèche','#40d0ff'],['5','Neige mouillée','#40d0ff'],['6','Gadoue (Slush)','#ff9900'],['7','Glace','#ff0033'],['8','Neige compactée','#ff4400'],['9','Ornières gelées','#ff0033'],['/','Non signalé','#7090aa']],
+      [['0','Dry and clear','#00ff88'],['1','Damp','#ffe040'],['2','Wet/Water patches','#ffe040'],['3','Frost/Ice <1mm','#ff9900'],['4','Dry snow','#40d0ff'],['5','Wet snow','#40d0ff'],['6','Slush','#ff9900'],['7','Ice','#ff0033'],['8','Compacted snow','#ff4400'],['9','Frozen ruts','#ff0033'],['/','Not reported','#7090aa']]
+    );
     typeData.forEach(([k,v,col])=>{
       const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
       d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:900;color:${col}">${k}</div><div style="font-size:12px;color:#b0c8e0;margin-top:4px;line-height:1.3">${v}</div>`;
@@ -1183,7 +1210,7 @@ function buildGRF(sub) {
 
     // Extent codes
     const extSection=el('div'); extSection.style.marginBottom='16px';
-    extSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">ÉTENDUE DE CONTAMINATION (E)</div>`;
+    extSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">${L('ÉTENDUE DE CONTAMINATION (E)','CONTAMINATION EXTENT (E)')}</div>`;
     const extGrid=el('div'); extGrid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:8px';
     [['1','≤ 10%','#00ff88'],['2','11–25%','#ffe040'],['5','26–50%','#ff9900'],['9','51–100%','#ff4400']].forEach(([k,v,col])=>{
       const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
@@ -1194,16 +1221,16 @@ function buildGRF(sub) {
 
     // Braking codes with RCAM
     const brSection=el('div');
-    brSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">FREINAGE (BB) → RWYCC & LIMITES XW</div>`;
+    brSection.innerHTML=`<div style="font-size:13px;font-weight:700;color:#7090aa;letter-spacing:2px;margin-bottom:10px;font-family:monospace">${L('FREINAGE (BB) → RWYCC & LIMITES XW','BRAKING (BB) → RWYCC & XW LIMITS')}</div>`;
     const brData=[
-      {bb:'95',label:'BON',rwycc:'5',tkof:'25',ldg:'36',col:'#00ff88'},
-      {bb:'94',label:'BON À MOYEN',rwycc:'4',tkof:'22',ldg:'30',col:'#ffe600'},
-      {bb:'93',label:'MOYEN',rwycc:'3',tkof:'20',ldg:'25',col:'#ff9900'},
-      {bb:'92',label:'MOYEN À MAUVAIS',rwycc:'2',tkof:'15',ldg:'17',col:'#ff4400'},
-      {bb:'91',label:'MAUVAIS',rwycc:'1',tkof:'13',ldg:'15',col:'#ff0033'},
-      {bb:'01-35',label:'Coeff µ 0.01→0.35',rwycc:'1–3',tkof:'13–20',ldg:'15–25',col:'#ff6600'},
-      {bb:'36-90',label:'Coeff µ 0.36→0.90',rwycc:'5–6',tkof:'25–36',ldg:'36',col:'#00ff88'},
-      {bb:'99',label:'Non fiable',rwycc:'—',tkof:'—',ldg:'—',col:'#ffe040'},
+      {bb:'95',label:L('BON','GOOD'),rwycc:'5',tkof:'25',ldg:'36',col:'#00ff88'},
+      {bb:'94',label:L('BON À MOYEN','GOOD TO MEDIUM'),rwycc:'4',tkof:'22',ldg:'30',col:'#ffe600'},
+      {bb:'93',label:L('MOYEN','MEDIUM'),rwycc:'3',tkof:'20',ldg:'25',col:'#ff9900'},
+      {bb:'92',label:L('MOYEN À MAUVAIS','MEDIUM TO POOR'),rwycc:'2',tkof:'15',ldg:'17',col:'#ff4400'},
+      {bb:'91',label:L('MAUVAIS','POOR'),rwycc:'1',tkof:'13',ldg:'15',col:'#ff0033'},
+      {bb:'01-35',label:L('Coeff µ 0.01→0.35','µ coeff 0.01→0.35'),rwycc:'1–3',tkof:'13–20',ldg:'15–25',col:'#ff6600'},
+      {bb:'36-90',label:L('Coeff µ 0.36→0.90','µ coeff 0.36→0.90'),rwycc:'5–6',tkof:'25–36',ldg:'36',col:'#00ff88'},
+      {bb:'99',label:L('Non fiable','Unreliable'),rwycc:'—',tkof:'—',ldg:'—',col:'#ffe040'},
     ];
     brData.forEach(item=>{
       const d=el('div'); d.style.cssText=`background:${item.col}10;border:1.5px solid ${item.col}44;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;flex-wrap:wrap`;
@@ -1215,11 +1242,14 @@ function buildGRF(sub) {
   }
 
   if(sub==='opt'){
-    const card=buildCard('GUIDE SÉLECTIONS OPT', c.n);
-    [['🛫 DÉCOLLAGE','Entrer type de contaminant + profondeur (mm). Plusieurs contaminants → calculer séparément, utiliser le plus limitant.'],
+    const card=buildCard(L('GUIDE SÉLECTIONS OPT','OPT SELECTIONS GUIDE'), c.n);
+    L([['🛫 DÉCOLLAGE','Entrer type de contaminant + profondeur (mm). Plusieurs contaminants → calculer séparément, utiliser le plus limitant.'],
      ['📊 DISPATCH ATTERRISSAGE','Entrer le type de contaminant (ex: Slush). Profondeur si applicable.'],
-     ['✈️ ATTERRISSAGE EN VOL','Entrer le RWYCC le plus bas (braking action) pour les calculs de performance en vol. Ex: MEDIUM TO POOR = 2.']
-    ].forEach(([phase,txt])=>{
+     ['✈️ ATTERRISSAGE EN VOL','Entrer le RWYCC le plus bas (braking action) pour les calculs de performance en vol. Ex: MEDIUM TO POOR = 2.']],
+     [['🛫 TAKEOFF','Enter the contaminant type + depth (mm). Multiple contaminants → calculate each separately, use the most limiting.'],
+     ['📊 LANDING DISPATCH','Enter the contaminant type (e.g. Slush). Depth if applicable.'],
+     ['✈️ LANDING EN ROUTE','Enter the lowest RWYCC (braking action) for in-flight performance calculations. E.g. MEDIUM TO POOR = 2.']]
+    ).forEach(([phase,txt])=>{
       const d=el('div'); d.style.cssText='background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:12px';
       d.innerHTML=`<div style="font-size:18px;font-weight:900;color:${c.n};margin-bottom:8px">${phase}</div><div style="font-size:17px;line-height:1.6">${txt}</div>`;
       card.appendChild(d);
@@ -1233,68 +1263,68 @@ function buildGRF(sub) {
 function buildCold(sub) {
   const c=C.cold; const wrap=el('div','page');
   const phases=[
-    {id:'preflight',icon:'🔍',name:'PRÉ-VOL',items:[{id:'c1',label:'Commutateurs PROBE HEAT',action:'ON – OPL',sub:'Vérifier extinction voyants probe heat'}]},
-    {id:'avantdemarrage',icon:'📋',name:'AVANT DÉMARRAGE',items:[
-      {id:'c2',label:'Données de décollage – calculer. ATM interdit sur piste contaminée'},
-      {id:'c3',label:'Vent traversier max – vérifier RCAM'},{id:'c4',label:'Temps de protection antigel (HOT) – obtenir OM A'},{id:'c5',label:'Dégivrage à la porte si possible'},
+    {id:'preflight',icon:'🔍',name:L('PRÉ-VOL','PREFLIGHT'),items:[{id:'c1',label:L('Commutateurs PROBE HEAT','PROBE HEAT switches'),action:L('ON – OPL','ON – F/O'),sub:L('Vérifier extinction voyants probe heat','Verify that all probe heat lights are extinguished')}]},
+    {id:'avantdemarrage',icon:'📋',name:L('AVANT DÉMARRAGE','BEFORE START'),items:[
+      {id:'c2',label:L('Données de décollage – calculer. ATM interdit sur piste contaminée','Takeoff data – compute. ATM is not allowed on contaminated runway')},
+      {id:'c3',label:L('Vent traversier max – vérifier RCAM','Max crosswind – review GRF RCAM table')},{id:'c4',label:L('Temps de protection antigel (HOT) – obtenir OM A','Hold Over Time (HOT) – obtain from OM A')},{id:'c5',label:L('Dégivrage à la porte si possible','De-icing at the gate if possible')},
     ]},
-    {id:'demarrage',icon:'⚠️',name:'DÉMARRAGE MOTEURS',items:[
-      {id:'c6',label:'TAE < -40°C & moteur refroidi >1h → NE PAS DÉMARRER',action:'⛔ NO START'},
-      {id:'c7',label:'TAE < -40°C & moteur refroidi >3h → NE PAS DÉMARRER',action:'⛔ NO START'},
-      {id:'c8',label:'TAE < -35°C → 2 min ralenti avant modification manette gaz'},
-      {id:'c9',label:'Après démarrage : ENGINE START switches',action:'CONT – OPL'},
-      {id:'c10',label:'Après démarrage : ENGINE ANTI-ICE switches',action:'ON – OPL'},
+    {id:'demarrage',icon:'⚠️',name:L('DÉMARRAGE MOTEURS','ENGINE START'),items:[
+      {id:'c6',label:L('TAE < -40°C & moteur refroidi >1h → NE PAS DÉMARRER','OAT < -40°C and engine cold soaked >1h → do not start or motor the engine'),action:L('⛔ NO START','⛔ NO START')},
+      {id:'c7',label:L('TAE < -40°C & moteur refroidi >3h → NE PAS DÉMARRER','OAT < -40°C and engine cold soaked >3h → do not start or motor the engine'),action:L('⛔ NO START','⛔ NO START')},
+      {id:'c8',label:L('TAE < -35°C → 2 min ralenti avant modification manette gaz','OAT < -35°C → 2 min idle before changing thrust lever position')},
+      {id:'c9',label:L('Après démarrage : ENGINE START switches','Immediately after engine start: ENGINE START switches'),action:L('CONT – OPL','CONT – F/O')},
+      {id:'c10',label:L('Après démarrage : ENGINE ANTI-ICE switches','Immediately after engine start: ENGINE ANTI-ICE switches'),action:L('ON – OPL','ON – F/O')},
     ]},
-    {id:'roulage',icon:'🛞',name:'ROULAGE',items:[
-      {id:'c11',label:'Informer PNC et passagers avant dégivrage'},
-      {id:'c12',label:'VOLETS RENTRÉS avant dégivrage',action:'UP – OPL'},
-      {id:'c13',label:'BLEED moteurs',action:'OFF – OPL'},{id:'c14',label:'APU BLEED',action:'OFF – OPL'},
-      {id:'c15',label:'Après dégivrage : ~1 min attente puis BLEED ON'},
-      {id:'c16',label:'Vitesse réduite · distances augmentées · poussée minimum · pas inverseurs'},
-      {id:'c17',label:'TAE ≤ 3°C : run-up 70% N1 pendant 30s toutes 30 min max'},
+    {id:'roulage',icon:'🛞',name:L('ROULAGE','TAXI'),items:[
+      {id:'c11',label:L('Informer PNC et passagers avant dégivrage','Advise cabin crew and passengers before de-icing')},
+      {id:'c12',label:L('VOLETS RENTRÉS avant dégivrage','FLAPS UP before de-icing'),action:L('UP – OPL','UP – F/O')},
+      {id:'c13',label:L('BLEED moteurs','Engine BLEED air switches'),action:L('OFF – OPL','OFF – F/O')},{id:'c14',label:'APU BLEED',action:L('OFF – OPL','OFF – F/O')},
+      {id:'c15',label:L('Après dégivrage : ~1 min attente puis BLEED ON','After de-icing: wait ~1 minute then Engine BLEED air switches ON')},
+      {id:'c16',label:L('Vitesse réduite · distances augmentées · poussée minimum · pas inverseurs','Slow speed · greater distance · minimum thrust · do not use reverse thrust')},
+      {id:'c17',label:L('TAE ≤ 3°C : run-up 70% N1 pendant 30s toutes 30 min max','OAT ≤ 3°C: engine run-up to 70% N1 for 30s at intervals no greater than 30 min')},
     ]},
-    {id:'avantdecollage',icon:'🛫',name:'AVANT DÉCOLLAGE',items:[
-      {id:'c18',label:'HOT – toujours dans les limites ?'},
-      {id:'c19',label:'TAE ≤ 3°C + A/I moteurs : informer ATC + static run-up'},
-      {id:'c20',label:'Run-up N1 70% min · stable 30s → lâcher frein + TOGA'},
+    {id:'avantdecollage',icon:'🛫',name:L('AVANT DÉCOLLAGE','BEFORE TAKE-OFF'),items:[
+      {id:'c18',label:L('HOT – toujours dans les limites ?','Holdover time – still within limits?')},
+      {id:'c19',label:L('TAE ≤ 3°C + A/I moteurs : informer ATC + static run-up','OAT ≤ 3°C and engine A/I required: inform ATC + perform static engine run-up')},
+      {id:'c20',label:L('Run-up N1 70% min · stable 30s → lâcher frein + TOGA','Run-up to 70% N1 minimum, confirm stable 30s, then release brake and press TOGA')},
     ]},
-    {id:'approche',icon:'🛬',name:'APPROCHE & ATTERRISSAGE',items:[
-      {id:'c21',label:'Corrections altimétriques T° froide → APPLIQUER (onglet Corrections)'},
-      {id:'c22',label:'Vent traversier max – vérifier RCAM'},
-      {id:'c23',label:'Attente en givre → INTERDIT volets sortis'},
-      {id:'c24',label:'Crab angle vent traversier → maintenir sur piste glissante'},
-      {id:'c25',label:'Freinage automatique → RECOMMANDÉ'},
-      {id:'c26',label:'Volets 15 + VREF ICE → VREF15 +10 kt (additif vent ≤ 5 kt)'},
+    {id:'approche',icon:'🛬',name:L('APPROCHE & ATTERRISSAGE','APPROACH & LANDING'),items:[
+      {id:'c21',label:L('Corrections altimétriques T° froide → APPLIQUER (onglet Corrections)','Cold temp altitude corrections → APPLY (see Corrections tab)')},
+      {id:'c22',label:L('Vent traversier max – vérifier RCAM','Max crosswind – review GRF RCAM table')},
+      {id:'c23',label:L('Attente en givre → INTERDIT volets sortis','Holding in icing conditions → PROHIBITED with flaps extended')},
+      {id:'c24',label:L('Crab angle vent traversier → maintenir sur piste glissante','Crosswind crab angle → maintain on very slippery runways')},
+      {id:'c25',label:L('Freinage automatique → RECOMMANDÉ','Autobrakes → RECOMMENDED')},
+      {id:'c26',label:L('Volets 15 + VREF ICE → VREF15 +10 kt (additif vent ≤ 5 kt)','Flaps 15 + VREF ICE → VREF15 +10 kt (wind additives should not exceed 5 kt)')},
     ]},
-    {id:'apres',icon:'🏁',name:'APRÈS ATTERRISSAGE',items:[
-      {id:'c27',label:'VOLETS → rentrer à 15°. Pas < 15° avant zones libres de contaminants'},
-      {id:'c28',label:'Anti-glace moteurs ON pour toutes opérations sol en givre'},
-      {id:'c29',label:'ENGINE START switches',action:'CONT – OPL'},
-      {id:'c30',label:'ENGINE ANTI-ICE switches',action:'ON – OPL'},
+    {id:'apres',icon:'🏁',name:L('APRÈS ATTERRISSAGE','AFTER LANDING'),items:[
+      {id:'c27',label:L('VOLETS → rentrer à 15°. Pas < 15° avant zones libres de contaminants','FLAPS → retract to 15. Do not retract below 15° until flap areas are free of contaminants')},
+      {id:'c28',label:L('Anti-glace moteurs ON pour toutes opérations sol en givre','Engine anti-ice ON for all ground operations when icing conditions exist')},
+      {id:'c29',label:'ENGINE START switches',action:L('CONT – OPL','CONT – F/O')},
+      {id:'c30',label:'ENGINE ANTI-ICE switches',action:L('ON – OPL','ON – F/O')},
     ]},
   ];
-  const subItems=[...phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:`${p.items.length} actions`})),{id:'corr',icon:'🌡️',label:'Corrections Altimétriques',desc:'Calcul T° froide automatique'}];
+  const subItems=[...phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`)})),{id:'corr',icon:'🌡️',label:L('Corrections Altimétriques','Altitude Corrections'),desc:L('Calcul T° froide automatique','Automatic cold temp calculation')}];
   if(!sub){ wrap.appendChild(buildSubgrid(subItems, c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
-  wrap.appendChild(buildBackBtn('RETOUR',()=>{ STATE.sub=null; render(); }));
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
   if(sub==='corr'){
-    const card=buildCard('CORRECTIONS ALTIMÉTRIQUES TEMPÉRATURE FROIDE', c.n);
-    card.appendChild(el('div','info','<b>IMPORTANT :</b> Pour approche RNP, la correction est EN PLUS des 50 ft obligatoires.'));
+    const card=buildCard(L('CORRECTIONS ALTIMÉTRIQUES TEMPÉRATURE FROIDE','COLD TEMPERATURE ALTITUDE CORRECTIONS'), c.n);
+    card.appendChild(el('div','info',L('<b>IMPORTANT :</b> Pour approche RNP, la correction est EN PLUS des 50 ft obligatoires.','<b>IMPORTANT:</b> For an RNP approach, the correction is IN ADDITION to the mandatory 50 ft additive.')));
     const row=el('div','row');
-    const aInp=el('input','inp'); aInp.placeholder='Altitude publiée (ft)'; aInp.type='number';
-    const oInp=el('input','inp'); oInp.placeholder='TAE (°C) ex: -20'; oInp.type='number';
-    const btn=el('button','btn','CALCULER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const aInp=el('input','inp'); aInp.placeholder=L('Altitude publiée (ft)','Published altitude (ft)'); aInp.type='number';
+    const oInp=el('input','inp'); oInp.placeholder=L('TAE (°C) ex: -20','OAT (°C) e.g. -20'); oInp.type='number';
+    const btn=el('button','btn',L('CALCULER','CALCULATE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
     row.appendChild(aInp); row.appendChild(oInp); row.appendChild(btn); card.appendChild(row);
     const res=el('div');
     btn.addEventListener('click',()=>{
       const a=parseInt(aInp.value),o=parseInt(oInp.value);
       if(isNaN(a)||isNaN(o)){res.innerHTML='';return;}
       const corr=getCorr(a,o);
-      res.innerHTML=`<div class="ok-box"><div class="res-lbl">CORRECTION À AJOUTER</div><div class="res-val" style="color:#60ff60;font-size:52px">+${corr} ft</div><div style="margin-top:10px;font-size:17px;color:#7090aa">Altitude publiée : <b style="color:#e8f0ff">${a} ft</b> &nbsp;|&nbsp; TAE : <b style="color:#e8f0ff">${o}°C</b> &nbsp;→&nbsp; Altitude corrigée : <b style="color:${c.n};font-size:22px">${a+corr} ft</b></div></div>`;
+      res.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('CORRECTION À AJOUTER','CORRECTION TO ADD')}</div><div class="res-val" style="color:#60ff60;font-size:52px">+${corr} ft</div><div style="margin-top:10px;font-size:17px;color:#7090aa">${L('Altitude publiée','Published altitude')} : <b style="color:#e8f0ff">${a} ft</b> &nbsp;|&nbsp; OAT : <b style="color:#e8f0ff">${o}°C</b> &nbsp;→&nbsp; ${L('Altitude corrigée','Corrected altitude')} : <b style="color:${c.n};font-size:22px">${a+corr} ft</b></div></div>`;
     });
     card.appendChild(res);
     // Table
-    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>ALT (ft)</th><th>-10°C</th><th>-20°C</th><th>-30°C</th><th>-40°C</th><th>-50°C</th><th>-60°C</th></tr></thead>';
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('ALT (ft)','ALT (ft)')}</th><th>-10°C</th><th>-20°C</th><th>-30°C</th><th>-40°C</th><th>-50°C</th><th>-60°C</th></tr></thead>`;
     const tb=el('tbody');
     COLD_TBL.forEach(r=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;font-weight:700;color:${c.n}">${r.alt}</td><td>${r.m10}</td><td>${r.m20}</td><td>${r.m30}</td><td>${r.m40}</td><td>${r.m50}</td><td>${r.m60}</td>`;tb.appendChild(tr);});
     tbl.appendChild(tb); const tw=el('div','tbl-wrap');tw.appendChild(tbl); card.appendChild(tw);
@@ -1309,25 +1339,31 @@ function buildCold(sub) {
 // ── BRNAV ──
 function buildBRNAV() {
   const c=C.brnav; const wrap=el('div','page');
-  const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>NE PAS CONFONDRE :</b> RNAV 1 ≠ RNP 1. Spécifications de navigation différentes.</div>';
+  const warn=el('div','warn'); warn.innerHTML='<span style="font-size:22px">⚠️</span><div><b>'+L('NE PAS CONFONDRE :','DO NOT CONFUSE:')+'</b> '+L('RNAV 1 ≠ RNP 1. Spécifications de navigation différentes.','RNAV 1 ≠ RNP 1. Different navigation specifications.')+'</div>';
   wrap.appendChild(warn);
-  const expCard=buildCard('QU\'EST-CE QUE BRNAV / PRNAV ?', c.n);
+  const expCard=buildCard(L('QU\'EST-CE QUE BRNAV / PRNAV ?','WHAT IS BRNAV / PRNAV?'), c.n);
   expCard.appendChild(el('div',null,null,{fontSize:'17px',lineHeight:'1.8'}));
-  [
+  L([
     [`<b style="color:${c.n}">BRNAV (RNAV 5)</b>`,`= Basic Area Navigation. Précision latérale ±5 NM (95% du temps). Utilisé en route, espace aérien inférieur et supérieur.`],
     [`<b style="color:#a5d6a7">PRNAV (RNAV 1)</b>`,`= Precision Area Navigation. Précision ±1 NM (95% du temps). Requis sur SID, STAR, approches RNAV dans certains espaces aériens.`],
     [`<b style="color:#c8ffc8">RNAV 2</b>`,`= Précision ±2 NM. Utilisé sur certaines routes US et espaces spécifiques.`],
-  ].forEach(([title,text])=>{
+  ],[
+    [`<b style="color:${c.n}">BRNAV (RNAV 5)</b>`,`= Basic Area Navigation. Lateral accuracy ±5 NM (95% of the time). Used en route, in lower and upper airspace.`],
+    [`<b style="color:#a5d6a7">PRNAV (RNAV 1)</b>`,`= Precision Area Navigation. Accuracy ±1 NM (95% of the time). Required on SID, STAR, RNAV approaches in certain airspace.`],
+    [`<b style="color:#c8ffc8">RNAV 2</b>`,`= Accuracy ±2 NM. Used on certain US routes and specific airspace.`],
+  ]).forEach(([title,text])=>{
     const d=el('div'); d.style.cssText='margin-bottom:14px;font-size:17px;line-height:1.7';
     d.innerHTML=`${title} ${text}`; expCard.appendChild(d);
   });
-  expCard.appendChild(el('div','tip','* Pour PRNAV, toute combinaison de deux capteurs est acceptable (DME/DME, GPS/IRS, GPS/DME).'));
+  expCard.appendChild(el('div','tip',L('* Pour PRNAV, toute combinaison de deux capteurs est acceptable (DME/DME, GPS/IRS, GPS/DME).','* For PRNAV, any combination of two sensors is acceptable (DME/DME, GPS/IRS, GPS/DME).')));
   wrap.appendChild(expCard);
-  const eqCard=buildCard('ÉQUIPEMENTS REQUIS', c.n);
-  eqCard.appendChild(el('div','info','X = Requis &nbsp;|&nbsp; Chiffres = quantité min &nbsp;|&nbsp; (PF) = Pilote en Fonction'));
-  const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>SYSTÈME</th><th>BRNAV RNAV 5</th><th>PRNAV RNAV 1&2</th></tr></thead>';
+  const eqCard=buildCard(L('ÉQUIPEMENTS REQUIS','REQUIRED EQUIPMENT'), c.n);
+  eqCard.appendChild(el('div','info',L('X = Requis &nbsp;|&nbsp; Chiffres = quantité min &nbsp;|&nbsp; (PF) = Pilote en Fonction','X = Required &nbsp;|&nbsp; Numbers = min quantity &nbsp;|&nbsp; (PF) = Pilot Flying')));
+  const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('SYSTÈME','SYSTEM')}</th><th>BRNAV RNAV 5</th><th>PRNAV RNAV 1&2</th></tr></thead>`;
   const tb=el('tbody');
-  [['DME ou GPS *','1','2'],['VOR','1','1'],['ADIRU (mode NAV)','MEL 34-35','2'],['FMC','1','1'],['MCDU','1','1'],['FMS NAV DATABASE','Voir MEL','Voir MEL'],['FCC','—','1'],['Pilote automatique et/ou FD','—','1 (PF)'],['ND MODE MAP','1 (PF)','1 (PF)'],['Panneau EFIS','1 (PF)','1 (PF)'],['Mode LNAV','—','X']].forEach(([s,b,p])=>{
+  L([['DME ou GPS *','1','2'],['VOR','1','1'],['ADIRU (mode NAV)','MEL 34-35','2'],['FMC','1','1'],['MCDU','1','1'],['FMS NAV DATABASE','Voir MEL','Voir MEL'],['FCC','—','1'],['Pilote automatique et/ou FD','—','1 (PF)'],['ND MODE MAP','1 (PF)','1 (PF)'],['Panneau EFIS','1 (PF)','1 (PF)'],['Mode LNAV','—','X']],
+    [['DME or GPS *','1','2'],['VOR','1','1'],['ADIRU (NAV mode)','MEL 34-35','2'],['FMC','1','1'],['MCDU','1','1'],['FMS NAV DATABASE','See MEL','See MEL'],['FCC','—','1'],['Autopilot and/or FD','—','1 (PF)'],['ND MAP mode','1 (PF)','1 (PF)'],['EFIS control panel','1 (PF)','1 (PF)'],['LNAV Mode','—','X']]
+  ).forEach(([s,b,p])=>{
     const tr=el('tr'); tr.innerHTML=`<td style="font-size:17px;font-weight:700">${s}</td><td style="font-family:monospace;font-size:20px;font-weight:700;color:${b==='X'?c.n:b==='—'?'#7090aa':'#e8f0ff'}">${b}</td><td style="font-family:monospace;font-size:20px;font-weight:700;color:${p==='X'?c.n:p==='—'?'#7090aa':'#e8f0ff'}">${p}</td>`;
     tb.appendChild(tr);
   });
@@ -1338,11 +1374,11 @@ function buildBRNAV() {
 // ── CONTACTS ──
 function buildContacts() {
   const c=C.util; const wrap=el('div','page');
-  const card=buildCard('COMMUNICATIONS COMPAGNIE VHF/ACARS', c.n);
-  const inp=el('input','inp'); inp.placeholder='🔍 Rechercher station, pays, prestataire...'; inp.style.cssText='width:100%;margin-bottom:16px';
+  const card=buildCard(L('COMMUNICATIONS COMPAGNIE VHF/ACARS','COMPANY VHF/ACARS COMMUNICATIONS'), c.n);
+  const inp=el('input','inp'); inp.placeholder=L('🔍 Rechercher station, pays, prestataire...','🔍 Search station, country, handler...'); inp.style.cssText='width:100%;margin-bottom:16px';
   const tblWrap=el('div','tbl-wrap');
   const buildTable=(data)=>{
-    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th>STATION</th><th>PRESTATAIRE</th><th>VHF</th><th>SITA/ACARS</th></tr></thead>';
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>STATION</th><th>${L('PRESTATAIRE','HANDLER')}</th><th>VHF</th><th>SITA/ACARS</th></tr></thead>`;
     const tb=el('tbody');
     data.forEach(ct=>{
       const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px;text-shadow:0 0 8px ${c.g}">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
@@ -1358,7 +1394,7 @@ function buildContacts() {
   });
   card.appendChild(inp); card.appendChild(tblWrap);
   // Domestic
-  const dc=buildCard('RÉSEAU DOMESTIQUE ACARS', c.n);
+  const dc=buildCard(L('RÉSEAU DOMESTIQUE ACARS','DOMESTIC ACARS NETWORK'), c.n);
   [['VHF','131.850'],['DGAH','ALGDGAH'],['CCO','ALGOWAH / ALGJMAH'],['TECHNIQUE','ALGTTAH'],['OPS','XXXKKAH'],['PVD','XXXKLAH']].forEach(([k,v])=>{
     const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)';
     r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px;text-shadow:0 0 8px ${c.g}">${v}</span>`;
@@ -1370,29 +1406,30 @@ function buildContacts() {
 // ── DELAY ──
 function buildDelay() {
   const c=C.util; const wrap=el('div','page');
-  const card=buildCard('RECHERCHE CODE DE RETARD', c.n);
+  const card=buildCard(L('RECHERCHE CODE DE RETARD','DELAY CODE LOOKUP'), c.n);
   const row=el('div','row');
-  const inp=el('input','inp'); inp.placeholder='Entrer le code (ex: 93)'; inp.type='number'; inp.min='1'; inp.max='99';
-  const btn=el('button','btn','CHERCHER'); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+  const inp=el('input','inp'); inp.placeholder=L('Entrer le code (ex: 93)','Enter the code (e.g. 93)'); inp.type='number'; inp.min='1'; inp.max='99';
+  const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
   const clr=el('button','btn btn-g','✕');
   row.appendChild(inp); row.appendChild(btn); row.appendChild(clr); card.appendChild(row);
   const res=el('div');
-  btn.addEventListener('click',()=>{const d=DELAY_CODES[inp.value];res.innerHTML=d?`<div class="ok-box"><div class="res-lbl">CODE ${inp.value}</div><div style="font-size:20px;font-weight:700;margin-top:6px">${d}</div></div>`:'<div class="err-box"><div class="res-val" style="color:#ff3355">Code introuvable</div></div>';});
+  btn.addEventListener('click',()=>{const d=delayText(inp.value);res.innerHTML=d?`<div class="ok-box"><div class="res-lbl">CODE ${inp.value}</div><div style="font-size:20px;font-weight:700;margin-top:6px">${d}</div></div>`:'<div class="err-box"><div class="res-val" style="color:#ff3355">'+L('Code introuvable','Code not found')+'</div></div>';});
   clr.addEventListener('click',()=>{inp.value='';res.innerHTML='';});
   card.appendChild(res);
-  const allCard=buildCard('TOUS LES CODES DE RETARD', c.n);
-  const sinp=el('input','inp'); sinp.placeholder='🔍 Rechercher code ou description...'; sinp.style.cssText='width:100%;margin-bottom:16px';
+  const allCard=buildCard(L('TOUS LES CODES DE RETARD','ALL DELAY CODES'), c.n);
+  const sinp=el('input','inp'); sinp.placeholder=L('🔍 Rechercher code ou description...','🔍 Search code or description...'); sinp.style.cssText='width:100%;margin-bottom:16px';
   const tblWrap=el('div','tbl-wrap');
   const buildDT=(data)=>{
-    const tbl=el('table','tbl'); tbl.innerHTML='<thead><tr><th style="width:60px">CODE</th><th>DESCRIPTION</th></tr></thead>';
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th style="width:60px">CODE</th><th>DESCRIPTION</th></tr></thead>`;
     const tb=el('tbody');
     data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:900;font-size:22px;text-shadow:0 0 8px ${c.g}">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
     tbl.appendChild(tb); return tbl;
   };
-  tblWrap.appendChild(buildDT(Object.entries(DELAY_CODES)));
+  const delayEntries=()=>Object.keys(DELAY_CODES).map(k=>[k,delayText(k)]);
+  tblWrap.appendChild(buildDT(delayEntries()));
   sinp.addEventListener('input',()=>{
     const q=sinp.value.toLowerCase();
-    const f=Object.entries(DELAY_CODES).filter(([k,v])=>k.includes(sinp.value)||v.toLowerCase().includes(q));
+    const f=delayEntries().filter(([k,v])=>k.includes(sinp.value)||v.toLowerCase().includes(q));
     tblWrap.innerHTML=''; tblWrap.appendChild(buildDT(f));
   });
   allCard.appendChild(sinp); allCard.appendChild(tblWrap);
@@ -1402,16 +1439,16 @@ function buildDelay() {
 // ── NOTES ──
 function buildNotes() {
   const c=C.util; const wrap=el('div','page');
-  const card=buildCard('📝 NOTES DE VOL', c.n);
-  card.appendChild(el('div','info','Notes sauvegardées pour cette session uniquement.'));
-  const ta=el('textarea','notes-ta'); ta.placeholder='Saisir notes, remarques, procédures spéciales...'; ta.rows=12;
+  const card=buildCard('📝 '+L('NOTES DE VOL','FLIGHT NOTES'), c.n);
+  card.appendChild(el('div','info',L('Notes sauvegardées pour cette session uniquement.','Notes saved for this session only.')));
+  const ta=el('textarea','notes-ta'); ta.placeholder=L('Saisir notes, remarques, procédures spéciales...','Enter notes, remarks, special procedures...'); ta.rows=12;
   try{ta.value=sessionStorage.getItem('b737_notes')||'';}catch{}
   ta.addEventListener('input',()=>{try{sessionStorage.setItem('b737_notes',ta.value);}catch{}});
   const btnRow=el('div','row'); btnRow.style.marginTop='12px';
-  const clrBtn=el('button','btn btn-g','🗑️ Effacer');
-  const expBtn=el('button','btn','📥 Exporter'); expBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 14px ${c.g}`;
-  clrBtn.addEventListener('click',()=>{if(window.confirm('Effacer ?')){ta.value='';try{sessionStorage.removeItem('b737_notes');}catch{}}});
-  expBtn.addEventListener('click',()=>{const b=new Blob([ta.value],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`notes-vol-${new Date().toISOString().slice(0,10)}.txt`;a.click();});
+  const clrBtn=el('button','btn btn-g','🗑️ '+L('Effacer','Clear'));
+  const expBtn=el('button','btn','📥 '+L('Exporter','Export')); expBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 14px ${c.g}`;
+  clrBtn.addEventListener('click',()=>{if(window.confirm(L('Effacer ?','Clear?'))){ta.value='';try{sessionStorage.removeItem('b737_notes');}catch{}}});
+  expBtn.addEventListener('click',()=>{const b=new Blob([ta.value],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${L('notes-vol','flight-notes')}-${new Date().toISOString().slice(0,10)}.txt`;a.click();});
   btnRow.appendChild(clrBtn); btnRow.appendChild(expBtn);
   card.appendChild(ta); card.appendChild(btnRow); wrap.appendChild(card); return wrap;
 }
@@ -1433,7 +1470,6 @@ const UTILS=[
   {id:'delay',   icon:'⏱️',name:'CODES RETARD',col:C.util},
   {id:'notes',   icon:'📝',name:'NOTES',col:C.util},
 ];
-const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',cold:'COLD WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:'CODES DE RETARD',notes:'NOTES DE VOL'};
 
 // ═══════════════════════════════════════════════════════════════
 // BUILD APP
@@ -1441,6 +1477,7 @@ const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',co
 
 function buildApp() {
   const div=el('div','app');
+  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',cold:'COLD WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
 
   // HEADER
   const hdr=el('div','hdr');
@@ -1449,18 +1486,22 @@ function buildApp() {
   logoIcon.innerHTML='<div class="plane">✈️</div><div class="txt">B737 OPS</div>';
   const logoText=el('div');
   const logoName=el('div','logo-name','AIR ALGÉRIE B737 OPS INFO QR');
-  const logoSub=el('div','logo-sub','DIRECTION DES OPÉRATIONS AÉRIENNES · QUICK REFERENCE');
+  const logoSub=el('div','logo-sub',L('DIRECTION DES OPÉRATIONS AÉRIENNES · QUICK REFERENCE','FLIGHT OPERATIONS DIRECTORATE · QUICK REFERENCE'));
   logoText.appendChild(logoName); logoText.appendChild(logoSub);
   logoRow.appendChild(logoIcon); logoRow.appendChild(logoText);
   const tools=el('div','hdr-tools');
+  const UTIL_NAMES={contacts:'CONTACTS',delay:L('CODES RETARD','DELAY CODES'),notes:L('NOTES','NOTES')};
   UTILS.forEach(u=>{
-    const b=el('button',`tool-btn${STATE.page===u.id?' on':''}`,u.icon+' '+u.name);
+    const b=el('button',`tool-btn${STATE.page===u.id?' on':''}`,u.icon+' '+UTIL_NAMES[u.id]);
     b.addEventListener('click',()=>{
       if(STATE.page===u.id){STATE.page=null;STATE.sub=null;}else{STATE.page=u.id;STATE.sub=null;}
       render();
     });
     tools.appendChild(b);
   });
+  const langBtn=el('button','tool-btn lang-btn', STATE.lang==='fr' ? '🇬🇧 EN' : '🇫🇷 FR');
+  langBtn.addEventListener('click', ()=>{ setLang(STATE.lang==='fr'?'en':'fr'); });
+  tools.appendChild(langBtn);
   hdr.appendChild(logoRow); hdr.appendChild(tools); div.appendChild(hdr);
 
   // CONTENT
@@ -1468,7 +1509,7 @@ function buildApp() {
     // HOME
     const home=el('div','home');
     const h1=el('h1',null,'B737 OPS CENTER'); home.appendChild(h1);
-    const sub=el('p','home-sub','SÉLECTIONNER UNE PROCÉDURE · AIR ALGÉRIE · DOA'); home.appendChild(sub);
+    const sub=el('p','home-sub',L('SÉLECTIONNER UNE PROCÉDURE · AIR ALGÉRIE · DOA','SELECT A PROCEDURE · AIR ALGÉRIE · DOA')); home.appendChild(sub);
     const grid=el('div','grid');
     SECTIONS.forEach(s=>{
       const block=el('div','block');
@@ -1487,7 +1528,7 @@ function buildApp() {
     const c=sec?.col||C.util;
     const pageWrap=el('div','page');
     // Back to home
-    const backHome=el('button','back','← ACCUEIL');
+    const backHome=el('button','back',L('← ACCUEIL','← HOME'));
     backHome.addEventListener('click',()=>{ STATE.page=null; STATE.sub=null; render(); });
     pageWrap.appendChild(backHome);
     // Page header
@@ -1533,7 +1574,16 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
   const isStandalone=window.navigator.standalone===true;
   try{if(sessionStorage.getItem('install_dismissed'))return;}catch{}
   if(isIOS&&!isStandalone){
-    setTimeout(()=>{const b=document.getElementById('ibanner');if(b)b.style.display='block';},3000);
+    setTimeout(()=>{
+      const b=document.getElementById('ibanner');
+      if(b){
+        if(STATE.lang==='en'){
+          document.getElementById('ib-title').textContent='Install B737 OPS QR';
+          document.getElementById('ib-text').textContent='Share ➜ "Add to Home Screen"';
+        }
+        b.style.display='block';
+      }
+    },3000);
   }
 })();
 </script>
@@ -1574,7 +1624,8 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
   ">
     © 2025 – Tous droits réservés · All rights reserved<br>
     Document à usage interne exclusif – Air Algérie · Direction des Opérations Aériennes<br>
-    Toute reproduction, distribution ou modification non autorisée est strictement interdite.
+    Toute reproduction, distribution ou modification non autorisée est strictement interdite.<br>
+    <span style="opacity:.7">For internal use only – unauthorized reproduction or distribution is strictly prohibited.</span>
   </div>
 </div>
 
