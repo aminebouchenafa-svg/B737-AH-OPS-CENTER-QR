@@ -1,0 +1,19 @@
+{
+  "name": "B737 OPS INFO QR",
+  "short_name": "B737 OPS QR",
+  "description": "Air Algérie - B737 Ops Info QR - Quick Reference System - consultable hors ligne",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
