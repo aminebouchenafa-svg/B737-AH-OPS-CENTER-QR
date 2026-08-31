@@ -1,0 +1,19 @@
+{
+  "name": "B737 CBTA TRI",
+  "short_name": "B737 CBTA",
+  "description": "B737 AH Ops Center QR - consultable hors ligne",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0A0C10",
+  "theme_color": "#0A0C10",
+  "icons": [
+    {
+      "src": "./icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
