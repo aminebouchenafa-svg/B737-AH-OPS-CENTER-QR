@@ -1,18 +1,18 @@
 {
-  "name": "B737 CBTA TRI",
-  "short_name": "B737 CBTA",
-  "description": "B737 AH Ops Center QR - consultable hors ligne",
+  "name": "B737 OPS INFO QR",
+  "short_name": "B737 OPS QR",
+  "description": "Air Algérie - B737 Ops Info QR - Quick Reference System - consultable hors ligne",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0A0C10",
-  "theme_color": "#0A0C10",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
   "icons": [
     {
-      "src": "./icon-256.png",
-      "sizes": "256x256",
-      "type": "image/png",
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
