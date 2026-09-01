@@ -68,8 +68,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .subblock{border-radius:16px;border:2px solid;padding:20px 16px;cursor:pointer;transition:transform .2s;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent}
 .subblock:active{transform:scale(.97)}
 .subblock-ico{font-size:28px;flex-shrink:0}
-.subblock-name{font-size:17px;font-weight:900}
-.subblock-desc{font-size:13px;opacity:.65;margin-top:3px}
+.subblock-name{font-size:22px;font-weight:900}
+.subblock-desc{font-size:14px;opacity:.65;margin-top:3px}
 
 /* TABS */
 .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid rgba(255,255,255,.08);flex-wrap:wrap;padding-bottom:0}
@@ -362,6 +362,9 @@ const C={
   grf:  {n:"#ffe040",g:"rgba(255,224,64,.4)", d:"#5c4000",m:"#f9a825"},
   brnav:{n:"#60ff60",g:"rgba(96,255,96,.4)",  d:"#1b5e20",m:"#2e7d32"},
   util: {n:"#40d0ff",g:"rgba(64,208,255,.35)",d:"#003040",m:"#0097a7"},
+  contacts:{n:"#ff5fa2",g:"rgba(255,95,162,.35)",d:"#661a3d",m:"#e91e8c"},
+  delay:{n:"#7c83ff",g:"rgba(124,131,255,.35)",d:"#242569",m:"#5c5ce6"},
+  notes:{n:"#ffb020",g:"rgba(255,176,32,.35)",d:"#5c3d00",m:"#ff9800"},
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1343,7 +1346,7 @@ function buildBRNAV() {
 
 // ── CONTACTS ──
 function buildContacts() {
-  const c=C.util; const wrap=el('div','page');
+  const c=C.contacts; const wrap=el('div','page');
   const card=buildCard(L('COMMUNICATIONS COMPAGNIE VHF/ACARS','COMPANY VHF/ACARS COMMUNICATIONS'), c.n);
   const inp=el('input','inp'); inp.placeholder=L('🔍 Rechercher station, pays, prestataire...','🔍 Search station, country, handler...'); inp.style.cssText='width:100%;margin-bottom:16px';
   const tblWrap=el('div','tbl-wrap');
@@ -1375,7 +1378,7 @@ function buildContacts() {
 
 // ── DELAY ──
 function buildDelay() {
-  const c=C.util; const wrap=el('div','page');
+  const c=C.delay; const wrap=el('div','page');
   const card=buildCard(L('RECHERCHE CODE DE RETARD','DELAY CODE LOOKUP'), c.n);
   const row=el('div','row');
   const inp=el('input','inp'); inp.placeholder=L('Entrer le code (ex: 93)','Enter the code (e.g. 93)'); inp.type='number'; inp.min='1'; inp.max='99';
@@ -1408,7 +1411,7 @@ function buildDelay() {
 
 // ── NOTES ──
 function buildNotes() {
-  const c=C.util; const wrap=el('div','page');
+  const c=C.notes; const wrap=el('div','page');
   const card=buildCard('📝 '+L('NOTES DE VOL','FLIGHT NOTES'), c.n);
   card.appendChild(el('div','info',L('Notes sauvegardées pour cette session uniquement.','Notes saved for this session only.')));
   const ta=el('textarea','notes-ta'); ta.placeholder=L('Saisir notes, remarques, procédures spéciales...','Enter notes, remarks, special procedures...'); ta.rows=12;
@@ -1436,9 +1439,9 @@ const SECTIONS=[
   {id:'brnav',icon:'🧭',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
 ];
 const UTILS=[
-  {id:'contacts',icon:'📻',name:'CONTACTS',col:C.util},
-  {id:'delay',   icon:'⏱️',name:'CODES RETARD',col:C.util},
-  {id:'notes',   icon:'📝',name:'NOTES',col:C.util},
+  {id:'contacts',icon:'📻',name:'CONTACTS',col:C.contacts},
+  {id:'delay',   icon:'⏱️',name:'CODES RETARD',col:C.delay},
+  {id:'notes',   icon:'📝',name:'NOTES',col:C.notes},
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -1462,7 +1465,10 @@ function buildApp() {
   const tools=el('div','hdr-tools');
   const UTIL_NAMES={contacts:'CONTACTS',delay:L('CODES RETARD','DELAY CODES'),notes:L('NOTES','NOTES')};
   UTILS.forEach(u=>{
-    const b=el('button',`tool-btn${STATE.page===u.id?' on':''}`,u.icon+' '+UTIL_NAMES[u.id]);
+    const b=el('button','tool-btn',u.icon+' '+UTIL_NAMES[u.id]);
+    if(STATE.page===u.id){
+      b.style.cssText=`border-color:${u.col.n}99;color:${u.col.n};background:${u.col.n}1a;box-shadow:0 0 12px ${u.col.g}`;
+    }
     b.addEventListener('click',()=>{
       if(STATE.page===u.id){STATE.page=null;STATE.sub=null;}else{STATE.page=u.id;STATE.sub=null;}
       render();
