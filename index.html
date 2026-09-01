@@ -762,10 +762,10 @@ function buildLVP(sub) {
 
   if(sub==='limites'){
     const card=el('div','card'); const ttl=el('div','card-ttl',L('VÉRIFICATEUR CONDITIONS LVP','LVP CONDITIONS CHECKER')); ttl.style.color=c.n; card.appendChild(ttl);
-    const info=el('div','info',L('Entrez les conditions actuelles pour vérifier si LVP possible.','Enter current conditions to check whether LVP is possible.')); card.appendChild(info);
+    const info=el('div','info',L('Entrez les conditions actuelles pour vérifier si LVP possible. Le RWYCC ajuste automatiquement la limite de vent traversier via le tableau RCAM.','Enter current conditions to check whether LVP is possible. RWYCC automatically adjusts the crosswind limit via the RCAM table.')); card.appendChild(info);
     const row=el('div','row');
     const wInp=el('input','inp'); wInp.placeholder=L('Vent traversier (kt)','Crosswind (kt)'); wInp.type='number';
-    const rInp=el('input','inp'); rInp.placeholder='RWYCC (0-6)'; rInp.type='number';
+    const rInp=el('input','inp'); rInp.placeholder='RWYCC (0-6)'; rInp.type='number'; rInp.min='0'; rInp.max='6';
     const vInp=el('input','inp'); vInp.placeholder=L('Visibilité (m)','Visibility (m)'); vInp.type='number';
     row.appendChild(wInp); row.appendChild(rInp); row.appendChild(vInp);
     card.appendChild(row);
@@ -775,11 +775,52 @@ function buildLVP(sub) {
     checkBtn.addEventListener('click',()=>{
       const wind=parseFloat(wInp.value), rwycc=parseInt(rInp.value), vis=parseInt(vInp.value);
       const issues=[];
-      if(!isNaN(wind)&&wind>20)issues.push(L(`Vent traversier ${wind} kt > 20 kt limite LVP`,`Crosswind ${wind} kt > 20 kt LVP limit`));
+
+      // RWYCC entré → lookup automatique dans le tableau RCAM (limite XW LDG)
+      const rcamRow = !isNaN(rwycc) ? RCAM_DATA.find(r=>r.rwycc===rwycc) : null;
+      const isDry = !isNaN(rwycc) && rwycc===6;
+      const isContaminated = !isNaN(rwycc) && rwycc<6;
+
+      let xwLimit=20, rcamCapped=false;
+      if(rcamRow && isContaminated){
+        const ldgNum=parseInt(rcamRow.ldg,10);
+        if(isNaN(ldgNum)){
+          issues.push(L(`RWYCC ${rwycc} – Atterrissage interdit (XW LDG RCAM = NIL)`,`RWYCC ${rwycc} – Landing prohibited (RCAM XW LDG = NIL)`));
+          xwLimit=0;
+        } else if(ldgNum<20){ xwLimit=ldgNum; rcamCapped=true; }
+      }
+
+      if(!isNaN(wind) && wind>xwLimit){
+        issues.push(rcamCapped
+          ? L(`Vent traversier ${wind} kt > ${xwLimit} kt (limite RCAM réduite – RWYCC ${rwycc})`,`Crosswind ${wind} kt > ${xwLimit} kt (reduced RCAM limit – RWYCC ${rwycc})`)
+          : L(`Vent traversier ${wind} kt > ${xwLimit} kt limite LVP`,`Crosswind ${wind} kt > ${xwLimit} kt LVP limit`));
+      }
       if(!isNaN(rwycc)&&rwycc<=1)issues.push(L(`RWYCC ${rwycc} – Piste trop glissante (PAUVRE ou NUL)`,`RWYCC ${rwycc} – Runway too slippery (POOR or NIL)`));
       if(!isNaN(vis)&&vis<75)issues.push(L(`Visibilité ${vis} m < 75 m (limite CAT IIIA)`,`Visibility ${vis} m < 75 m (CAT IIIA limit)`));
-      if(issues.length===0) resDiv.innerHTML='<div class="ok-box"><div class="res-val" style="color:#60ff60">✅ '+L('CONDITIONS LVP ACCEPTABLES','LVP CONDITIONS ACCEPTABLE')+'</div></div>';
-      else resDiv.innerHTML=`<div class="err-box"><div class="res-val" style="color:#ff3355">🚨 ${L('LVP NON AUTORISÉ','LVP NOT AUTHORIZED')}</div>${issues.map(i=>`<div style="margin-top:8px;font-size:16px;color:#ff9090">• ${i}</div>`).join('')}</div>`;
+
+      // Totem piste contaminée / non contaminée
+      let totem='';
+      if(!isNaN(rwycc)){
+        totem = isDry
+          ? `<div class="chip c-ok" style="margin-bottom:12px">${L('✅ PISTE SÈCHE — NON CONTAMINÉE','✅ DRY RUNWAY — NOT CONTAMINATED')}</div>`
+          : `<div class="chip c-bad" style="margin-bottom:12px">${L('⚠️ PISTE CONTAMINÉE','⚠️ CONTAMINATED RUNWAY')}</div>`;
+      }
+
+      // Tableau RCAM intégré en transparence (ligne correspondante)
+      let rcamInfo='';
+      if(rcamRow){
+        rcamInfo=`<div style="margin-top:12px;padding:12px 14px;background:${rcamRow.clr}10;border:1.5px solid ${rcamRow.clr}44;border-radius:10px">
+          <div style="font-size:11px;color:#7090aa;letter-spacing:1.5px;margin-bottom:6px;font-family:monospace">RCAM RWYCC ${rwycc} — ${L('LU AUTOMATIQUEMENT','AUTO-LOOKED-UP')}</div>
+          <div style="font-size:15px;margin-bottom:4px">${rcamDesc(rcamRow)}</div>
+          <div style="font-size:14px;color:#7090aa">${L('Freinage','Braking')}: <b style="color:${rcamRow.clr}">${rcamBraking(rcamRow)}</b> &nbsp;·&nbsp; ${L('XW LDG (RCAM)','XW LDG (RCAM)')}: <b style="color:${rcamRow.clr}">${rcamRow.ldg}${rcamRow.ldg!=='NIL'?' kt':''}</b></div>
+        </div>`;
+      }
+
+      const body = issues.length===0
+        ? '<div class="ok-box"><div class="res-val" style="color:#60ff60">✅ '+L('CONDITIONS LVP ACCEPTABLES','LVP CONDITIONS ACCEPTABLE')+'</div></div>'
+        : `<div class="err-box"><div class="res-val" style="color:#ff3355">🚨 ${L('LVP NON AUTORISÉ','LVP NOT AUTHORIZED')}</div>${issues.map(i=>`<div style="margin-top:8px;font-size:16px;color:#ff9090">• ${i}</div>`).join('')}</div>`;
+
+      resDiv.innerHTML = totem + body + rcamInfo;
     });
     card.appendChild(checkBtn); card.appendChild(resDiv);
     // Limits table
@@ -791,6 +832,7 @@ function buildLVP(sub) {
       r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 12px ${c.g}">${v}</span>`;
       lCard.appendChild(r);
     });
+    lCard.appendChild(el('div','tip',L('* En cas de piste contaminée, la limite de vent traversier est réduite selon le tableau RCAM (calcul automatique dans le vérificateur ci-dessus).','* In case of contaminated runway, the crosswind limit is reduced per the RCAM table (calculated automatically in the checker above).')));
     wrap.appendChild(card); wrap.appendChild(lCard);
   }
 
