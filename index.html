@@ -129,6 +129,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 select.inp{cursor:pointer}
 
 /* TOGGLE */
+.apfd-box{border:1.5px dashed rgba(255,255,255,.15);border-radius:12px;padding:6px 6px 2px;margin-bottom:10px}
+.or-divider{text-align:center;font-family:monospace;font-size:11px;font-weight:900;color:#7090aa;letter-spacing:2px;margin:-2px 0 2px}
 .eq-row{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:10px;margin-bottom:3px;transition:background .2s}
 .eq-row.inop{background:rgba(255,0,51,.08)}
 .eq-name{font-size:17px;flex:1;font-weight:700}
@@ -548,34 +550,62 @@ function buildRNP(sub) {
 
     const infoBox=el('div','info',L('Activez le toggle pour chaque équipement <b>INOPÉRANT</b> (panne ou MEL INOP)','Toggle each <b>INOPERATIVE</b> item (failed or dispatched MEL INOP)')); card.appendChild(infoBox);
     const eqContainer=el('div'); card.appendChild(eqContainer);
+    const noteContainer=el('div'); card.appendChild(noteContainer);
     const resultDiv=el('div'); card.appendChild(resultDiv);
 
     const failed={};
+    function buildToggleRow(id,label,req){
+      const row=el('div',`eq-row${failed[id]?' inop':''}`);
+      const name=el('div','eq-name',label);
+      if(failed[id]){name.style.textDecoration='line-through';name.style.color='#ff3355';}
+      const reqEl=el('div','eq-req',req);
+      const tog=el('label','tog');
+      const input=el('input'); input.type='checkbox'; input.checked=!!failed[id];
+      const sl=el('span','sl');
+      tog.appendChild(input); tog.appendChild(sl);
+      input.addEventListener('change',()=>{ failed[id]=!failed[id]; rebuildEquip(); });
+      row.appendChild(name); row.appendChild(reqEl); row.appendChild(tog);
+      return row;
+    }
+
     function rebuildEquip(){
-      const baseEquip=[
-        {id:'e1',label:'AP / FD',req:L('1 ou 2','1 or 2')},{id:'e2',label:'FMC',req:L('2 requis','2 required')},{id:'e3',label:'CDU/MCDU',req:L('2 requis','2 required')},
+      const otherEquip=[
+        {id:'e2',label:'FMC',req:L('2 requis','2 required')},{id:'e3',label:'CDU/MCDU',req:L('2 requis','2 required')},
         {id:'e4',label:'GPS',req:L('1 requis','1 required')},{id:'e5',label:'FMC Database',req:'CURRENT'},{id:'e6',label:L('IRS/ADIRU en NAV','IRS/ADIRU in NAV'),req:L('2 requis','2 required')},
         {id:'e7',label:L('ND (mode MAP)','ND (MAP mode)'),req:L('2 requis','2 required')},{id:'e8',label:'FMC Alert Light',req:L('1 requis','1 required')},{id:'e9',label:'EGPWS',req:L('1 requis','1 required')},
         {id:'e10',label:L('Radio Altimètre','Radio Altimeter'),req:L('1 requis','1 required')},{id:'e11',label:L('PFD/ND sans flags invalides','PFD/ND with no invalid flags'),req:L('Requis','Required')},
-        ...(minima==='vnav'?[{id:'v1',label:'NPS (Nav Performance Scales)',req:L('Installé & opérationnel','Installed & operative')},{id:'v2',label:L('Radio Alt même côté AP actif','Radio Alt on same side as active AP'),req:L('Requis','Required')}]:[]),
+        ...(minima==='vnav'?[{id:'v1',label:'NPS (Nav Performance Scales)',req:L('Installé & opérationnel','Installed & operative')}]:[]),
       ];
       eqContainer.innerHTML='';
-      baseEquip.forEach(eq=>{
-        const row=el('div',`eq-row${failed[eq.id]?' inop':''}`);
-        const name=el('div','eq-name',eq.label);
-        if(failed[eq.id]){name.style.textDecoration='line-through';name.style.color='#ff3355';}
-        const req=el('div','eq-req',eq.req);
-        const tog=el('label','tog');
-        const input=el('input'); input.type='checkbox'; input.checked=!!failed[eq.id];
-        const sl=el('span','sl');
-        tog.appendChild(input); tog.appendChild(sl);
-        input.addEventListener('change',()=>{ failed[eq.id]=!failed[eq.id]; rebuildEquip(); });
-        row.appendChild(name); row.appendChild(req); row.appendChild(tog);
-        eqContainer.appendChild(row);
-      });
-      const failCount=baseEquip.filter(e=>failed[e.id]).length;
-      if(failCount===0) resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#60ff60">✅ ${L('APPROCHE RNP AUTORISÉE','RNP APPROACH AUTHORIZED')}</div></div>`;
-      else resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#ff3355">🚨 ${L(`RNP INTERDITE – ${failCount} équipement(s) inopérant(s)`,`RNP PROHIBITED – ${failCount} item(s) inoperative`)}</div></div>`;
+
+      // AP / FD : relation OU — 1 A/P opérationnel OU 2 F/D opérationnels (pas les deux à la fois)
+      const apfdBox=el('div','apfd-box');
+      apfdBox.appendChild(buildToggleRow('ap', L('A/P (pilote automatique)','A/P (autopilot)'), L('1 requis','1 required')));
+      apfdBox.appendChild(el('div','or-divider', L('— OU —','— OR —')));
+      apfdBox.appendChild(buildToggleRow('fd', L('F/D (les deux côtés)','F/D (both sides)'), L('2 requis','2 required')));
+      eqContainer.appendChild(apfdBox);
+
+      otherEquip.forEach(eq=>{ eqContainer.appendChild(buildToggleRow(eq.id, eq.label, eq.req)); });
+
+      // Note importante LNAV/VNAV : Radio Alt même côté que l'AP actif — rappel, pas un toggle pass/fail
+      noteContainer.innerHTML='';
+      if(minima==='vnav'){
+        noteContainer.appendChild(el('div','tip','⚠️ '+L('IMPORTANT : le Radio Altimètre doit être opérationnel du <b>même côté</b> que le pilote automatique utilisé.','IMPORTANT: the Radio Altimeter must be operative on the <b>same side</b> as the operating autopilot.')));
+      }
+
+      const apOk=!failed['ap'], fdOk=!failed['fd'];
+      const apfdOk = apOk || fdOk;
+      const otherFailed = otherEquip.filter(e=>failed[e.id]);
+      const allOk = apfdOk && otherFailed.length===0;
+
+      if(allOk){
+        resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#60ff60">✅ ${L('APPROCHE RNP AUTORISÉE','RNP APPROACH AUTHORIZED')}</div></div>`;
+      } else {
+        const reasons=[];
+        if(!apfdOk) reasons.push(L('A/P ET F/D insuffisants – il faut au moins 1 A/P OU 2 F/D opérationnels','A/P AND F/D insufficient – need at least 1 A/P OR 2 F/D operative'));
+        otherFailed.forEach(e=>reasons.push(L(`${e.label} inopérant (${e.req})`,`${e.label} inoperative (${e.req})`)));
+        resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#ff3355">🚨 ${L('RNP INTERDITE','RNP PROHIBITED')}</div>${reasons.map(r=>`<div style="margin-top:8px;font-size:15px;color:#ff9090">• ${r}</div>`).join('')}</div>`;
+      }
     }
     rebuildEquip();
     wrap.appendChild(card);
