@@ -10,8 +10,10 @@
 <title>B737 OPS INFO QR</title>
 <link rel="manifest" href="./manifest.webmanifest"/>
 
-<!-- apple-touch-icon placeholder (replaced by canvas PNG below) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiIHJ4PSIyMDAiIGZpbGw9IiMxYTFhMmUiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjQ2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjBmZjYwIiBzdHJva2Utd2lkdGg9IjYiIG9wYWNpdHk9IjAuNCIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUxMiw0MDApIHJvdGF0ZSgtMzApIj48ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSIxNjAiIHJ5PSIyOCIgZmlsbD0iIzYwZmY2MCIvPjxlbGxpcHNlIGN4PSIxNjAiIGN5PSIwIiByeD0iNDAiIHJ5PSIxOCIgZmlsbD0iIzQwZmY4MCIvPjxwYXRoIGQ9Ik0yMCwtMjAgTC02MCwtMTIwIEwtMTAwLC0xMTAgTC0zMCwyMCBaIiBmaWxsPSIjNDBkMGZmIi8+PHBhdGggZD0iTTIwLDIwIEwtNjAsMTIwIEwtMTAwLDExMCBMLTMwLC0yMCBaIiBmaWxsPSIjNDBkMGZmIi8+PGVsbGlwc2UgY3g9Ii0yMCIgY3k9Ii0xMDUiIHJ4PSIyMCIgcnk9IjEyIiBmaWxsPSIjZmZlMDQwIi8+PGVsbGlwc2UgY3g9Ii0yMCIgY3k9IjEwNSIgcng9IjIwIiByeT0iMTIiIGZpbGw9IiNmZmUwNDAiLz48L2c+PHRleHQgeD0iNTEyIiB5PSI2OTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI3MCIgZm9udC13ZWlnaHQ9IjkwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzYwZmY2MCI+QUlSIEFMR0VSSUU8L3RleHQ+PHRleHQgeD0iNTEyIiB5PSI3OTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMTAiIGZvbnQtd2VpZ2h0PSI5MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM0MGQwZmYiPkI3Mzc8L3RleHQ+PHRleHQgeD0iNTEyIiB5PSI4NjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI1MCIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2RmODBmZiI+T1BTIElORk8gUVI8L3RleHQ+PC9zdmc+"/>
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png"/>
+<link rel="apple-touch-icon" sizes="152x152" href="./icon-180.png"/>
+<link rel="apple-touch-icon" sizes="167x167" href="./icon-180.png"/>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -165,110 +167,6 @@ input:checked+.sl::before{transform:translateX(22px)}
 @media(min-width:1024px){html{font-size:21px}.pg-title{font-size:34px}}
 </style>
 
-<script>
-// Generate PNG icon via canvas for iOS homescreen
-(function() {
-  try {
-    var canvas = document.createElement('canvas');
-    canvas.width = 180; canvas.height = 180;
-    var ctx = canvas.getContext('2d');
-    
-    // Background
-    var bgGrad = ctx.createLinearGradient(0,0,180,180);
-    bgGrad.addColorStop(0, '#1a1a3e');
-    bgGrad.addColorStop(1, '#0d0d1a');
-    ctx.fillStyle = bgGrad;
-    roundRect(ctx, 0, 0, 180, 180, 40);
-    ctx.fill();
-    
-    // Green border
-    ctx.strokeStyle = '#00ff88';
-    ctx.lineWidth = 3;
-    ctx.globalAlpha = 0.7;
-    roundRect(ctx, 1.5, 1.5, 177, 177, 39);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    
-    // Draw airplane
-    ctx.save();
-    ctx.translate(90, 70);
-    ctx.rotate(-35 * Math.PI / 180);
-    
-    // Fuselage
-    var gr = ctx.createLinearGradient(-35,0,35,0);
-    gr.addColorStop(0,'#00cc66'); gr.addColorStop(1,'#00ff88');
-    ctx.fillStyle = gr;
-    ellipse(ctx, 0, 0, 35, 7.5);
-    ctx.fill();
-    
-    // Wings
-    ctx.fillStyle = '#40d0ff';
-    ctx.beginPath(); ctx.moveTo(4,-5); ctx.lineTo(-15,-30); ctx.lineTo(-23,-27); ctx.lineTo(-7,5); ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(4,5); ctx.lineTo(-15,30); ctx.lineTo(-23,27); ctx.lineTo(-7,-5); ctx.closePath(); ctx.fill();
-    
-    // Tail
-    ctx.fillStyle = '#df80ff';
-    ctx.beginPath(); ctx.moveTo(-27,-4); ctx.lineTo(-38,-19); ctx.lineTo(-42,-17); ctx.lineTo(-33,0); ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(-27,4); ctx.lineTo(-38,19); ctx.lineTo(-42,17); ctx.lineTo(-33,0); ctx.closePath(); ctx.fill();
-    
-    // Engines
-    ctx.fillStyle = '#ffe040';
-    ellipse(ctx, -7, -25, 5.5, 3.5); ctx.fill();
-    ellipse(ctx, -7, 25, 5.5, 3.5); ctx.fill();
-    
-    ctx.restore();
-    
-    // Text
-    ctx.fillStyle = '#00ff88';
-    ctx.font = 'bold 13px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('AIR ALGERIE', 90, 118);
-    
-    ctx.fillStyle = '#40d0ff';
-    ctx.font = 'bold 27px Arial';
-    ctx.fillText('B737', 90, 143);
-    
-    ctx.fillStyle = '#df80ff';
-    ctx.font = 'bold 10px Arial';
-    ctx.fillText('OPS INFO QR', 90, 161);
-    
-    // Set as apple-touch-icon
-    var pngUrl = canvas.toDataURL('image/png');
-    var link = document.querySelector('link[rel="apple-touch-icon"]') || document.createElement('link');
-    link.rel = 'apple-touch-icon';
-    link.href = pngUrl;
-    document.head.appendChild(link);
-    
-    // Also set multiple sizes
-    ['152x152','167x167','180x180'].forEach(function(sz) {
-      var l = document.createElement('link');
-      l.rel = 'apple-touch-icon';
-      l.sizes = sz;
-      l.href = pngUrl;
-      document.head.appendChild(l);
-    });
-    
-  } catch(e) { console.log('Icon generation error:', e); }
-  
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
-  }
-  function ellipse(ctx, cx, cy, rx, ry) {
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
-  }
-})();
-</script>
 
 </head>
 <body>
