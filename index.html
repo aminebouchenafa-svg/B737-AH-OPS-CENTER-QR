@@ -41,6 +41,7 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .home{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;gap:28px}
 .home h1{font-size:clamp(26px,5vw,48px);font-weight:900;text-align:center;background:linear-gradient(135deg,#60ff60,#40d0ff,#df80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;line-height:1.2}
 .home-sub{font-family:monospace;font-size:12px;color:#7090aa;letter-spacing:3px;text-align:center;margin-top:-16px}
+.training-badge{font-family:monospace;font-size:11px;font-weight:800;letter-spacing:2px;color:#ffe040;background:rgba(255,224,64,.1);border:1.5px solid rgba(255,224,64,.4);border-radius:20px;padding:6px 16px;text-align:center}
 
 /* BLOCKS */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:880px}
@@ -1408,6 +1409,7 @@ function buildApp() {
     const home=el('div','home');
     const h1=el('h1',null,'B737 OPS CENTER'); home.appendChild(h1);
     const sub=el('p','home-sub',L('SÉLECTIONNER UNE PROCÉDURE · AIR ALGÉRIE · DOA','SELECT A PROCEDURE · AIR ALGÉRIE · DOA')); home.appendChild(sub);
+    const trainingBadge=el('div','training-badge',L('⚠️ POUR ENTRAÎNEMENT UNIQUEMENT — NON OFFICIEL','⚠️ FOR TRAINING PURPOSES ONLY — UNOFFICIAL')); home.appendChild(trainingBadge);
     const grid=el('div','grid');
     SECTIONS.forEach(s=>{
       const block=el('div','block');
@@ -1513,6 +1515,16 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
     margin-bottom: 4px;
   ">
     AIR ALGÉRIE · B737 OPS INFO QR · QUICK REFERENCE SYSTEM
+  </div>
+  <div style="
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffe040;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  ">
+    ⚠️ POUR ENTRAÎNEMENT UNIQUEMENT — NON OFFICIEL / FOR TRAINING PURPOSES ONLY — UNOFFICIAL
   </div>
   <div style="
     font-family: monospace;
