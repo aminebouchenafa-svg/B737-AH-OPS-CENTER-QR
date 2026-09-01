@@ -28,30 +28,29 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 /* HEADER */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(26,26,46,.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;gap:10px;flex-wrap:wrap}
 .logo-row{display:flex;align-items:center;gap:12px}
-.logo-icon{width:48px;height:48px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(96,255,96,.15),rgba(64,200,255,.15));border:2px solid rgba(96,255,96,.45);box-shadow:0 0 18px rgba(96,255,96,.3);gap:2px;flex-shrink:0}
-.logo-icon .plane{font-size:20px;filter:drop-shadow(0 0 6px #60ff60);line-height:1}
-.logo-icon .txt{font-size:8px;font-weight:900;color:#60ff60;letter-spacing:.5px;text-shadow:0 0 8px rgba(96,255,96,.8);line-height:1}
-.logo-name{font-size:14px;font-weight:900;letter-spacing:2px;color:#60ff60;text-shadow:0 0 14px rgba(96,255,96,.6);line-height:1.2}
-.logo-sub{font-size:10px;color:#7090aa;letter-spacing:1.5px;margin-top:3px;font-family:monospace}
+.logo-icon{width:48px;height:48px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,51,85,.45);box-shadow:0 0 18px rgba(255,51,85,.3);flex-shrink:0}
+.logo-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.logo-name{font-size:18px;font-weight:900;letter-spacing:2px;color:#ff3355;text-shadow:0 0 14px rgba(255,51,85,.6);line-height:1.2}
+.logo-sub{font-size:12px;color:#7090aa;letter-spacing:1.5px;margin-top:3px;font-family:monospace}
 .hdr-tools{display:flex;gap:6px;flex-wrap:wrap}
-.tool-btn{padding:8px 14px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap}
+.tool-btn{padding:10px 18px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:17px;font-weight:700;transition:all .2s;white-space:nowrap}
 .tool-btn:active,.tool-btn.on{border-color:rgba(64,208,255,.6);color:#40d0ff;background:rgba(64,208,255,.1);box-shadow:0 0 12px rgba(64,208,255,.25)}
 
 /* HOME */
 .home{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;gap:28px}
 .home h1{font-size:clamp(26px,5vw,48px);font-weight:900;text-align:center;background:linear-gradient(135deg,#60ff60,#40d0ff,#df80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;line-height:1.2}
 .home-sub{font-family:monospace;font-size:12px;color:#7090aa;letter-spacing:3px;text-align:center;margin-top:-16px}
-.training-badge{font-family:monospace;font-size:11px;font-weight:800;letter-spacing:2px;color:#ffe040;background:rgba(255,224,64,.1);border:1.5px solid rgba(255,224,64,.4);border-radius:20px;padding:6px 16px;text-align:center}
+.training-badge{font-family:monospace;font-size:15px;font-weight:800;letter-spacing:2px;color:#ccff00;background:rgba(204,255,0,.1);border:1.5px solid rgba(204,255,0,.4);border-radius:20px;padding:8px 18px;text-align:center}
 
 /* BLOCKS */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:880px}
 @media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:380px){.grid{grid-template-columns:1fr}}
-.block{border-radius:22px;border:2px solid;padding:26px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:transform .2s,filter .2s;text-align:center;min-height:160px;justify-content:center;-webkit-tap-highlight-color:transparent}
+.block{border-radius:22px;border:2px solid;padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .2s,filter .2s;text-align:center;min-height:190px;justify-content:center;-webkit-tap-highlight-color:transparent}
 .block:active{transform:scale(.96);filter:brightness(1.2)}
-.block-ico{font-size:42px;line-height:1}
-.block-name{font-size:17px;font-weight:900;letter-spacing:2px}
-.block-sub{font-size:12px;letter-spacing:1px;opacity:.65}
+.block-ico{font-size:52px;line-height:1}
+.block-name{font-size:21px;font-weight:900;letter-spacing:2px}
+.block-sub{font-size:14px;letter-spacing:1px;opacity:.65}
 
 /* PAGE */
 .page{max-width:960px;margin:0 auto;padding:18px;animation:fadeUp .3s ease}
@@ -166,7 +165,7 @@ input:checked+.sl::before{transform:translateX(22px)}
 #ibanner p{margin:3px 0 0;color:#b0c8e0;font-size:13px;font-weight:400}
 #ibanner .ib-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#60ff60;font-size:20px;cursor:pointer;padding:0;line-height:1}
 
-@media(min-width:768px){html{font-size:19px}.block-name{font-size:19px}.ck-txt{font-size:19px}}
+@media(min-width:768px){html{font-size:19px}.block-name{font-size:23px}.ck-txt{font-size:19px}}
 @media(min-width:1024px){html{font-size:21px}.pg-title{font-size:34px}}
 </style>
 
@@ -1454,7 +1453,7 @@ function buildApp() {
   const hdr=el('div','hdr');
   const logoRow=el('div','logo-row');
   const logoIcon=el('div','logo-icon');
-  logoIcon.innerHTML='<div class="plane">✈️</div><div class="txt">B737 OPS</div>';
+  logoIcon.innerHTML='<img src="./icon-180.png" alt="B737 OPS CENTER" width="48" height="48"/>';
   const logoText=el('div');
   const logoName=el('div','logo-name','AIR ALGÉRIE B737 OPS INFO QR');
   const logoSub=el('div','logo-sub',L('DIRECTION DES OPÉRATIONS AÉRIENNES · QUICK REFERENCE','FLIGHT OPERATIONS DIRECTORATE · QUICK REFERENCE'));
