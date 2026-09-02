@@ -862,11 +862,26 @@ function buildLVP(sub) {
 
   if(sub==='limites'){
     const card=el('div','card'); const ttl=el('div','card-ttl',L('VÉRIFICATEUR CONDITIONS LVP','LVP CONDITIONS CHECKER')); ttl.style.color=c.n; card.appendChild(ttl);
-    const info=el('div','info',L('Entrez les conditions actuelles pour vérifier si LVP possible. Le RWYCC ajuste automatiquement la limite de vent traversier via le tableau RCAM.','Enter current conditions to check whether LVP is possible. RWYCC automatically adjusts the crosswind limit via the RCAM table.')); card.appendChild(info);
+    const info=el('div','info',L('Entrez les conditions actuelles pour vérifier si LVP possible. Le RWYCC ajuste automatiquement la limite de vent traversier via le tableau RCAM. Le RVR minimum appliqué dépend de la catégorie choisie ci-dessous (minima Air Algérie).','Enter current conditions to check whether LVP is possible. RWYCC automatically adjusts the crosswind limit via the RCAM table. The applied minimum RVR depends on the category selected below (Air Algérie minima).')); card.appendChild(info);
+
+    let selectedCat='iiia';
+    const catRow=el('div','row');
+    const catII=el('button','btn btn-g','CAT II');
+    const catIIIA=el('button','btn','CAT IIIA');
+    const updateCatBtns=()=>{
+      if(selectedCat==='ii'){catII.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;catIIIA.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+      else{catIIIA.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;catII.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+    };
+    catII.addEventListener('click',()=>{selectedCat='ii';updateCatBtns();});
+    catIIIA.addEventListener('click',()=>{selectedCat='iiia';updateCatBtns();});
+    updateCatBtns();
+    catRow.appendChild(catII); catRow.appendChild(catIIIA);
+    card.appendChild(catRow);
+
     const row=el('div','row');
     const wInp=el('input','inp'); wInp.placeholder=L('Vent traversier (kt)','Crosswind (kt)'); wInp.type='number';
     const rInp=el('input','inp'); rInp.placeholder='RWYCC (0-6)'; rInp.type='number'; rInp.min='0'; rInp.max='6';
-    const vInp=el('input','inp'); vInp.placeholder=L('Visibilité (m)','Visibility (m)'); vInp.type='number';
+    const vInp=el('input','inp'); vInp.placeholder=L('RVR / Visibilité (m)','RVR / Visibility (m)'); vInp.type='number';
     row.appendChild(wInp); row.appendChild(rInp); row.appendChild(vInp);
     card.appendChild(row);
     const checkBtn=el('button','btn',L('VÉRIFIER LVP','CHECK LVP'));
@@ -875,6 +890,8 @@ function buildLVP(sub) {
     checkBtn.addEventListener('click',()=>{
       const wind=parseFloat(wInp.value), rwycc=parseInt(rInp.value), vis=parseInt(vInp.value);
       const issues=[];
+      const catLabel = selectedCat==='ii' ? 'CAT II' : 'CAT IIIA';
+      const visMin = selectedCat==='ii' ? 300 : 175;
 
       // RWYCC entré → lookup automatique dans le tableau RCAM (limite XW LDG)
       const rcamRow = !isNaN(rwycc) ? RCAM_DATA.find(r=>r.rwycc===rwycc) : null;
@@ -896,7 +913,7 @@ function buildLVP(sub) {
           : L(`Vent traversier ${wind} kt > ${xwLimit} kt limite LVP`,`Crosswind ${wind} kt > ${xwLimit} kt LVP limit`));
       }
       if(!isNaN(rwycc)&&rwycc<=1)issues.push(L(`RWYCC ${rwycc} – Piste trop glissante (PAUVRE ou NUL)`,`RWYCC ${rwycc} – Runway too slippery (POOR or NIL)`));
-      if(!isNaN(vis)&&vis<75)issues.push(L(`Visibilité ${vis} m < 75 m (limite CAT IIIA)`,`Visibility ${vis} m < 75 m (CAT IIIA limit)`));
+      if(!isNaN(vis)&&vis<visMin)issues.push(L(`RVR/Visibilité ${vis} m < ${visMin} m (limite RVR TDZ ${catLabel})`,`RVR/Visibility ${vis} m < ${visMin} m (${catLabel} TDZ RVR limit)`));
 
       // Totem piste contaminée / non contaminée
       let totem='';
