@@ -242,6 +242,22 @@ const RCAM_DATA = [
 const rcamDesc = r => L(r.desc, r.descEn);
 const rcamBraking = r => L(r.braking, r.brakingEn);
 
+// Auto-inserts "/" between digits as the user types (e.g. RCR "522" -> "5/2/2")
+function attachDigitSlashMask(inp, maxDigits){
+  inp.addEventListener('input',()=>{
+    const digits = inp.value.replace(/[^0-9]/g,'').slice(0,maxDigits);
+    inp.value = digits.length<=1 ? digits : digits.split('').join('/');
+  });
+}
+// Auto-inserts "/" after the runway designator (e.g. MOTNE "R28R290050" -> "R28R/290050")
+function attachRunwaySlashMask(inp){
+  inp.addEventListener('input',()=>{
+    const raw = inp.value.toUpperCase().replace(/\//g,'');
+    const m = raw.match(/^(R\d{2}[LCR]?)(\d+)$/);
+    inp.value = m ? `${m[1]}/${m[2]}` : raw;
+  });
+}
+
 const SNOWT = {"0":"Sec et dégagé","1":"Humide","2":"Mouillé/Flaques d'eau","3":"Givre/Gelée <1mm","4":"Neige sèche","5":"Neige mouillée","6":"Gadoue (Slush)","7":"Glace","8":"Neige compactée","9":"Ornières gelées","/":"Non signalé"};
 const SNOWT_EN = {"0":"Dry and clear","1":"Damp","2":"Wet/Water patches","3":"Frost/Ice <1mm","4":"Dry snow","5":"Wet snow","6":"Slush","7":"Ice","8":"Compacted snow","9":"Frozen ruts","/":"Not reported"};
 const SNOWE = {"1":"10% ou moins","2":"11–25%","5":"26–50%","9":"51–100%","/":"Non signalé"};
@@ -726,26 +742,96 @@ function buildLVP(sub) {
   if(sub==='equip'){
     const card=el('div','card');
     const ttl=el('div','card-ttl',L('ÉQUIPEMENT EN PANNE – IMPACT LVP','FAILED EQUIPMENT – LVP IMPACT')); ttl.style.color=c.n; card.appendChild(ttl);
-    card.appendChild(el('div','info',L('Entrez l\'équipement <b>en panne</b> ou dispatché MEL INOP.<br>L\'app indique si le LVP CAT 2 / CAT 3A est encore autorisé.','Enter the <b>failed</b> equipment or item dispatched MEL INOP.<br>The app shows whether LVP CAT 2 / CAT 3A is still authorized.')));
+    card.appendChild(el('div','info',L('Entrez l\'équipement <b>en panne</b> ou dispatché MEL INOP, puis sélectionnez-le dans la liste.','Enter the <b>failed</b> equipment or item dispatched MEL INOP, then pick it from the list.')));
 
+    const searchWrap=el('div'); searchWrap.style.cssText='position:relative;margin-bottom:12px';
     const inp=el('input','inp');
     inp.placeholder=L('Équipement en panne ex: ANTISKID, FD, ILS, RADIO ALT...','Failed equipment e.g.: ANTISKID, FD, ILS, RADIO ALT...');
-    inp.style.cssText='width:100%;margin-bottom:12px';
-    card.appendChild(inp);
+    inp.style.cssText='width:100%';
+    searchWrap.appendChild(inp);
 
-    const alarmDiv=el('div');
-    card.appendChild(alarmDiv);
+    const suggestBox=el('div');
+    suggestBox.style.cssText=`position:absolute;left:0;right:0;top:calc(100% + 4px);background:#151530;border:1.5px solid ${c.n}55;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.5);max-height:280px;overflow-y:auto;z-index:20;display:none`;
+    searchWrap.appendChild(suggestBox);
+    card.appendChild(searchWrap);
 
-    // Matched results list
-    const matchList=el('div');
-    card.appendChild(matchList);
+    const alarmDiv=el('div'); card.appendChild(alarmDiv);
+    const resultDiv=el('div'); card.appendChild(resultDiv);
+
+    // Helper: render CAT badge
+    function catBadge(val, isXReq, isQtyReq){
+      var bg,brd,col,label;
+      if(isXReq){bg='rgba(255,0,51,.2)';brd='rgba(255,0,51,.6)';col='#ff3355';label=L('REQUIS (X)','REQUIRED (X)');}
+      else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label=L('REQUIS','REQUIRED');}
+      else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label=L('RECOMMANDÉ','RECOMMENDED');}
+      else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label=L('NON REQUIS','NOT REQUIRED');}
+      return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:700;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
+    }
+
+    function renderResult(found){
+      resultDiv.innerHTML='';
+      var isReqCat2 = found.c2 === 'X';
+      var isReqCat3 = found.c3 === 'X';
+      var isQtyCat2 = !isNaN(parseInt(found.c2)) && found.c2 !== '—';
+      var isQtyCat3 = !isNaN(parseInt(found.c3)) && found.c3 !== '—';
+
+      var d=el('div');
+      d.style.cssText='border-radius:14px;padding:18px 20px;margin-bottom:12px;border:2px solid;';
+
+      var c2Badge = catBadge(found.c2, isReqCat2, isQtyCat2);
+      var c3Badge = catBadge(found.c3, isReqCat3, isQtyCat3);
+
+      var blockedC2 = isReqCat2;
+      var blockedC3 = isReqCat3;
+      var warnC2 = isQtyCat2;
+      var warnC3 = isQtyCat3;
+
+      var borderColor='';
+      if(blockedC2 && blockedC3){
+        borderColor='rgba(255,0,51,.6)';
+        d.style.background='rgba(255,0,51,.1)';
+        d.style.boxShadow='0 0 16px rgba(255,0,51,.3)';
+        d.style.animation='pulse .9s ease infinite';
+      } else if(blockedC2 || blockedC3){
+        borderColor='rgba(255,100,0,.6)';
+        d.style.background='rgba(255,100,0,.08)';
+        d.style.boxShadow='0 0 12px rgba(255,100,0,.2)';
+      } else if(warnC2 || warnC3){
+        borderColor='rgba(255,150,0,.5)';
+        d.style.background='rgba(255,150,0,.07)';
+        d.style.boxShadow='0 0 9px rgba(255,150,0,.15)';
+      } else {
+        borderColor='rgba(96,255,96,.4)';
+        d.style.background='rgba(96,255,96,.06)';
+      }
+
+      var verdictC2='', verdictC3='';
+      if(blockedC2) verdictC2='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900">&#x1F6A8; '+L('LVP CAT 2 NON AUTORISE','LVP CAT 2 NOT AUTHORIZED')+'</div>';
+      else if(warnC2) verdictC2='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700">&#9888; '+L('CAT 2 - Verifier MEL min '+found.c2+' requis','CAT 2 - Check MEL, min '+found.c2+' required')+'</div>';
+      else verdictC2='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700">&#10003; '+L('CAT 2 - Non impacte','CAT 2 - Not impacted')+'</div>';
+      if(blockedC3) verdictC3='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900;margin-top:6px">&#x1F6A8; '+L('LVP CAT 3A NON AUTORISE','LVP CAT 3A NOT AUTHORIZED')+'</div>';
+      else if(warnC3) verdictC3='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#9888; '+L('CAT 3A - Verifier MEL min '+found.c3+' requis','CAT 3A - Check MEL, min '+found.c3+' required')+'</div>';
+      else verdictC3='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#10003; '+L('CAT 3A - Non impacte','CAT 3A - Not impacted')+'</div>';
+      var headerColor = (blockedC2||blockedC3)?'#ff3355':(warnC2||warnC3)?'#ff9900':'#60ff60';
+      var headerIcon  = (blockedC2||blockedC3)?'&#x1F6A8;':(warnC2||warnC3)?'&#9888;':'&#10003;';
+      var html = '<div style="font-size:20px;font-weight:900;color:'+headerColor+';margin-bottom:14px">'+headerIcon+' '+found.n+' '+L('EN PANNE','FAILED')+'</div>'
+           + '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">'
+           + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 2</div>'+c2Badge+'</div>'
+           + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 3A</div>'+c3Badge+'</div>'
+           + '</div>' + verdictC2 + verdictC3;
+
+      d.style.borderColor=borderColor;
+      d.innerHTML=html;
+      resultDiv.appendChild(d);
+    }
+
+    function hideSuggestions(){ suggestBox.style.display='none'; suggestBox.innerHTML=''; }
 
     inp.addEventListener('input',()=>{
       const q=inp.value.trim().toUpperCase();
-      alarmDiv.innerHTML=''; matchList.innerHTML='';
+      alarmDiv.innerHTML=''; resultDiv.innerHTML=''; hideSuggestions();
       if(q.length<2) return;
 
-      // Find ALL matching items
       const matches=LVP_EQ.filter(e=>e.n.includes(q)||e.n.split(' ').some(w=>w.startsWith(q)));
 
       if(!matches.length){
@@ -753,78 +839,24 @@ function buildLVP(sub) {
         return;
       }
 
-      // Helper: render CAT badge
-      function catBadge(val, isXReq, isQtyReq){
-        var bg,brd,col,label;
-        if(isXReq){bg='rgba(255,0,51,.2)';brd='rgba(255,0,51,.6)';col='#ff3355';label=L('REQUIS (X)','REQUIRED (X)');}
-        else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label=L('QUANTITÉ MIN','MIN QUANTITY');}
-        else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label=L('RECOMMANDÉ','RECOMMENDED');}
-        else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label=L('NON REQUIS','NOT REQUIRED');}
-        return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:700;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
-      }
-
-      // For each match, show alarm
-      matches.forEach(function(found){
-        var isReqCat2 = found.c2 === 'X';
-        var isReqCat3 = found.c3 === 'X';
-        var isQtyCat2 = !isNaN(parseInt(found.c2)) && found.c2 !== '—';
-        var isQtyCat3 = !isNaN(parseInt(found.c3)) && found.c3 !== '—';
-
-        var d=el('div');
-        d.style.cssText='border-radius:14px;padding:18px 20px;margin-bottom:12px;border:2px solid;';
-
-        var html='';
-        var borderColor='';
-
-        var c2Badge = catBadge(found.c2, isReqCat2, isQtyCat2);
-        var c3Badge = catBadge(found.c3, isReqCat3, isQtyCat3);
-
-        // Determine overall verdict
-        var blockedC2 = isReqCat2;
-        var blockedC3 = isReqCat3;
-        var warnC2 = isQtyCat2;
-        var warnC3 = isQtyCat3;
-
-        // Color the card
-        if(blockedC2 && blockedC3){
-          borderColor='rgba(255,0,51,.6)';
-          d.style.background='rgba(255,0,51,.1)';
-          d.style.boxShadow='0 0 16px rgba(255,0,51,.3)';
-          d.style.animation='pulse .9s ease infinite';
-        } else if(blockedC2 || blockedC3){
-          borderColor='rgba(255,100,0,.6)';
-          d.style.background='rgba(255,100,0,.08)';
-          d.style.boxShadow='0 0 12px rgba(255,100,0,.2)';
-        } else if(warnC2 || warnC3){
-          borderColor='rgba(255,150,0,.5)';
-          d.style.background='rgba(255,150,0,.07)';
-          d.style.boxShadow='0 0 9px rgba(255,150,0,.15)';
-        } else {
-          borderColor='rgba(96,255,96,.4)';
-          d.style.background='rgba(96,255,96,.06)';
-        }
-
-        // Build verdict line
-        var verdictC2='', verdictC3='';
-        if(blockedC2) verdictC2='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900">&#x1F6A8; '+L('LVP CAT 2 NON AUTORISE','LVP CAT 2 NOT AUTHORIZED')+'</div>';
-        else if(warnC2) verdictC2='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700">&#9888; '+L('CAT 2 - Verifier MEL min '+found.c2+' requis','CAT 2 - Check MEL, min '+found.c2+' required')+'</div>';
-        else verdictC2='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700">&#10003; '+L('CAT 2 - Non impacte','CAT 2 - Not impacted')+'</div>';
-        if(blockedC3) verdictC3='<div style="font-size:16px;color:#ff3355;background:rgba(255,0,51,.12);border-radius:8px;padding:9px 14px;font-weight:900;margin-top:6px">&#x1F6A8; '+L('LVP CAT 3A NON AUTORISE','LVP CAT 3A NOT AUTHORIZED')+'</div>';
-        else if(warnC3) verdictC3='<div style="font-size:16px;color:#ff9900;background:rgba(255,150,0,.1);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#9888; '+L('CAT 3A - Verifier MEL min '+found.c3+' requis','CAT 3A - Check MEL, min '+found.c3+' required')+'</div>';
-        else verdictC3='<div style="font-size:16px;color:#60ff60;background:rgba(96,255,96,.08);border-radius:8px;padding:9px 14px;font-weight:700;margin-top:6px">&#10003; '+L('CAT 3A - Non impacte','CAT 3A - Not impacted')+'</div>';
-        var headerColor = (blockedC2||blockedC3)?'#ff3355':(warnC2||warnC3)?'#ff9900':'#60ff60';
-        var headerIcon  = (blockedC2||blockedC3)?'&#x1F6A8;':(warnC2||warnC3)?'&#9888;':'&#10003;';
-        html = '<div style="font-size:20px;font-weight:900;color:'+headerColor+';margin-bottom:14px">'+headerIcon+' '+found.n+' '+L('EN PANNE','FAILED')+'</div>'
-             + '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">'
-             + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 2</div>'+c2Badge+'</div>'
-             + '<div><div style="font-size:11px;color:#7090aa;letter-spacing:1px;margin-bottom:6px;font-family:monospace">CAT 3A</div>'+c3Badge+'</div>'
-             + '</div>' + verdictC2 + verdictC3;
-        
-        d.style.borderColor=borderColor;
-        d.innerHTML=html;
-        matchList.appendChild(d);
+      matches.forEach(found=>{
+        const opt=el('div',null,found.n);
+        opt.style.cssText=`padding:13px 16px;cursor:pointer;font-size:16px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.06)`;
+        opt.addEventListener('mousedown',(ev)=>{
+          ev.preventDefault();
+          inp.value=found.n;
+          hideSuggestions();
+          alarmDiv.innerHTML='';
+          renderResult(found);
+        });
+        suggestBox.appendChild(opt);
       });
+      suggestBox.style.display='block';
     });
+
+    inp.addEventListener('focus',()=>{ if(suggestBox.innerHTML) suggestBox.style.display='block'; });
+    inp.addEventListener('blur',()=>{ setTimeout(hideSuggestions,150); });
+
     wrap.appendChild(card);
   }
 
@@ -901,7 +933,48 @@ function buildLVP(sub) {
       lCard.appendChild(r);
     });
     lCard.appendChild(el('div','tip',L('* En cas de piste contaminée, la limite de vent traversier est réduite selon le tableau RCAM (calcul automatique dans le vérificateur ci-dessus).','* In case of contaminated runway, the crosswind limit is reduced per the RCAM table (calculated automatically in the checker above).')));
-    wrap.appendChild(card); wrap.appendChild(lCard);
+
+    // Approach & landing LVO minima (Air Algérie approved)
+    const mCard=el('div','card'); const mt=el('div','card-ttl',L('MINIMA APPROCHE & ATTERRISSAGE (LVO)','APPROACH & LANDING MINIMA (LVO)')); mt.style.color=c.n; mCard.appendChild(mt);
+    mCard.appendChild(el('div','info',L('Minima les plus bas approuvés Air Algérie B737NG · Réf : M/LVO/PNT.','Air Algérie B737NG approved lowest minima · Ref: M/LVO/PNT.')));
+    const mTbl=el('table','tbl');
+    mTbl.innerHTML=`<thead><tr><th>CAT</th><th>DH</th><th>TDZ RVR</th><th>MID RVR</th><th>${L('RVR fin de piste','Stop end RVR')}</th><th>Autoland</th></tr></thead>`;
+    const mTb=el('tbody');
+    [['CAT I','200ft','550m','550m','75m','—'],
+     ['CAT II','100ft','300m','300m','75m',L('Requis','Required')],
+     ['CAT IIIA',L('50ft (ou pas de DH)','50ft (or no DH)'),'175m','175m','75m',L('Requis','Required')],
+    ].forEach(([cat,dh,tdz,mid,se,al])=>{
+      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;color:${c.n}">${cat}</td><td style="font-family:monospace;font-weight:700">${dh}</td><td style="font-family:monospace;font-weight:700">${tdz}</td><td style="font-family:monospace;font-weight:700">${mid}</td><td style="font-family:monospace;font-weight:700">${se}</td><td>${al}</td>`;
+      mTb.appendChild(tr);
+    });
+    mTbl.appendChild(mTb);
+    const mTblWrap=el('div','tbl-wrap'); mTblWrap.appendChild(mTbl); mCard.appendChild(mTblWrap);
+    mCard.appendChild(el('div','tip',L('Note 1 : Le RVR TDZ est toujours déterminant. Les RVR MID et fin de piste sont également déterminants s\'ils sont transmis et pertinents (portion haute vitesse ≈60 kt). Réf. OM-A 8.3.1.7.','Note 1: The TDZ RVR is always controlling. The MID and stop end RVRs are also controlling if reported and relevant (high-speed phase ≈60 kt). Refer to OM-A 8.3.1.7.')));
+    mCard.appendChild(el('div','tip',L('Note 2 : Le RVR MID/fin de piste requis = 125 m ou la valeur requise pour la zone de toucher des roues, la plus faible des deux.','Note 2: The required MID/stop end RVR = 125m or the value required for the touchdown zone, whichever is lower.')));
+
+    // Low visibility take-off (LVTO) minima
+    const tCard=el('div','card'); const tt=el('div','card-ttl',L('MINIMA DÉCOLLAGE PAR VISIBILITÉ RÉDUITE (LVTO)','LOW VISIBILITY TAKE-OFF MINIMA (LVTO)')); tt.style.color=c.n; tCard.appendChild(tt);
+    tCard.appendChild(el('div','info',L('Un décollage avec RVR &lt; 400 m est considéré LVTO. Le RVR minimum requis Air Algérie est <b>175 m</b>.','A take-off with RVR less than 400m is considered LVTO. The AIR ALGERIE required RVR is <b>175m</b>.')));
+    const tTbl=el('table','tbl');
+    tTbl.innerHTML=`<thead><tr><th>${L('NIVEAU INSTALLATIONS','FACILITY LEVEL')}</th><th>RVR¹</th></tr></thead>`;
+    const tTb=el('tbody');
+    [[L('A – HIRL, CL & RVR pertinent','A – HIRL, CL & relevant RVR'),'125m'],
+     [L('B – RL, CL & RVR pertinent','B – RL, CL & relevant RVR'),'150m'],
+     [L('C – RL & CL','C – RL & CL'),'200m'],
+     [L('D – Jour : RL & RCLM · Nuit : RL ou CL','D – Day: RL & RCLM · Night: RL or CL'),'300m'],
+     [L('Jour : RL ou RCLM · Nuit : RL ou CL','Day: RL or RCLM · Night: RL or CL'),'400m'],
+     [L('Référence visuelle adéquate (jour uniquement)','Adequate visual reference (day only)'),'500m'],
+    ].forEach(([lvl,rvr])=>{
+      const tr=el('tr'); tr.innerHTML=`<td>${lvl}</td><td style="font-family:monospace;font-weight:700;color:${c.n}">${rvr}</td>`;
+      tTb.appendChild(tr);
+    });
+    tTbl.appendChild(tTb);
+    const tTblWrap=el('div','tbl-wrap'); tTblWrap.appendChild(tTbl); tCard.appendChild(tTblWrap);
+    tCard.appendChild(el('div','tip',L('¹ RVR 75 m autorisé avec système de guidage approuvé ou HUD/HUDLS.','¹ RVR 75m permitted with an approved guidance system or HUD/HUDLS.')));
+    tCard.appendChild(el('div','tip',L('Note : Si le RVR est inférieur à 200 m, les trois RVR (TDZ/MID/fin de piste) sont requis.','Note: When the RVR is below 200m, all three RVRs (TDZ/MID/stop end) are required.')));
+    tCard.appendChild(el('div','tip',L('⚠️ Vérifiez toujours vos minima sur la charte terrain (10-9) et l\'Appendix 1 – valeurs ci-dessus à titre de référence rapide.','⚠️ Always verify your minima on the airport chart (10-9) and Appendix 1 – values above are a quick reference only.')));
+
+    wrap.appendChild(card); wrap.appendChild(lCard); wrap.appendChild(mCard); wrap.appendChild(tCard);
   }
 
   if(sub==='tableau'){
@@ -1039,7 +1112,8 @@ function buildGRF(sub) {
     const card=buildCard(L('DÉCODEUR RCR / RWYCC','RCR / RWYCC DECODER'), c.n);
     card.appendChild(el('div','info',L('Entrez un code unique (ex: <b>2</b>) ou les trois tiers (ex: <b>5/2/2</b>)','Enter a single code (e.g. <b>2</b>) or the three thirds (e.g. <b>5/2/2</b>)')));
     const row=el('div','row');
-    const inp=el('input','inp'); inp.placeholder=L('ex : 5/2/2 ou 3','e.g.: 5/2/2 or 3');
+    const inp=el('input','inp'); inp.placeholder=L('ex : 522 → 5/2/2, ou 3','e.g.: 522 → 5/2/2, or 3');
+    attachDigitSlashMask(inp,3);
     const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
     const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
@@ -1069,7 +1143,8 @@ function buildGRF(sub) {
     const card=buildCard(L('DÉCODEUR MOTNE (METAR RUSSIE)','MOTNE DECODER (RUSSIAN METAR)'), c.n);
     card.appendChild(el('div','info',L(`<b>Format METAR Russie :</b> après le QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure : <span style="font-family:monospace">R[PISTE]/[E][T][DD][BB]</span><br><b>E</b>=étendue · <b>T</b>=type · <b>DD</b>=profondeur · <b>BB</b>=freinage (ou coeff µ)`,`<b>Russian METAR format:</b> after the QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure: <span style="font-family:monospace">R[RUNWAY]/[E][T][DD][BB]</span><br><b>E</b>=extent · <b>T</b>=type · <b>DD</b>=depth · <b>BB</b>=braking (or µ coefficient)`)));
     const row=el('div','row');
-    const inp=el('input','inp'); inp.placeholder=L('ex : R28R/290050 ou 059200','e.g.: R28R/290050 or 059200');
+    const inp=el('input','inp'); inp.placeholder=L('ex : R28R290050 → R28R/290050, ou 059200','e.g.: R28R290050 → R28R/290050, or 059200');
+    attachRunwaySlashMask(inp);
     const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g};font-weight:900`;
     const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
