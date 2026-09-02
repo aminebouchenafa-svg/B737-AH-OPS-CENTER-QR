@@ -72,7 +72,7 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .subblock:active{transform:scale(.97)}
 .subblock-ico{width:30px;height:30px;flex-shrink:0}
 .subblock-ico svg{width:100%;height:100%}
-.subblock-name{font-size:22px;font-weight:900}
+.subblock-name{font-size:22px;font-weight:700}
 .subblock-desc{font-size:14px;opacity:.65;margin-top:3px}
 
 /* TABS */
@@ -82,7 +82,7 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 
 /* CARD */
 .card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;margin-bottom:14px}
-.card-ttl{font-size:16px;font-weight:900;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card-ttl{font-size:16px;font-weight:700;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .card-ttl::before{content:'';display:block;width:5px;height:20px;border-radius:3px;background:currentColor;flex-shrink:0;box-shadow:0 0 7px currentColor}
 
 /* CHECKLIST */
@@ -501,7 +501,6 @@ function buildCard(title, color, ...children) {
   const card = el('div','card');
   const ttl = el('div','card-ttl', title);
   ttl.style.color = color;
-  ttl.style.textShadow = `0 0 9px ${color}`;
   card.appendChild(ttl);
   children.forEach(c=>{ if(c) card.appendChild(c); });
   return card;
@@ -517,7 +516,6 @@ function buildSubgrid(items, color, onPick) {
     const info = el('div');
     const name = el('div','subblock-name', item.label);
     name.style.color = color;
-    name.style.textShadow = `0 0 7px ${color}80`;
     const desc = el('div','subblock-desc', item.desc);
     info.appendChild(name); info.appendChild(desc);
     sb.appendChild(ico); sb.appendChild(info);
@@ -762,7 +760,7 @@ function buildLVP(sub) {
         else if(isQtyReq){bg='rgba(255,150,0,.15)';brd='rgba(255,150,0,.5)';col='#ff9900';label=L('QUANTITÉ MIN','MIN QUANTITY');}
         else if(val==='R'){bg='rgba(255,224,64,.1)';brd='rgba(255,224,64,.4)';col='#ffe040';label=L('RECOMMANDÉ','RECOMMENDED');}
         else{bg='rgba(96,255,96,.1)';brd='rgba(96,255,96,.4)';col='#60ff60';label=L('NON REQUIS','NOT REQUIRED');}
-        return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:900;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
+        return '<div style="background:'+bg+';border:2px solid '+brd+';border-radius:10px;padding:10px 18px;text-align:center;min-width:110px"><div style="font-family:monospace;font-size:30px;font-weight:700;color:'+col+'">'+val+'</div><div style="font-size:12px;color:'+col+';margin-top:4px;font-weight:700">'+label+'</div></div>';
       }
 
       // For each match, show alarm
@@ -899,7 +897,7 @@ function buildLVP(sub) {
       [['Max headwind','25 kt'],['Max crosswind','20 kt *'],['Max tailwind','10 kt'],['Flaps','40 (non-standard: 30)'],['Engines','BOTH ENGINES OPERATIVE'],['Glideslope angle','2.5°–3.25°']]
     ).forEach(([k,v])=>{
       const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-      r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 8px ${c.g}">${v}</span>`;
+      r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n}">${v}</span>`;
       lCard.appendChild(r);
     });
     lCard.appendChild(el('div','tip',L('* En cas de piste contaminée, la limite de vent traversier est réduite selon le tableau RCAM (calcul automatique dans le vérificateur ci-dessus).','* In case of contaminated runway, the crosswind limit is reduced per the RCAM table (calculated automatically in the checker above).')));
@@ -952,7 +950,7 @@ function buildCPDLC(sub) {
       [['WILCO','Understood and will comply'],['UNABLE','Cannot comply'],['STANBY','Standby – to be followed by WILCO/UNABLE'],['ROGER','Message received (information only)']]
     ).forEach(([r,d])=>{
       const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-      row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};text-shadow:0 0 7px ${c.g};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
       rCard.appendChild(row);
     });
     wrap.appendChild(rCard);
@@ -1001,7 +999,7 @@ function buildCPDLC(sub) {
     const card=buildCard(L('CODES LOGON FIR','FIR LOGON CODES'), c.n);
     const COUNTRY_EN={'🇩🇿 ALGÉRIE':'🇩🇿 ALGERIA','🇫🇷 FRANCE':'🇫🇷 FRANCE','🇪🇸 ESPAGNE':'🇪🇸 SPAIN','🇮🇹 ITALIE':'🇮🇹 ITALY','🇩🇪 ALLEMAGNE':'🇩🇪 GERMANY','🇨🇭 SUISSE':'🇨🇭 SWITZERLAND','🇬🇧 ANGLETERRE':'🇬🇧 UNITED KINGDOM','🇵🇹 PORTUGAL':'🇵🇹 PORTUGAL','🇲🇦 MAROC':'🇲🇦 MOROCCO','🇹🇳 TUNISIE':'🇹🇳 TUNISIA'};
     Object.entries(CPDLC_FIR).forEach(([pays,firs])=>{
-      const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:900;color:${c.n};text-shadow:0 0 7px ${c.g};margin:18px 0 10px`;
+      const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:700;color:${c.n};margin:18px 0 10px`;
       ptitle.textContent=L(pays, COUNTRY_EN[pays]||pays); card.appendChild(ptitle);
       firs.forEach(fir=>{
         const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;margin-bottom:6px';
@@ -1030,7 +1028,7 @@ function buildGRF(sub) {
     const card=buildCard(L('RCAM – MATRICE ÉTAT PISTE','RCAM – RUNWAY CONDITION MATRIX'), c.n);
     RCAM_DATA.forEach(r=>{
       const row=el('div','rcam-row'); row.style.cssText=`border-color:${r.clr}44;background:${r.clr}08`;
-      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 12px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${rcamDesc(r)}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${rcamBraking(r)}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:700;color:${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${rcamDesc(r)}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${rcamBraking(r)}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
       card.appendChild(row);
     });
     card.appendChild(el('div','tip',L('* 36/33 kt avec winglets','* 36/33 kt with winglets')));
@@ -1057,7 +1055,7 @@ function buildGRF(sub) {
       res.innerHTML='';
       rows.forEach(t=>{
         const d=el('div'); d.style.cssText=`border:2px solid ${t.clr}55;border-radius:14px;padding:16px 20px;margin-bottom:12px;background:${t.clr}08`;
-        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 12px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${rcamDesc(t)}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${rcamBraking(t)}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
+        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:700;color:${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${rcamDesc(t)}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${rcamBraking(t)}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
         res.appendChild(d);
       });
       if(rows.some(t=>t.rwycc<=2)){const w=el('div','warn');w.innerHTML='⚠️ <b>'+L('ATTENTION :','WARNING:')+'</b> '+L('Condition piste MOYEN À MAUVAIS ou pire. Vérifier performances.','Runway condition MEDIUM TO POOR or worse. Check performance.');res.appendChild(w);}
@@ -1146,7 +1144,7 @@ function buildGRF(sub) {
           <!-- Header: runway -->
           <div style="background:rgba(255,255,255,.06);padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.06)">
             <div style="font-size:13px;color:#7090aa;letter-spacing:2px;font-family:monospace">${L('PISTE','RUNWAY')}</div>
-            <div style="font-family:monospace;font-size:28px;font-weight:900;color:${c.n};text-shadow:0 0 9px ${c.g}">RWY ${rwy}</div>
+            <div style="font-family:monospace;font-size:28px;font-weight:700;color:${c.n}">RWY ${rwy}</div>
             <div style="margin-left:auto;font-family:monospace;font-size:13px;color:#7090aa">${raw}</div>
           </div>
 
@@ -1154,12 +1152,12 @@ function buildGRF(sub) {
           <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.06)">
             <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,.06)">
               <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">${L('TYPE DE DÉPÔT','DEPOSIT TYPE')} (T=${T})</div>
-              <div style="font-size:20px;font-weight:900;color:${typeColor};line-height:1.3">${snowT(T)||T}</div>
+              <div style="font-size:20px;font-weight:700;color:${typeColor};line-height:1.3">${snowT(T)||T}</div>
               <div style="font-size:13px;color:#7090aa;margin-top:6px">${L('Code','Code')} ${T}</div>
             </div>
             <div style="padding:16px 20px">
               <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:8px;font-family:monospace">${L('ÉTENDUE','EXTENT')} (E=${E})</div>
-              <div style="font-size:20px;font-weight:900;color:${extColor};line-height:1.3">${snowE(E)||E}</div>
+              <div style="font-size:20px;font-weight:700;color:${extColor};line-height:1.3">${snowE(E)||E}</div>
               <div style="font-size:13px;color:#7090aa;margin-top:6px">${L('de la piste couverte','of runway covered')}</div>
             </div>
           </div>
@@ -1167,28 +1165,28 @@ function buildGRF(sub) {
           <!-- Depth -->
           <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06)">
             <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:6px;font-family:monospace">${L('PROFONDEUR','DEPTH')} (DD=${DD})</div>
-            <div style="font-size:22px;font-weight:900;color:#e8f0ff">${depth}</div>
+            <div style="font-size:22px;font-weight:700;color:#e8f0ff">${depth}</div>
           </div>
 
           <!-- Braking + RCAM -->
           <div style="padding:16px 20px;background:${brBg}">
             <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:12px;font-family:monospace">${L('FREINAGE / ACTION FREINAGE','BRAKING / BRAKING ACTION')} (BB=${BB||'—'})</div>
-            <div style="font-size:26px;font-weight:900;color:${brColor};text-shadow:0 0 10px ${brColor};margin-bottom:14px">${brText}</div>
+            <div style="font-size:26px;font-weight:700;color:${brColor};margin-bottom:14px">${brText}</div>
 
             ${rwycc!=='—'?`
             <!-- RCAM Impact -->
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px">
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
                 <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">RWYCC</div>
-                <div style="font-family:monospace;font-size:32px;font-weight:900;color:${brColor};text-shadow:0 0 9px ${brColor}">${rwycc}</div>
+                <div style="font-family:monospace;font-size:32px;font-weight:700;color:${brColor}">${rwycc}</div>
               </div>
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
                 <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">${L('XW T/O MAX','MAX XW T/O')}</div>
-                <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwTkof}</div>
+                <div style="font-family:monospace;font-size:22px;font-weight:700;color:${brColor}">${xwTkof}</div>
               </div>
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
                 <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">${L('XW LDG MAX','MAX XW LDG')}</div>
-                <div style="font-family:monospace;font-size:22px;font-weight:900;color:${brColor}">${xwLdg}</div>
+                <div style="font-family:monospace;font-size:22px;font-weight:700;color:${brColor}">${xwLdg}</div>
               </div>
             </div>` : ''}
           </div>
@@ -1214,7 +1212,7 @@ function buildGRF(sub) {
     );
     typeData.forEach(([k,v,col])=>{
       const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
-      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:900;color:${col}">${k}</div><div style="font-size:12px;color:#b0c8e0;margin-top:4px;line-height:1.3">${v}</div>`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${col}">${k}</div><div style="font-size:12px;color:#b0c8e0;margin-top:4px;line-height:1.3">${v}</div>`;
       typeGrid.appendChild(d);
     });
     typeSection.appendChild(typeGrid); refCard.appendChild(typeSection);
@@ -1225,7 +1223,7 @@ function buildGRF(sub) {
     const extGrid=el('div'); extGrid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:8px';
     [['1','≤ 10%','#00ff88'],['2','11–25%','#ffe040'],['5','26–50%','#ff9900'],['9','51–100%','#ff4400']].forEach(([k,v,col])=>{
       const d=el('div'); d.style.cssText=`background:${col}15;border:1.5px solid ${col}55;border-radius:8px;padding:10px;text-align:center`;
-      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:900;color:${col}">${k}</div><div style="font-size:13px;color:#b0c8e0;margin-top:4px">${v}</div>`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${col}">${k}</div><div style="font-size:13px;color:#b0c8e0;margin-top:4px">${v}</div>`;
       extGrid.appendChild(d);
     });
     extSection.appendChild(extGrid); refCard.appendChild(extSection);
@@ -1245,7 +1243,7 @@ function buildGRF(sub) {
     ];
     brData.forEach(item=>{
       const d=el('div'); d.style.cssText=`background:${item.col}10;border:1.5px solid ${item.col}44;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;flex-wrap:wrap`;
-      d.innerHTML=`<div style="font-family:monospace;font-size:20px;font-weight:900;color:${item.col};min-width:60px">${item.bb}</div><div style="flex:1"><div style="font-size:16px;font-weight:900;color:${item.col}">${item.label}</div></div><div style="text-align:center;min-width:50px"><div style="font-size:10px;color:#7090aa">RWYCC</div><div style="font-family:monospace;font-size:20px;font-weight:900;color:${item.col}">${item.rwycc}</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.tkof} kt</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.ldg} kt</div></div>`;
+      d.innerHTML=`<div style="font-family:monospace;font-size:20px;font-weight:700;color:${item.col};min-width:60px">${item.bb}</div><div style="flex:1"><div style="font-size:16px;font-weight:700;color:${item.col}">${item.label}</div></div><div style="text-align:center;min-width:50px"><div style="font-size:10px;color:#7090aa">RWYCC</div><div style="font-family:monospace;font-size:20px;font-weight:700;color:${item.col}">${item.rwycc}</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.tkof} kt</div></div><div style="text-align:center;min-width:60px"><div style="font-size:10px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:${item.col}">${item.ldg} kt</div></div>`;
       brSection.appendChild(d);
     });
     refCard.appendChild(brSection);
@@ -1262,7 +1260,7 @@ function buildGRF(sub) {
      ['✈️ LANDING EN ROUTE','Enter the lowest RWYCC (braking action) for in-flight performance calculations. E.g. MEDIUM TO POOR = 2.']]
     ).forEach(([phase,txt])=>{
       const d=el('div'); d.style.cssText='background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:12px';
-      d.innerHTML=`<div style="font-size:18px;font-weight:900;color:${c.n};margin-bottom:8px">${phase}</div><div style="font-size:17px;line-height:1.6">${txt}</div>`;
+      d.innerHTML=`<div style="font-size:18px;font-weight:700;color:${c.n};margin-bottom:8px">${phase}</div><div style="font-size:17px;line-height:1.6">${txt}</div>`;
       card.appendChild(d);
     });
     wrap.appendChild(card);
@@ -1392,7 +1390,7 @@ function buildContacts() {
     const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>STATION</th><th>${L('PRESTATAIRE','HANDLER')}</th><th>VHF</th><th>SITA/ACARS</th></tr></thead>`;
     const tb=el('tbody');
     data.forEach(ct=>{
-      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px;text-shadow:0 0 5px ${c.g}">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
+      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
       tb.appendChild(tr);
     });
     tbl.appendChild(tb); return tbl;
@@ -1408,7 +1406,7 @@ function buildContacts() {
   const dc=buildCard(L('RÉSEAU DOMESTIQUE ACARS','DOMESTIC ACARS NETWORK'), c.n);
   [['VHF','131.850'],['DGAH','ALGDGAH'],['CCO','ALGOWAH / ALGJMAH'],['TECHNIQUE','ALGTTAH'],['OPS','XXXKKAH'],['PVD','XXXKLAH']].forEach(([k,v])=>{
     const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-    r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px;text-shadow:0 0 5px ${c.g}">${v}</span>`;
+    r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px">${v}</span>`;
     dc.appendChild(r);
   });
   wrap.appendChild(card); wrap.appendChild(dc); return wrap;
@@ -1433,7 +1431,7 @@ function buildDelay() {
   const buildDT=(data)=>{
     const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th style="width:60px">CODE</th><th>DESCRIPTION</th></tr></thead>`;
     const tb=el('tbody');
-    data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:900;font-size:22px;text-shadow:0 0 5px ${c.g}">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
+    data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:700;font-size:22px">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
     tbl.appendChild(tb); return tbl;
   };
   const delayEntries=()=>Object.keys(DELAY_CODES).map(k=>[k,delayText(k)]);
