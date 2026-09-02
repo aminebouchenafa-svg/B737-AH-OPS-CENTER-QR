@@ -171,6 +171,27 @@ input:checked+.sl::before{transform:translateX(22px)}
 
 @media(min-width:768px){html{font-size:19px}.block-name{font-size:23px}.ck-txt{font-size:19px}}
 @media(min-width:1024px){html{font-size:21px}.pg-title{font-size:34px}}
+
+/* Global search */
+.search-btn{padding:10px 12px}
+.search-btn svg{width:20px;height:20px}
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(6,8,16,.94);backdrop-filter:blur(6px);z-index:1000;flex-direction:column}
+.search-overlay.open{display:flex}
+.search-bar{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(26,26,46,.97)}
+.search-bar svg{width:22px;height:22px;color:#7090aa;flex-shrink:0}
+.search-bar input{flex:1;background:none;border:none;outline:none;color:#e8f0ff;font-size:19px;font-weight:700;font-family:inherit}
+.search-bar input::placeholder{color:#7090aa;font-weight:400}
+.search-close{background:rgba(255,255,255,.08);border:none;color:#e8f0ff;width:36px;height:36px;border-radius:10px;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.search-results{flex:1;overflow-y:auto;padding:8px 12px 24px}
+.search-hint{padding:40px 20px;text-align:center;color:#7090aa;font-size:16px;line-height:1.6}
+.search-result{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;cursor:pointer;margin-bottom:4px;border:1.5px solid transparent}
+.search-result:active,.search-result:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.search-result-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.06)}
+.search-result-ico svg{width:20px;height:20px}
+.search-result-txt{flex:1;min-width:0}
+.search-result-title{font-size:17px;font-weight:700;color:#e8f0ff}
+.search-result-crumb{font-size:12px;color:#7090aa;letter-spacing:1px;margin-top:2px}
+.search-result-desc{font-size:14px;color:#7090aa;margin-top:2px}
 </style>
 
 
@@ -1571,6 +1592,143 @@ const UTILS=[
 ];
 
 // ═══════════════════════════════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════════════════════════════
+// title/desc/kw are [fr,en] pairs (not run through L()) so the index
+// stays static and is read in the current language at search time.
+const SEARCH_INDEX=[
+  {page:'rnp',sub:null,icon:'radar',col:C.rnp,title:['RNP','RNP'],desc:['Approche RNP','RNP Approach'],kw:['gnss','rnav','fmc']},
+  {page:'rnp',sub:'dispatch',icon:'clipboard',col:C.rnp,title:['Dispatch RNP','RNP Dispatch'],desc:['RAIM · Qualification · ALTN','RAIM · Qualification · ALTN'],kw:['raim','alternate']},
+  {page:'rnp',sub:'equip',icon:'gear',col:C.rnp,title:['Équipements RNP','RNP Equipment'],desc:['LNAV / LNAV-VNAV · MEL','LNAV / LNAV-VNAV · MEL'],kw:['ap','fd','fmc','gps','autopilot','pilote automatique']},
+  {page:'rnp',sub:'prep',icon:'document',col:C.rnp,title:['Préparation RNP','RNP Preparation'],desc:['Briefing · CDU · Minima','Briefing · CDU · Minima'],kw:[]},
+  {page:'rnp',sub:'contingence',icon:'warning',col:C.rnp,title:['Contingences RNP','RNP Contingencies'],desc:['Remise de gaz · Déclencheurs','Go-around · Triggers'],kw:['go-around','remise de gaz','anp']},
+
+  {page:'lvp',sub:null,icon:'plane',col:C.lvp,title:['LVP','LVP'],desc:['CAT II / IIIA','CAT II / IIIA'],kw:['cat2','cat3','autoland']},
+  {page:'lvp',sub:'briefing',icon:'clipboard',col:C.lvp,title:['Briefing LVP','LVP Briefing'],desc:['Checklist pré-approche CAT II/IIIA','CAT II/IIIA pre-approach checklist'],kw:[]},
+  {page:'lvp',sub:'equip',icon:'gear',col:C.lvp,title:['Équipement en panne LVP','LVP Failed Equipment'],desc:['Recherche instrument · Alarme','Instrument lookup · Alert'],kw:['mel','inop','panne','failed']},
+  {page:'lvp',sub:'limites',icon:'wind',col:C.lvp,title:['Conditions LVP','LVP Conditions'],desc:['Vent · Piste · Visibilité · RVR','Wind · Runway · Visibility · RVR'],kw:['rvr','rcam','crosswind','vent traversier','minima','175','300']},
+  {page:'lvp',sub:'tableau',icon:'barchart',col:C.lvp,title:['Tableau CAT 2/3A','CAT 2/3A Table'],desc:['Exigences complètes B737','Full B737 requirements'],kw:[]},
+
+  {page:'cpdlc',sub:null,icon:'chat',col:C.cpdlc,title:['CPDLC','CPDLC'],desc:['Datalink','Datalink'],kw:['atn','datalink']},
+  {page:'cpdlc',sub:'logon',icon:'link',col:C.cpdlc,title:['Procédure Logon','Logon Procedure'],desc:['Étapes connexion ATC','ATC connection steps'],kw:['wilco','unable','stanby','roger']},
+  {page:'cpdlc',sub:'code',icon:'hash',col:C.cpdlc,title:['Code HEX Avion','Aircraft HEX Code'],desc:['Lookup immatriculation','Registration lookup'],kw:['hex','immatriculation','registration']},
+  {page:'cpdlc',sub:'fp',icon:'document',col:C.cpdlc,title:['Plan de Vol CPDLC','CPDLC Flight Plan'],desc:['Items 10a et 18','Items 10a and 18'],kw:['flight plan','item 18']},
+  {page:'cpdlc',sub:'fir',icon:'map',col:C.cpdlc,title:['Codes FIR','FIR Codes'],desc:['France · Espagne · Algérie · +','France · Spain · Algeria · +'],kw:['fir']},
+
+  {page:'grf',sub:null,icon:'barchart',col:C.grf,title:['GRF / RCAM','GRF / RCAM'],desc:['État de piste','Runway condition'],kw:['runway condition']},
+  {page:'grf',sub:'rcam',icon:'barchart',col:C.grf,title:['Tableau RCAM','RCAM Table'],desc:['Conditions piste · XW limits','Runway condition · XW limits'],kw:['rwycc','freinage','braking']},
+  {page:'grf',sub:'rcr',icon:'magnify',col:C.grf,title:['Décodeur RCR','RCR Decoder'],desc:['RWYCC → résultat complet','RWYCC → full result'],kw:['rwycc']},
+  {page:'grf',sub:'motne',icon:'snowflake',col:C.grf,title:['Décodeur MOTNE','MOTNE Decoder'],desc:['Format METAR Russie R28R/290050','Russian METAR format R28R/290050'],kw:['snowtam','r28r']},
+  {page:'grf',sub:'opt',icon:'laptop',col:C.grf,title:['Guide OPT','OPT Guide'],desc:['Sélections takeoff · landing','Takeoff · landing selections'],kw:[]},
+
+  {page:'cold',sub:null,icon:'snowflake',col:C.cold,title:['Cold Weather','Cold Weather'],desc:['Procédures grand froid','Cold weather procedures'],kw:['givre','icing','deicing','degivrage']},
+  {page:'cold',sub:'preflight',icon:'magnify',col:C.cold,title:['Pré-vol (froid)','Preflight (cold)'],desc:['Probe heat','Probe heat'],kw:[]},
+  {page:'cold',sub:'avantdemarrage',icon:'clipboard',col:C.cold,title:['Avant démarrage (froid)','Before Start (cold)'],desc:['HOT · Dégivrage','HOT · De-icing'],kw:['hot','holdover','holdover time']},
+  {page:'cold',sub:'demarrage',icon:'warning',col:C.cold,title:['Démarrage moteurs (froid)','Engine Start (cold)'],desc:['Limites T° froide','Cold temp limits'],kw:[]},
+  {page:'cold',sub:'roulage',icon:'wheel',col:C.cold,title:['Roulage (froid)','Taxi (cold)'],desc:['Dégivrage · Bleed','De-icing · Bleed'],kw:['deicing']},
+  {page:'cold',sub:'avantdecollage',icon:'plane',col:C.cold,title:['Avant décollage (froid)','Before Takeoff (cold)'],desc:['Run-up · HOT','Run-up · HOT'],kw:[]},
+  {page:'cold',sub:'approche',icon:'plane',col:C.cold,title:['Approche & atterrissage (froid)','Approach & Landing (cold)'],desc:['Corrections T° froide','Cold temp corrections'],kw:[]},
+  {page:'cold',sub:'apres',icon:'flag',col:C.cold,title:['Après atterrissage (froid)','After Landing (cold)'],desc:['Volets · Anti-glace','Flaps · Anti-ice'],kw:[]},
+  {page:'cold',sub:'corr',icon:'thermometer',col:C.cold,title:['Corrections Altimétriques','Altitude Corrections'],desc:['Calcul T° froide automatique','Automatic cold temp calculation'],kw:['altitude correction']},
+
+  {page:'brnav',sub:null,icon:'compass',col:C.brnav,title:['BRNAV / PRNAV','BRNAV / PRNAV'],desc:['RNAV 5 · RNAV 1/2','RNAV 5 · RNAV 1/2'],kw:['rnav','rnav5','rnav1']},
+
+  {page:'contacts',sub:null,icon:'radio',col:C.contacts,title:['Contacts','Contacts'],desc:['VHF / ACARS compagnie','Company VHF / ACARS'],kw:['vhf','acars','sita','frequence','frequency','telephone']},
+  {page:'delay',sub:null,icon:'stopwatch',col:C.delay,title:['Codes Retard','Delay Codes'],desc:['Codes IATA de retard','IATA delay codes'],kw:['iata','retard','delay']},
+  {page:'notes',sub:null,icon:'document',col:C.notes,title:['Notes de Vol','Flight Notes'],desc:['Notes personnelles','Personal notes'],kw:[]},
+];
+
+const normalizeSearch = s => (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+function searchMatches(query){
+  const q = normalizeSearch(query);
+  if(q.length<2) return [];
+  const li = STATE.lang==='fr'?0:1;
+  return SEARCH_INDEX
+    .map(item=>{
+      const title = item.title[li], desc = item.desc[li];
+      const haystack = normalizeSearch(title+' '+desc+' '+item.kw.join(' '));
+      const idx = haystack.indexOf(q);
+      if(idx<0) return null;
+      // Prefer specific subpages over their generic parent hub when both match equally well
+      const rank = idx + (item.sub ? 0 : 50);
+      return {item, title, desc, rank};
+    })
+    .filter(Boolean)
+    .sort((a,b)=>a.rank-b.rank);
+}
+
+let searchOverlayEl=null, searchInputEl=null, searchResultsEl=null;
+
+function closeSearch(){ if(searchOverlayEl) searchOverlayEl.classList.remove('open'); }
+
+function buildSearchOverlay(){
+  const overlay=el('div','search-overlay');
+  const bar=el('div','search-bar');
+  bar.innerHTML=svgIcon('magnify');
+  const inp=document.createElement('input');
+  inp.type='text';
+  inp.placeholder=L('Rechercher dans toute l\'app…','Search the whole app…');
+  bar.appendChild(inp);
+  const closeBtn=el('button','search-close','✕');
+  closeBtn.addEventListener('click', closeSearch);
+  bar.appendChild(closeBtn);
+  overlay.appendChild(bar);
+
+  const results=el('div','search-results');
+  results.innerHTML=`<div class="search-hint">${L('Tapez au moins 2 lettres — ex : RVR, RCAM, dégivrage, CPDLC…','Type at least 2 letters — e.g.: RVR, RCAM, de-icing, CPDLC…')}</div>`;
+  overlay.appendChild(results);
+
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) closeSearch(); });
+
+  inp.addEventListener('input',()=>{
+    const matches=searchMatches(inp.value);
+    if(!inp.value.trim()){
+      results.innerHTML=`<div class="search-hint">${L('Tapez au moins 2 lettres — ex : RVR, RCAM, dégivrage, CPDLC…','Type at least 2 letters — e.g.: RVR, RCAM, de-icing, CPDLC…')}</div>`;
+      return;
+    }
+    if(!matches.length){
+      results.innerHTML=`<div class="search-hint">${L('Aucun résultat','No results')}</div>`;
+      return;
+    }
+    results.innerHTML='';
+    matches.forEach(({item,title,desc})=>{
+      const r=el('div','search-result');
+      const ico=el('div','search-result-ico'); ico.innerHTML=svgIcon(item.icon); ico.style.color=item.col.n;
+      const txt=el('div','search-result-txt');
+      const secName=[...SECTIONS,...UTILS].find(s=>s.id===item.page)?.name || item.page.toUpperCase();
+      const crumb=el('div','search-result-crumb', item.sub ? secName+' → '+title : secName);
+      const ttl=el('div','search-result-title', item.sub ? title : title);
+      const dsc=el('div','search-result-desc', desc);
+      txt.appendChild(crumb); txt.appendChild(ttl); txt.appendChild(dsc);
+      r.appendChild(ico); r.appendChild(txt);
+      r.addEventListener('click',()=>{
+        STATE.page=item.page; STATE.sub=item.sub;
+        closeSearch();
+        render();
+      });
+      results.appendChild(r);
+    });
+  });
+
+  document.body.appendChild(overlay);
+  searchOverlayEl=overlay; searchInputEl=inp; searchResultsEl=results;
+  return overlay;
+}
+
+function openSearch(){
+  if(!searchOverlayEl) buildSearchOverlay();
+  searchOverlayEl.classList.add('open');
+  searchInputEl.value='';
+  searchInputEl.dispatchEvent(new Event('input'));
+  setTimeout(()=>searchInputEl.focus(),50);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && searchOverlayEl && searchOverlayEl.classList.contains('open')) closeSearch();
+});
+
+// ═══════════════════════════════════════════════════════════════
 // BUILD APP
 // ═══════════════════════════════════════════════════════════════
 
@@ -1589,6 +1747,10 @@ function buildApp() {
   logoText.appendChild(logoName); logoText.appendChild(logoSub);
   logoRow.appendChild(logoIcon); logoRow.appendChild(logoText);
   const tools=el('div','hdr-tools');
+  const searchBtn=el('button','tool-btn search-btn',svgIcon('magnify'));
+  searchBtn.title=L('Recherche','Search');
+  searchBtn.addEventListener('click', openSearch);
+  tools.appendChild(searchBtn);
   const UTIL_NAMES={contacts:'CONTACTS',delay:L('CODES RETARD','DELAY CODES'),notes:L('NOTES','NOTES')};
   UTILS.forEach(u=>{
     const b=el('button','tool-btn',svgIcon(u.icon)+'<span>'+UTIL_NAMES[u.id]+'</span>');
