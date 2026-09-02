@@ -33,7 +33,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .logo-name{font-size:18px;font-weight:900;letter-spacing:2px;color:#ff3355;text-shadow:0 0 14px rgba(255,51,85,.6);line-height:1.2}
 .logo-sub{font-size:12px;color:#7090aa;letter-spacing:1.5px;margin-top:3px;font-family:monospace}
 .hdr-tools{display:flex;gap:6px;flex-wrap:wrap}
-.tool-btn{padding:10px 18px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:17px;font-weight:700;transition:all .2s;white-space:nowrap}
+.tool-btn{padding:10px 18px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:17px;font-weight:700;transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.tool-btn svg{width:19px;height:19px;flex-shrink:0}
 .tool-btn:active,.tool-btn.on{border-color:rgba(64,208,255,.6);color:#40d0ff;background:rgba(64,208,255,.1);box-shadow:0 0 12px rgba(64,208,255,.25)}
 
 /* HOME */
@@ -48,7 +49,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 @media(max-width:380px){.grid{grid-template-columns:1fr}}
 .block{border-radius:22px;border:2px solid;padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .2s,filter .2s;text-align:center;min-height:190px;justify-content:center;-webkit-tap-highlight-color:transparent}
 .block:active{transform:scale(.96);filter:brightness(1.2)}
-.block-ico{font-size:52px;line-height:1}
+.block-ico{width:52px;height:52px;line-height:1}
+.block-ico svg{width:100%;height:100%}
 .block-name{font-size:21px;font-weight:900;letter-spacing:2px}
 .block-sub{font-size:14px;letter-spacing:1px;opacity:.65}
 
@@ -58,7 +60,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .back{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:50px;color:#7090aa;cursor:pointer;font-size:16px;font-weight:700;transition:all .2s;margin-bottom:20px;-webkit-tap-highlight-color:transparent}
 .back:active{color:#e8f0ff;border-color:rgba(255,255,255,.3)}
 .pg-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.pg-ico{font-size:48px;line-height:1}
+.pg-ico{width:44px;height:44px;line-height:1}
+.pg-ico svg{width:100%;height:100%}
 .pg-title{font-size:clamp(20px,4vw,32px);font-weight:900;letter-spacing:2px}
 .pg-sub{font-family:monospace;font-size:11px;color:#7090aa;letter-spacing:2px;margin-top:4px}
 
@@ -67,7 +70,8 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 @media(max-width:480px){.subgrid{grid-template-columns:1fr}}
 .subblock{border-radius:16px;border:2px solid;padding:20px 16px;cursor:pointer;transition:transform .2s;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent}
 .subblock:active{transform:scale(.97)}
-.subblock-ico{font-size:28px;flex-shrink:0}
+.subblock-ico{width:30px;height:30px;flex-shrink:0}
+.subblock-ico svg{width:100%;height:100%}
 .subblock-name{font-size:22px;font-weight:900}
 .subblock-desc{font-size:14px;opacity:.65;margin-top:3px}
 
@@ -368,6 +372,40 @@ const C={
 };
 
 // ═══════════════════════════════════════════════════════════════
+// ICONS (flat SVG line icons, replace emoji for a cleaner look)
+// ═══════════════════════════════════════════════════════════════
+
+const ICON_BODY = {
+  radar:        '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  plane:        '<path d="M2 12 L22 4 L15 12 L22 20 Z" fill="currentColor" stroke="none"/>',
+  chat:         '<path d="M4 4h16v13H8l-4 4z"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/>',
+  snowflake:    '<line x1="12" y1="3" x2="12" y2="21"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="3" y1="12" x2="21" y2="12"/>',
+  barchart:     '<rect x="4" y="12" width="4" height="8" fill="currentColor" stroke="none"/><rect x="10" y="7" width="4" height="13" fill="currentColor" stroke="none"/><rect x="16" y="14" width="4" height="6" fill="currentColor" stroke="none"/>',
+  compass:      '<circle cx="12" cy="12" r="9"/><polygon points="12,6 14,12 12,18 10,12" fill="currentColor" stroke="none"/>',
+  radio:        '<rect x="4" y="10" width="16" height="9" rx="2"/><circle cx="8" cy="15" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1.4" fill="currentColor" stroke="none"/><line x1="12" y1="10" x2="12" y2="4"/><line x1="12" y1="4" x2="16" y2="2"/>',
+  stopwatch:    '<circle cx="12" cy="13" r="8"/><line x1="12" y1="13" x2="12" y2="8"/><line x1="12" y1="13" x2="15" y2="14"/><line x1="9" y1="2" x2="15" y2="2"/><line x1="12" y1="2" x2="12" y2="5"/>',
+  document:     '<path d="M6 2h9l4 4v16H6z"/><polyline points="15,2 15,6 19,6"/><line x1="9" y1="9" x2="12" y2="9"/><line x1="9" y1="12.5" x2="16" y2="12.5"/><line x1="9" y1="16" x2="16" y2="16"/>',
+  clipboard:    '<rect x="5" y="4" width="14" height="17" rx="2"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/>',
+  gear:         '<circle cx="12" cy="12" r="6.2"/><circle cx="12" cy="12" r="2.1" fill="currentColor" stroke="none"/>'
+                + [0,45,90,135,180,225,270,315].map(a=>`<rect x="11" y="1.2" width="2" height="3.4" rx="0.6" fill="currentColor" stroke="none" transform="rotate(${a} 12 12)"/>`).join(''),
+  warning:      '<path d="M12 3 L22 20 L2 20 Z"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/>',
+  wind:         '<polyline points="3,7 14,7 16,5"/><polyline points="3,12 18,12 20,9"/><polyline points="3,17 12,17 14,15"/>',
+  link:         '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+  hash:         '<line x1="9" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="15" y2="21"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="3" y1="15" x2="19" y2="15"/>',
+  map:          '<polygon points="3,5 9,3 15,5 21,3 21,19 15,21 9,19 3,21"/><line x1="9" y1="3" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="21"/>',
+  magnify:      '<circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/>',
+  laptop:       '<rect x="3" y="4" width="18" height="12" rx="1"/><line x1="2" y1="19" x2="22" y2="19"/><line x1="9" y1="19" x2="9" y2="16"/><line x1="15" y1="19" x2="15" y2="16"/>',
+  wheel:        '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/><line x1="12" y1="4" x2="12" y2="9.5"/><line x1="12" y1="14.5" x2="12" y2="20"/><line x1="4" y1="12" x2="9.5" y2="12"/><line x1="14.5" y1="12" x2="20" y2="12"/>',
+  flag:         '<line x1="5" y1="21" x2="5" y2="3"/><path d="M5 4h12v10H5z"/><rect x="5" y="4" width="6" height="5" fill="currentColor" stroke="none"/><rect x="11" y="9" width="6" height="5" fill="currentColor" stroke="none"/>',
+  thermometer:  '<rect x="10" y="3" width="4" height="11" rx="2"/><circle cx="12" cy="17" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="8" x2="12" y2="17" stroke-width="3"/>',
+};
+function svgIcon(key){
+  const body = ICON_BODY[key];
+  if(!body) return '';
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // CHECKLIST STATE
 // ═══════════════════════════════════════════════════════════════
 
@@ -475,7 +513,7 @@ function buildSubgrid(items, color, onPick) {
     const sb = el('div','subblock');
     sb.style.borderColor = color+'55';
     sb.style.background = color+'08';
-    const ico = el('div','subblock-ico', item.icon);
+    const ico = el('div','subblock-ico'); ico.innerHTML = svgIcon(item.icon); ico.style.color = color; ico.style.filter = `drop-shadow(0 0 6px ${color}90)`;
     const info = el('div');
     const name = el('div','subblock-name', item.label);
     name.style.color = color;
@@ -514,10 +552,10 @@ function buildRNP(sub) {
     wrap.appendChild(tempCard);
 
     wrap.appendChild(buildSubgrid([
-      {id:'dispatch',icon:'📋',label:'Dispatch',desc:'RAIM · '+L('Qualifications','Qualification')+' · ALTN'},
-      {id:'equip',icon:'⚙️',label:L('Équipements','Equipment'),desc:'LNAV / LNAV-VNAV · MEL'},
-      {id:'prep',icon:'📝',label:L('Préparation','Preparation'),desc:'Briefing · CDU · '+L('Minima','Minima')},
-      {id:'contingence',icon:'🚨',label:L('Contingences','Contingencies'),desc:L('Remise de gaz · Déclencheurs','Go-around · Triggers')},
+      {id:'dispatch',icon:'clipboard',label:'Dispatch',desc:'RAIM · '+L('Qualifications','Qualification')+' · ALTN'},
+      {id:'equip',icon:'gear',label:L('Équipements','Equipment'),desc:'LNAV / LNAV-VNAV · MEL'},
+      {id:'prep',icon:'document',label:L('Préparation','Preparation'),desc:'Briefing · CDU · '+L('Minima','Minima')},
+      {id:'contingence',icon:'warning',label:L('Contingences','Contingencies'),desc:L('Remise de gaz · Déclencheurs','Go-around · Triggers')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
@@ -665,10 +703,10 @@ function buildLVP(sub) {
   const c=C.lvp; const wrap=el('div','page');
   if(!sub){
     wrap.appendChild(buildSubgrid([
-      {id:'briefing',icon:'📋',label:'Briefing',desc:L('Checklist pré-approche CAT II/IIIA','CAT II/IIIA pre-approach checklist')},
-      {id:'equip',icon:'⚙️',label:L('Équipements','Equipment'),desc:L('Recherche instrument · Alarme','Instrument lookup · Alert')},
-      {id:'limites',icon:'💨',label:L('Conditions LVP','LVP Conditions'),desc:L('Vent · Piste · Visibilité','Wind · Runway · Visibility')},
-      {id:'tableau',icon:'📊',label:L('Tableau CAT 2/3A','CAT 2/3A Table'),desc:L('Exigences complètes B737','Full B737 requirements')},
+      {id:'briefing',icon:'clipboard',label:'Briefing',desc:L('Checklist pré-approche CAT II/IIIA','CAT II/IIIA pre-approach checklist')},
+      {id:'equip',icon:'gear',label:L('Équipements','Equipment'),desc:L('Recherche instrument · Alarme','Instrument lookup · Alert')},
+      {id:'limites',icon:'wind',label:L('Conditions LVP','LVP Conditions'),desc:L('Vent · Piste · Visibilité','Wind · Runway · Visibility')},
+      {id:'tableau',icon:'barchart',label:L('Tableau CAT 2/3A','CAT 2/3A Table'),desc:L('Exigences complètes B737','Full B737 requirements')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
@@ -889,10 +927,10 @@ function buildCPDLC(sub) {
   const c=C.cpdlc; const wrap=el('div','page');
   if(!sub){
     wrap.appendChild(buildSubgrid([
-      {id:'logon',icon:'🔗',label:L('Procédure Logon','Logon Procedure'),desc:L('Étapes connexion ATC','ATC connection steps')},
-      {id:'code',icon:'🔢',label:L('Code HEX Avion','Aircraft HEX Code'),desc:L('Lookup immatriculation','Registration lookup')},
-      {id:'fp',icon:'📄',label:L('Plan de Vol','Flight Plan'),desc:L('Items 10a et 18','Items 10a and 18')},
-      {id:'fir',icon:'🗺️',label:L('Codes FIR','FIR Codes'),desc:L('France · Espagne · Algérie · +','France · Spain · Algeria · +')},
+      {id:'logon',icon:'link',label:L('Procédure Logon','Logon Procedure'),desc:L('Étapes connexion ATC','ATC connection steps')},
+      {id:'code',icon:'hash',label:L('Code HEX Avion','Aircraft HEX Code'),desc:L('Lookup immatriculation','Registration lookup')},
+      {id:'fp',icon:'document',label:L('Plan de Vol','Flight Plan'),desc:L('Items 10a et 18','Items 10a and 18')},
+      {id:'fir',icon:'map',label:L('Codes FIR','FIR Codes'),desc:L('France · Espagne · Algérie · +','France · Spain · Algeria · +')},
     ], c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
@@ -981,10 +1019,10 @@ function buildGRF(sub) {
   const c=C.grf; const wrap=el('div','page');
   const warndiv=el('div','warn'); warndiv.innerHTML='<span style="font-size:20px">📋</span><div>'+L('AIREP requis si freinage inférieur aux prévisions. Remise de gaz ≤ 1000\' AGL si perf non recalculées.','AIREP required if braking action is less than expected. Go-around ≤ 1000\' AGL if performance not recalculated.')+'</div>';
   if(!sub){ wrap.appendChild(warndiv); wrap.appendChild(buildSubgrid([
-    {id:'rcam',icon:'📊',label:L('Tableau RCAM','RCAM Table'),desc:L('Conditions piste · XW limits','Runway condition · XW limits')},
-    {id:'rcr',icon:'🔍',label:L('Décodeur RCR','RCR Decoder'),desc:L('RWYCC → résultat complet','RWYCC → full result')},
-    {id:'motne',icon:'🌨️',label:L('Décodeur MOTNE','MOTNE Decoder'),desc:L('Format METAR Russie R28R/290050','Russian METAR format R28R/290050')},
-    {id:'opt',icon:'💻',label:'Guide OPT',desc:L('Sélections takeoff · landing','Takeoff · landing selections')},
+    {id:'rcam',icon:'barchart',label:L('Tableau RCAM','RCAM Table'),desc:L('Conditions piste · XW limits','Runway condition · XW limits')},
+    {id:'rcr',icon:'magnify',label:L('Décodeur RCR','RCR Decoder'),desc:L('RWYCC → résultat complet','RWYCC → full result')},
+    {id:'motne',icon:'snowflake',label:L('Décodeur MOTNE','MOTNE Decoder'),desc:L('Format METAR Russie R28R/290050','Russian METAR format R28R/290050')},
+    {id:'opt',icon:'laptop',label:'Guide OPT',desc:L('Sélections takeoff · landing','Takeoff · landing selections')},
   ], c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
   wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
@@ -1236,19 +1274,19 @@ function buildGRF(sub) {
 function buildCold(sub) {
   const c=C.cold; const wrap=el('div','page');
   const phases=[
-    {id:'preflight',icon:'🔍',name:L('PRÉ-VOL','PREFLIGHT'),items:[{id:'c1',label:L('Commutateurs PROBE HEAT','PROBE HEAT switches'),action:L('ON – OPL','ON – F/O'),sub:L('Vérifier extinction voyants probe heat','Verify that all probe heat lights are extinguished')}]},
-    {id:'avantdemarrage',icon:'📋',name:L('AVANT DÉMARRAGE','BEFORE START'),items:[
+    {id:'preflight',icon:'magnify',name:L('PRÉ-VOL','PREFLIGHT'),items:[{id:'c1',label:L('Commutateurs PROBE HEAT','PROBE HEAT switches'),action:L('ON – OPL','ON – F/O'),sub:L('Vérifier extinction voyants probe heat','Verify that all probe heat lights are extinguished')}]},
+    {id:'avantdemarrage',icon:'clipboard',name:L('AVANT DÉMARRAGE','BEFORE START'),items:[
       {id:'c2',label:L('Données de décollage – calculer. ATM interdit sur piste contaminée','Takeoff data – compute. ATM is not allowed on contaminated runway')},
       {id:'c3',label:L('Vent traversier max – vérifier RCAM','Max crosswind – review GRF RCAM table')},{id:'c4',label:L('Temps de protection antigel (HOT) – obtenir OM A','Hold Over Time (HOT) – obtain from OM A')},{id:'c5',label:L('Dégivrage à la porte si possible','De-icing at the gate if possible')},
     ]},
-    {id:'demarrage',icon:'⚠️',name:L('DÉMARRAGE MOTEURS','ENGINE START'),items:[
+    {id:'demarrage',icon:'warning',name:L('DÉMARRAGE MOTEURS','ENGINE START'),items:[
       {id:'c6',label:L('TAE < -40°C & moteur refroidi >1h → NE PAS DÉMARRER','OAT < -40°C and engine cold soaked >1h → do not start or motor the engine'),action:L('⛔ NO START','⛔ NO START')},
       {id:'c7',label:L('TAE < -40°C & moteur refroidi >3h → NE PAS DÉMARRER','OAT < -40°C and engine cold soaked >3h → do not start or motor the engine'),action:L('⛔ NO START','⛔ NO START')},
       {id:'c8',label:L('TAE < -35°C → 2 min ralenti avant modification manette gaz','OAT < -35°C → 2 min idle before changing thrust lever position')},
       {id:'c9',label:L('Après démarrage : ENGINE START switches','Immediately after engine start: ENGINE START switches'),action:L('CONT – OPL','CONT – F/O')},
       {id:'c10',label:L('Après démarrage : ENGINE ANTI-ICE switches','Immediately after engine start: ENGINE ANTI-ICE switches'),action:L('ON – OPL','ON – F/O')},
     ]},
-    {id:'roulage',icon:'🛞',name:L('ROULAGE','TAXI'),items:[
+    {id:'roulage',icon:'wheel',name:L('ROULAGE','TAXI'),items:[
       {id:'c11',label:L('Informer PNC et passagers avant dégivrage','Advise cabin crew and passengers before de-icing')},
       {id:'c12',label:L('VOLETS RENTRÉS avant dégivrage','FLAPS UP before de-icing'),action:L('UP – OPL','UP – F/O')},
       {id:'c13',label:L('BLEED moteurs','Engine BLEED air switches'),action:L('OFF – OPL','OFF – F/O')},{id:'c14',label:'APU BLEED',action:L('OFF – OPL','OFF – F/O')},
@@ -1256,12 +1294,12 @@ function buildCold(sub) {
       {id:'c16',label:L('Vitesse réduite · distances augmentées · poussée minimum · pas inverseurs','Slow speed · greater distance · minimum thrust · do not use reverse thrust')},
       {id:'c17',label:L('TAE ≤ 3°C : run-up 70% N1 pendant 30s toutes 30 min max','OAT ≤ 3°C: engine run-up to 70% N1 for 30s at intervals no greater than 30 min')},
     ]},
-    {id:'avantdecollage',icon:'🛫',name:L('AVANT DÉCOLLAGE','BEFORE TAKE-OFF'),items:[
+    {id:'avantdecollage',icon:'plane',name:L('AVANT DÉCOLLAGE','BEFORE TAKE-OFF'),items:[
       {id:'c18',label:L('HOT – toujours dans les limites ?','Holdover time – still within limits?')},
       {id:'c19',label:L('TAE ≤ 3°C + A/I moteurs : informer ATC + static run-up','OAT ≤ 3°C and engine A/I required: inform ATC + perform static engine run-up')},
       {id:'c20',label:L('Run-up N1 70% min · stable 30s → lâcher frein + TOGA','Run-up to 70% N1 minimum, confirm stable 30s, then release brake and press TOGA')},
     ]},
-    {id:'approche',icon:'🛬',name:L('APPROCHE & ATTERRISSAGE','APPROACH & LANDING'),items:[
+    {id:'approche',icon:'plane',name:L('APPROCHE & ATTERRISSAGE','APPROACH & LANDING'),items:[
       {id:'c21',label:L('Corrections altimétriques T° froide → APPLIQUER (onglet Corrections)','Cold temp altitude corrections → APPLY (see Corrections tab)')},
       {id:'c22',label:L('Vent traversier max – vérifier RCAM','Max crosswind – review GRF RCAM table')},
       {id:'c23',label:L('Attente en givre → INTERDIT volets sortis','Holding in icing conditions → PROHIBITED with flaps extended')},
@@ -1269,14 +1307,14 @@ function buildCold(sub) {
       {id:'c25',label:L('Freinage automatique → RECOMMANDÉ','Autobrakes → RECOMMENDED')},
       {id:'c26',label:L('Volets 15 + VREF ICE → VREF15 +10 kt (additif vent ≤ 5 kt)','Flaps 15 + VREF ICE → VREF15 +10 kt (wind additives should not exceed 5 kt)')},
     ]},
-    {id:'apres',icon:'🏁',name:L('APRÈS ATTERRISSAGE','AFTER LANDING'),items:[
+    {id:'apres',icon:'flag',name:L('APRÈS ATTERRISSAGE','AFTER LANDING'),items:[
       {id:'c27',label:L('VOLETS → rentrer à 15°. Pas < 15° avant zones libres de contaminants','FLAPS → retract to 15. Do not retract below 15° until flap areas are free of contaminants')},
       {id:'c28',label:L('Anti-glace moteurs ON pour toutes opérations sol en givre','Engine anti-ice ON for all ground operations when icing conditions exist')},
       {id:'c29',label:'ENGINE START switches',action:L('CONT – OPL','CONT – F/O')},
       {id:'c30',label:'ENGINE ANTI-ICE switches',action:L('ON – OPL','ON – F/O')},
     ]},
   ];
-  const subItems=[...phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`)})),{id:'corr',icon:'🌡️',label:L('Corrections Altimétriques','Altitude Corrections'),desc:L('Calcul T° froide automatique','Automatic cold temp calculation')}];
+  const subItems=[...phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`)})),{id:'corr',icon:'thermometer',label:L('Corrections Altimétriques','Altitude Corrections'),desc:L('Calcul T° froide automatique','Automatic cold temp calculation')}];
   if(!sub){ wrap.appendChild(buildSubgrid(subItems, c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
   wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
 
@@ -1419,10 +1457,8 @@ function buildNotes() {
   ta.addEventListener('input',()=>{try{sessionStorage.setItem('b737_notes',ta.value);}catch{}});
   const btnRow=el('div','row'); btnRow.style.marginTop='12px';
   const clrBtn=el('button','btn btn-g','🗑️ '+L('Effacer','Clear'));
-  const expBtn=el('button','btn','📥 '+L('Exporter','Export')); expBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 14px ${c.g}`;
   clrBtn.addEventListener('click',()=>{if(window.confirm(L('Effacer ?','Clear?'))){ta.value='';try{sessionStorage.removeItem('b737_notes');}catch{}}});
-  expBtn.addEventListener('click',()=>{const b=new Blob([ta.value],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${L('notes-vol','flight-notes')}-${new Date().toISOString().slice(0,10)}.txt`;a.click();});
-  btnRow.appendChild(clrBtn); btnRow.appendChild(expBtn);
+  btnRow.appendChild(clrBtn);
   card.appendChild(ta); card.appendChild(btnRow); wrap.appendChild(card); return wrap;
 }
 
@@ -1431,17 +1467,17 @@ function buildNotes() {
 // ═══════════════════════════════════════════════════════════════
 
 const SECTIONS=[
-  {id:'rnp',  icon:'📡',name:'RNP',   sub:'APPROACH',      col:C.rnp},
-  {id:'lvp',  icon:'🛬',name:'LVP',   sub:'CAT II/IIIA',   col:C.lvp},
-  {id:'cpdlc',icon:'🔀',name:'CPDLC', sub:'DATALINK',      col:C.cpdlc},
-  {id:'cold', icon:'🌨️',name:'COLD',  sub:'WEATHER',       col:C.cold},
-  {id:'grf',  icon:'📊',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
-  {id:'brnav',icon:'🧭',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
+  {id:'rnp',  icon:'radar',name:'RNP',   sub:'APPROACH',      col:C.rnp},
+  {id:'lvp',  icon:'plane',name:'LVP',   sub:'CAT II/IIIA',   col:C.lvp},
+  {id:'cpdlc',icon:'chat', name:'CPDLC', sub:'DATALINK',      col:C.cpdlc},
+  {id:'cold', icon:'snowflake',name:'COLD',  sub:'WEATHER',       col:C.cold},
+  {id:'grf',  icon:'barchart',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
+  {id:'brnav',icon:'compass',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
 ];
 const UTILS=[
-  {id:'contacts',icon:'📻',name:'CONTACTS',col:C.contacts},
-  {id:'delay',   icon:'⏱️',name:'CODES RETARD',col:C.delay},
-  {id:'notes',   icon:'📝',name:'NOTES',col:C.notes},
+  {id:'contacts',icon:'radio',name:'CONTACTS',col:C.contacts},
+  {id:'delay',   icon:'stopwatch',name:'CODES RETARD',col:C.delay},
+  {id:'notes',   icon:'document',name:'NOTES',col:C.notes},
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -1465,7 +1501,7 @@ function buildApp() {
   const tools=el('div','hdr-tools');
   const UTIL_NAMES={contacts:'CONTACTS',delay:L('CODES RETARD','DELAY CODES'),notes:L('NOTES','NOTES')};
   UTILS.forEach(u=>{
-    const b=el('button','tool-btn',u.icon+' '+UTIL_NAMES[u.id]);
+    const b=el('button','tool-btn',svgIcon(u.icon)+'<span>'+UTIL_NAMES[u.id]+'</span>');
     if(STATE.page===u.id){
       b.style.cssText=`border-color:${u.col.n}99;color:${u.col.n};background:${u.col.n}1a;box-shadow:0 0 12px ${u.col.g}`;
     }
@@ -1491,7 +1527,7 @@ function buildApp() {
     SECTIONS.forEach(s=>{
       const block=el('div','block');
       block.style.cssText=`border-color:${s.col.d};background:rgba(26,26,46,.92);box-shadow:0 0 28px ${s.col.g}`;
-      const ico=el('div','block-ico',s.icon); ico.style.color=s.col.n; ico.style.filter=`drop-shadow(0 0 12px ${s.col.n})`;
+      const ico=el('div','block-ico'); ico.innerHTML=svgIcon(s.icon); ico.style.color=s.col.n; ico.style.filter=`drop-shadow(0 0 12px ${s.col.n})`;
       const name=el('div','block-name',s.name); name.style.cssText=`color:${s.col.n};text-shadow:0 0 14px ${s.col.g}`;
       const desc=el('div','block-sub',s.sub); desc.style.color=s.col.m;
       block.appendChild(ico); block.appendChild(name); block.appendChild(desc);
@@ -1510,7 +1546,7 @@ function buildApp() {
     pageWrap.appendChild(backHome);
     // Page header
     const pgHdr=el('div','pg-hdr');
-    const pgIco=el('div','pg-ico',sec?.icon); pgIco.style.color=c.n; pgIco.style.filter=`drop-shadow(0 0 16px ${c.n})`;
+    const pgIco=el('div','pg-ico'); pgIco.innerHTML=svgIcon(sec?.icon); pgIco.style.color=c.n; pgIco.style.filter=`drop-shadow(0 0 16px ${c.n})`;
     const pgText=el('div');
     const pgTitle=el('div','pg-title',TITLES[STATE.page]); pgTitle.style.cssText=`color:${c.n};text-shadow:0 0 18px ${c.g}`;
     const pgSub=el('div','pg-sub','AIR ALGÉRIE B737 · QUICK REFERENCE · DOA');
