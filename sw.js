@@ -1,6 +1,6 @@
 // Bump this version string whenever index.html (or any cached asset) changes,
 // so returning clients pick up the new content instead of the stale cache.
-const CACHE_VERSION = 'b737-ops-center-v11';
+const CACHE_VERSION = 'b737-ops-center-v15';
 
 const APP_SHELL = [
   './',
