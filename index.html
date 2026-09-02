@@ -28,14 +28,14 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 /* HEADER */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(26,26,46,.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;gap:10px;flex-wrap:wrap}
 .logo-row{display:flex;align-items:center;gap:12px}
-.logo-icon{width:48px;height:48px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,51,85,.45);box-shadow:0 0 18px rgba(255,51,85,.3);flex-shrink:0}
+.logo-icon{width:48px;height:48px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,51,85,.45);box-shadow:0 0 12px rgba(255,51,85,.3);flex-shrink:0}
 .logo-icon img{width:100%;height:100%;object-fit:cover;display:block}
-.logo-name{font-size:18px;font-weight:900;letter-spacing:2px;color:#ff3355;text-shadow:0 0 14px rgba(255,51,85,.6);line-height:1.2}
+.logo-name{font-size:18px;font-weight:900;letter-spacing:2px;color:#ff3355;text-shadow:0 0 9px rgba(255,51,85,.6);line-height:1.2}
 .logo-sub{font-size:12px;color:#7090aa;letter-spacing:1.5px;margin-top:3px;font-family:monospace}
 .hdr-tools{display:flex;gap:6px;flex-wrap:wrap}
 .tool-btn{padding:10px 18px;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8f0ff;cursor:pointer;font-size:17px;font-weight:700;transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
 .tool-btn svg{width:19px;height:19px;flex-shrink:0}
-.tool-btn:active,.tool-btn.on{border-color:rgba(64,208,255,.6);color:#40d0ff;background:rgba(64,208,255,.1);box-shadow:0 0 12px rgba(64,208,255,.25)}
+.tool-btn:active,.tool-btn.on{border-color:rgba(64,208,255,.6);color:#40d0ff;background:rgba(64,208,255,.1);box-shadow:0 0 8px rgba(64,208,255,.25)}
 
 /* HOME */
 .home{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;gap:28px}
@@ -83,13 +83,13 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 /* CARD */
 .card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;margin-bottom:14px}
 .card-ttl{font-size:16px;font-weight:900;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.card-ttl::before{content:'';display:block;width:5px;height:20px;border-radius:3px;background:currentColor;flex-shrink:0;box-shadow:0 0 10px currentColor}
+.card-ttl::before{content:'';display:block;width:5px;height:20px;border-radius:3px;background:currentColor;flex-shrink:0;box-shadow:0 0 7px currentColor}
 
 /* CHECKLIST */
 .ck{display:flex;align-items:flex-start;gap:12px;padding:13px 8px;border-radius:10px;cursor:pointer;transition:all .3s;margin-bottom:3px;-webkit-tap-highlight-color:transparent}
 .ck.done{opacity:.42;background:rgba(255,255,255,.02)}
 .ck-box{width:28px;height:28px;min-width:28px;border-radius:8px;border:2.5px solid;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px;flex-shrink:0;font-size:16px;font-weight:900}
-.ck-box.ticked{box-shadow:0 0 10px currentColor}
+.ck-box.ticked{box-shadow:0 0 7px currentColor}
 .ck-txt{font-size:17px;line-height:1.55;flex:1;transition:all .3s}
 .ck.done .ck-txt{text-decoration:line-through}
 .ck-act{font-family:monospace;font-size:13px;padding-left:12px;white-space:nowrap;font-weight:700;margin-top:3px}
@@ -101,17 +101,17 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .rst-btn{padding:6px 14px;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#7090aa;cursor:pointer;font-size:13px;font-weight:700;-webkit-tap-highlight-color:transparent}
 
 /* ALERT BOXES */
-.warn{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:16px;display:flex;gap:10px;align-items:flex-start;line-height:1.6;box-shadow:0 0 18px rgba(255,0,51,.12)}
+.warn{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:16px;display:flex;gap:10px;align-items:flex-start;line-height:1.6;box-shadow:0 0 12px rgba(255,0,51,.12)}
 .info{background:rgba(64,208,255,.07);border:1.5px solid rgba(64,208,255,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;font-size:16px;line-height:1.6}
 .tip{background:rgba(255,224,64,.07);border:1.5px solid rgba(255,224,64,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;font-size:16px;line-height:1.6}
-.ok-box{background:rgba(96,255,96,.08);border:2px solid rgba(96,255,96,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 18px rgba(96,255,96,.12)}
-.err-box{background:rgba(255,0,51,.08);border:2px solid rgba(255,0,51,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 20px rgba(255,0,51,.2);animation:pulse .9s ease infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 20px rgba(255,0,51,.2)}50%{box-shadow:0 0 35px rgba(255,0,51,.5)}}
+.ok-box{background:rgba(96,255,96,.08);border:2px solid rgba(96,255,96,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 12px rgba(96,255,96,.12)}
+.err-box{background:rgba(255,0,51,.08);border:2px solid rgba(255,0,51,.4);border-radius:12px;padding:18px 20px;margin-top:12px;box-shadow:0 0 13px rgba(255,0,51,.2);animation:pulse .9s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 13px rgba(255,0,51,.2)}50%{box-shadow:0 0 22px rgba(255,0,51,.5)}}
 .res-lbl{font-family:monospace;font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:7px}
 .res-val{font-size:26px;font-weight:900}
 .alarm{border-radius:12px;padding:14px 16px;margin-top:10px;display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700}
-.alarm-ok{background:rgba(96,255,96,.1);border:2px solid rgba(96,255,96,.5);color:#60ff60;box-shadow:0 0 16px rgba(96,255,96,.2)}
-.alarm-bad{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);color:#ff3355;box-shadow:0 0 20px rgba(255,0,51,.25);animation:pulse .9s ease infinite}
+.alarm-ok{background:rgba(96,255,96,.1);border:2px solid rgba(96,255,96,.5);color:#60ff60;box-shadow:0 0 10px rgba(96,255,96,.2)}
+.alarm-bad{background:rgba(255,0,51,.1);border:2px solid rgba(255,0,51,.5);color:#ff3355;box-shadow:0 0 13px rgba(255,0,51,.25);animation:pulse .9s ease infinite}
 
 /* TABLE */
 .tbl{width:100%;border-collapse:collapse;font-size:16px}
@@ -124,7 +124,7 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 /* INPUTS */
 .row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .inp{flex:1;min-width:140px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:11px;padding:12px 16px;color:#e8f0ff;font-size:17px;font-weight:700;outline:none;font-family:inherit;transition:border-color .2s}
-.inp:focus{border-color:rgba(64,208,255,.7);box-shadow:0 0 10px rgba(64,208,255,.2)}
+.inp:focus{border-color:rgba(64,208,255,.7);box-shadow:0 0 7px rgba(64,208,255,.2)}
 .inp::placeholder{color:#7090aa;font-weight:400}
 .btn{padding:12px 22px;border-radius:11px;border:none;cursor:pointer;font-size:16px;font-weight:900;letter-spacing:.5px;transition:transform .15s;font-family:inherit;-webkit-tap-highlight-color:transparent}
 .btn:active{transform:scale(.95)}
@@ -142,7 +142,7 @@ select.inp{cursor:pointer}
 .tog input{opacity:0;width:0;height:0}
 .sl{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:28px;cursor:pointer;transition:.3s;border:1.5px solid rgba(255,255,255,.15)}
 .sl::before{content:'';position:absolute;width:22px;height:22px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.4)}
-input:checked+.sl{background:rgba(255,0,51,.6);border-color:rgba(255,0,51,.7);box-shadow:0 0 10px rgba(255,0,51,.4)}
+input:checked+.sl{background:rgba(255,0,51,.6);border-color:rgba(255,0,51,.7);box-shadow:0 0 7px rgba(255,0,51,.4)}
 input:checked+.sl::before{transform:translateX(22px)}
 
 /* CHIP */
@@ -164,7 +164,7 @@ input:checked+.sl::before{transform:translateX(22px)}
 .mf-val{font-size:19px;font-weight:800}
 
 /* Install banner */
-#ibanner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(26,26,46,.97);border:2px solid rgba(96,255,96,.5);border-radius:16px;padding:14px 40px 14px 18px;color:#60ff60;font-size:14px;font-weight:700;text-align:center;z-index:9999;box-shadow:0 0 30px rgba(96,255,96,.3);max-width:320px;width:calc(100% - 32px);animation:slideUp .4s ease}
+#ibanner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(26,26,46,.97);border:2px solid rgba(96,255,96,.5);border-radius:16px;padding:14px 40px 14px 18px;color:#60ff60;font-size:14px;font-weight:700;text-align:center;z-index:9999;box-shadow:0 0 20px rgba(96,255,96,.3);max-width:320px;width:calc(100% - 32px);animation:slideUp .4s ease}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 #ibanner p{margin:3px 0 0;color:#b0c8e0;font-size:13px;font-weight:400}
 #ibanner .ib-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#60ff60;font-size:20px;cursor:pointer;padding:0;line-height:1}
@@ -438,7 +438,7 @@ function buildChecklist(items, color, ckKey) {
   const progWrap = el('div','prog-wrap');
   const progFill = el('div','prog-fill');
   progFill.style.background = color;
-  progFill.style.boxShadow = `0 0 8px ${color}`;
+  progFill.style.boxShadow = `0 0 5px ${color}`;
   progWrap.appendChild(progFill);
 
   const updateProgress = () => {
@@ -501,7 +501,7 @@ function buildCard(title, color, ...children) {
   const card = el('div','card');
   const ttl = el('div','card-ttl', title);
   ttl.style.color = color;
-  ttl.style.textShadow = `0 0 14px ${color}`;
+  ttl.style.textShadow = `0 0 9px ${color}`;
   card.appendChild(ttl);
   children.forEach(c=>{ if(c) card.appendChild(c); });
   return card;
@@ -513,11 +513,11 @@ function buildSubgrid(items, color, onPick) {
     const sb = el('div','subblock');
     sb.style.borderColor = color+'55';
     sb.style.background = color+'08';
-    const ico = el('div','subblock-ico'); ico.innerHTML = svgIcon(item.icon); ico.style.color = color; ico.style.filter = `drop-shadow(0 0 6px ${color}90)`;
+    const ico = el('div','subblock-ico'); ico.innerHTML = svgIcon(item.icon); ico.style.color = color; ico.style.filter = `drop-shadow(0 0 4px ${color}90)`;
     const info = el('div');
     const name = el('div','subblock-name', item.label);
     name.style.color = color;
-    name.style.textShadow = `0 0 10px ${color}80`;
+    name.style.textShadow = `0 0 7px ${color}80`;
     const desc = el('div','subblock-desc', item.desc);
     info.appendChild(name); info.appendChild(desc);
     sb.appendChild(ico); sb.appendChild(info);
@@ -576,11 +576,11 @@ function buildRNP(sub) {
     const ttl=el('div','card-ttl',L('ÉQUIPEMENTS RNP','RNP EQUIPMENT')); ttl.style.color=c.n; card.appendChild(ttl);
     const minimaRow=el('div','row');
     let minima='lnav';
-    const b1=el('button','btn','LNAV'); b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const b1=el('button','btn','LNAV'); b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
     const b2=el('button','btn btn-g',L('LNAV/VNAV (NPS requis)','LNAV/VNAV (NPS required)'));
     const updateMinima=()=>{
-      if(minima==='lnav'){b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b2.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
-      else{b2.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;b1.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+      if(minima==='lnav'){b1.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;b2.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
+      else{b2.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;b1.style.cssText='background:rgba(255,255,255,.07);color:#e8f0ff;border:1.5px solid rgba(255,255,255,.12)';}
       rebuildEquip();
     };
     b1.addEventListener('click',()=>{minima='lnav';updateMinima();});
@@ -791,16 +791,16 @@ function buildLVP(sub) {
         if(blockedC2 && blockedC3){
           borderColor='rgba(255,0,51,.6)';
           d.style.background='rgba(255,0,51,.1)';
-          d.style.boxShadow='0 0 24px rgba(255,0,51,.3)';
+          d.style.boxShadow='0 0 16px rgba(255,0,51,.3)';
           d.style.animation='pulse .9s ease infinite';
         } else if(blockedC2 || blockedC3){
           borderColor='rgba(255,100,0,.6)';
           d.style.background='rgba(255,100,0,.08)';
-          d.style.boxShadow='0 0 18px rgba(255,100,0,.2)';
+          d.style.boxShadow='0 0 12px rgba(255,100,0,.2)';
         } else if(warnC2 || warnC3){
           borderColor='rgba(255,150,0,.5)';
           d.style.background='rgba(255,150,0,.07)';
-          d.style.boxShadow='0 0 14px rgba(255,150,0,.15)';
+          d.style.boxShadow='0 0 9px rgba(255,150,0,.15)';
         } else {
           borderColor='rgba(96,255,96,.4)';
           d.style.background='rgba(96,255,96,.06)';
@@ -840,7 +840,7 @@ function buildLVP(sub) {
     row.appendChild(wInp); row.appendChild(rInp); row.appendChild(vInp);
     card.appendChild(row);
     const checkBtn=el('button','btn',L('VÉRIFIER LVP','CHECK LVP'));
-    checkBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 18px ${c.g};margin-bottom:14px;font-weight:900`;
+    checkBtn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 12px ${c.g};margin-bottom:14px;font-weight:900`;
     const resDiv=el('div');
     checkBtn.addEventListener('click',()=>{
       const wind=parseFloat(wInp.value), rwycc=parseInt(rInp.value), vis=parseInt(vInp.value);
@@ -899,7 +899,7 @@ function buildLVP(sub) {
       [['Max headwind','25 kt'],['Max crosswind','20 kt *'],['Max tailwind','10 kt'],['Flaps','40 (non-standard: 30)'],['Engines','BOTH ENGINES OPERATIVE'],['Glideslope angle','2.5°–3.25°']]
     ).forEach(([k,v])=>{
       const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-      r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 12px ${c.g}">${v}</span>`;
+      r.innerHTML=`<span style="font-size:17px;font-weight:700;color:#7090aa">${k}</span><span style="font-family:monospace;font-size:20px;font-weight:700;color:${c.n};text-shadow:0 0 8px ${c.g}">${v}</span>`;
       lCard.appendChild(r);
     });
     lCard.appendChild(el('div','tip',L('* En cas de piste contaminée, la limite de vent traversier est réduite selon le tableau RCAM (calcul automatique dans le vérificateur ci-dessus).','* In case of contaminated runway, the crosswind limit is reduced per the RCAM table (calculated automatically in the checker above).')));
@@ -952,7 +952,7 @@ function buildCPDLC(sub) {
       [['WILCO','Understood and will comply'],['UNABLE','Cannot comply'],['STANBY','Standby – to be followed by WILCO/UNABLE'],['ROGER','Message received (information only)']]
     ).forEach(([r,d])=>{
       const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-      row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};text-shadow:0 0 10px ${c.g};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:22px;font-weight:700;color:${c.n};text-shadow:0 0 7px ${c.g};min-width:80px">${r}</div><div style="font-size:16px;color:#7090aa">${d}</div>`;
       rCard.appendChild(row);
     });
     wrap.appendChild(rCard);
@@ -963,7 +963,7 @@ function buildCPDLC(sub) {
     const row=el('div','row');
     const sel=el('select','inp'); sel.innerHTML='<option value="">'+L('— Sélectionner immatriculation —','— Select registration —')+'</option>';
     Object.keys(FLEET).forEach(r=>{ const o=el('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
-    const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
     row.appendChild(sel); row.appendChild(btn); card.appendChild(row);
     const res=el('div');
     btn.addEventListener('click',()=>{
@@ -1001,7 +1001,7 @@ function buildCPDLC(sub) {
     const card=buildCard(L('CODES LOGON FIR','FIR LOGON CODES'), c.n);
     const COUNTRY_EN={'🇩🇿 ALGÉRIE':'🇩🇿 ALGERIA','🇫🇷 FRANCE':'🇫🇷 FRANCE','🇪🇸 ESPAGNE':'🇪🇸 SPAIN','🇮🇹 ITALIE':'🇮🇹 ITALY','🇩🇪 ALLEMAGNE':'🇩🇪 GERMANY','🇨🇭 SUISSE':'🇨🇭 SWITZERLAND','🇬🇧 ANGLETERRE':'🇬🇧 UNITED KINGDOM','🇵🇹 PORTUGAL':'🇵🇹 PORTUGAL','🇲🇦 MAROC':'🇲🇦 MOROCCO','🇹🇳 TUNISIE':'🇹🇳 TUNISIA'};
     Object.entries(CPDLC_FIR).forEach(([pays,firs])=>{
-      const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:900;color:${c.n};text-shadow:0 0 10px ${c.g};margin:18px 0 10px`;
+      const ptitle=el('div'); ptitle.style.cssText=`font-size:18px;font-weight:900;color:${c.n};text-shadow:0 0 7px ${c.g};margin:18px 0 10px`;
       ptitle.textContent=L(pays, COUNTRY_EN[pays]||pays); card.appendChild(ptitle);
       firs.forEach(fir=>{
         const row=el('div'); row.style.cssText='display:flex;align-items:center;gap:16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;margin-bottom:6px';
@@ -1030,7 +1030,7 @@ function buildGRF(sub) {
     const card=buildCard(L('RCAM – MATRICE ÉTAT PISTE','RCAM – RUNWAY CONDITION MATRIX'), c.n);
     RCAM_DATA.forEach(r=>{
       const row=el('div','rcam-row'); row.style.cssText=`border-color:${r.clr}44;background:${r.clr}08`;
-      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 18px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${rcamDesc(r)}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${rcamBraking(r)}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
+      row.innerHTML=`<div style="font-family:monospace;font-size:44px;font-weight:900;color:${r.clr};text-shadow:0 0 12px ${r.clr};line-height:1;min-width:46px">${r.rwycc}</div><div style="flex:1"><div style="font-size:14px;color:#7090aa;margin-bottom:6px">${rcamDesc(r)}</div><span class="chip ${r.rwycc>=5?'c-ok':r.rwycc>=3?'c-warn':'c-bad'}" style="font-size:16px">${rcamBraking(r)}</span></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.tkof}</div></div><div style="text-align:center;min-width:70px"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:22px;font-weight:700;color:${r.clr}">${r.ldg}</div></div>`;
       card.appendChild(row);
     });
     card.appendChild(el('div','tip',L('* 36/33 kt avec winglets','* 36/33 kt with winglets')));
@@ -1042,7 +1042,7 @@ function buildGRF(sub) {
     card.appendChild(el('div','info',L('Entrez un code unique (ex: <b>2</b>) ou les trois tiers (ex: <b>5/2/2</b>)','Enter a single code (e.g. <b>2</b>) or the three thirds (e.g. <b>5/2/2</b>)')));
     const row=el('div','row');
     const inp=el('input','inp'); inp.placeholder=L('ex : 5/2/2 ou 3','e.g.: 5/2/2 or 3');
-    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
     const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
     card.appendChild(row);
@@ -1057,7 +1057,7 @@ function buildGRF(sub) {
       res.innerHTML='';
       rows.forEach(t=>{
         const d=el('div'); d.style.cssText=`border:2px solid ${t.clr}55;border-radius:14px;padding:16px 20px;margin-bottom:12px;background:${t.clr}08`;
-        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 18px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${rcamDesc(t)}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${rcamBraking(t)}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
+        d.innerHTML=`<div style="font-family:monospace;font-size:12px;color:#7090aa;margin-bottom:10px;letter-spacing:2px">${t.third.toUpperCase()}</div><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="font-family:monospace;font-size:52px;font-weight:900;color:${t.clr};text-shadow:0 0 12px ${t.clr};line-height:1">${t.rwycc}</div><div style="flex:1"><div style="font-size:15px;margin-bottom:8px">${rcamDesc(t)}</div><span class="chip ${t.rwycc>=5?'c-ok':t.rwycc>=3?'c-warn':'c-bad'}" style="font-size:17px">${rcamBraking(t)}</span></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW T/O</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.tkof} kt</div></div><div style="text-align:center"><div style="font-size:12px;color:#7090aa">XW LDG</div><div style="font-family:monospace;font-size:26px;color:${t.clr};font-weight:700">${t.ldg} kt</div></div></div>`;
         res.appendChild(d);
       });
       if(rows.some(t=>t.rwycc<=2)){const w=el('div','warn');w.innerHTML='⚠️ <b>'+L('ATTENTION :','WARNING:')+'</b> '+L('Condition piste MOYEN À MAUVAIS ou pire. Vérifier performances.','Runway condition MEDIUM TO POOR or worse. Check performance.');res.appendChild(w);}
@@ -1072,7 +1072,7 @@ function buildGRF(sub) {
     card.appendChild(el('div','info',L(`<b>Format METAR Russie :</b> après le QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure : <span style="font-family:monospace">R[PISTE]/[E][T][DD][BB]</span><br><b>E</b>=étendue · <b>T</b>=type · <b>DD</b>=profondeur · <b>BB</b>=freinage (ou coeff µ)`,`<b>Russian METAR format:</b> after the QNH → <span style="font-family:monospace;color:${c.n}">R28R/290050</span><br>Structure: <span style="font-family:monospace">R[RUNWAY]/[E][T][DD][BB]</span><br><b>E</b>=extent · <b>T</b>=type · <b>DD</b>=depth · <b>BB</b>=braking (or µ coefficient)`)));
     const row=el('div','row');
     const inp=el('input','inp'); inp.placeholder=L('ex : R28R/290050 ou 059200','e.g.: R28R/290050 or 059200');
-    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g};font-weight:900`;
+    const btn=el('button','btn',L('DÉCODER','DECODE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g};font-weight:900`;
     const clr=el('button','btn btn-g',L('EFFACER','CLEAR'));
     row.appendChild(inp); row.appendChild(btn); row.appendChild(clr);
     card.appendChild(row);
@@ -1146,7 +1146,7 @@ function buildGRF(sub) {
           <!-- Header: runway -->
           <div style="background:rgba(255,255,255,.06);padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.06)">
             <div style="font-size:13px;color:#7090aa;letter-spacing:2px;font-family:monospace">${L('PISTE','RUNWAY')}</div>
-            <div style="font-family:monospace;font-size:28px;font-weight:900;color:${c.n};text-shadow:0 0 14px ${c.g}">RWY ${rwy}</div>
+            <div style="font-family:monospace;font-size:28px;font-weight:900;color:${c.n};text-shadow:0 0 9px ${c.g}">RWY ${rwy}</div>
             <div style="margin-left:auto;font-family:monospace;font-size:13px;color:#7090aa">${raw}</div>
           </div>
 
@@ -1173,14 +1173,14 @@ function buildGRF(sub) {
           <!-- Braking + RCAM -->
           <div style="padding:16px 20px;background:${brBg}">
             <div style="font-size:11px;color:#7090aa;letter-spacing:2px;margin-bottom:12px;font-family:monospace">${L('FREINAGE / ACTION FREINAGE','BRAKING / BRAKING ACTION')} (BB=${BB||'—'})</div>
-            <div style="font-size:26px;font-weight:900;color:${brColor};text-shadow:0 0 16px ${brColor};margin-bottom:14px">${brText}</div>
+            <div style="font-size:26px;font-weight:900;color:${brColor};text-shadow:0 0 10px ${brColor};margin-bottom:14px">${brText}</div>
 
             ${rwycc!=='—'?`
             <!-- RCAM Impact -->
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px">
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
                 <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">RWYCC</div>
-                <div style="font-family:monospace;font-size:32px;font-weight:900;color:${brColor};text-shadow:0 0 14px ${brColor}">${rwycc}</div>
+                <div style="font-family:monospace;font-size:32px;font-weight:900;color:${brColor};text-shadow:0 0 9px ${brColor}">${rwycc}</div>
               </div>
               <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center">
                 <div style="font-size:11px;color:#7090aa;margin-bottom:6px;letter-spacing:1px">${L('XW T/O MAX','MAX XW T/O')}</div>
@@ -1324,7 +1324,7 @@ function buildCold(sub) {
     const row=el('div','row');
     const aInp=el('input','inp'); aInp.placeholder=L('Altitude publiée (ft)','Published altitude (ft)'); aInp.type='number';
     const oInp=el('input','inp'); oInp.placeholder=L('TAE (°C) ex: -20','OAT (°C) e.g. -20'); oInp.type='number';
-    const btn=el('button','btn',L('CALCULER','CALCULATE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+    const btn=el('button','btn',L('CALCULER','CALCULATE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
     row.appendChild(aInp); row.appendChild(oInp); row.appendChild(btn); card.appendChild(row);
     const res=el('div');
     btn.addEventListener('click',()=>{
@@ -1392,7 +1392,7 @@ function buildContacts() {
     const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>STATION</th><th>${L('PRESTATAIRE','HANDLER')}</th><th>VHF</th><th>SITA/ACARS</th></tr></thead>`;
     const tb=el('tbody');
     data.forEach(ct=>{
-      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px;text-shadow:0 0 8px ${c.g}">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
+      const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;font-size:16px">${ct.f} ${ct.city}</td><td style="color:#7090aa;font-size:15px">${ct.co}</td><td style="font-family:monospace;color:${c.n};font-weight:700;font-size:19px;text-shadow:0 0 5px ${c.g}">${ct.freq}</td><td>${ct.sita?`<span style="font-family:monospace;font-size:13px;background:rgba(64,208,255,.1);border:1px solid rgba(64,208,255,.3);border-radius:5px;padding:3px 8px;color:${c.n}">${ct.sita}</span>`:'<span style="color:#7090aa">—</span>'}</td>`;
       tb.appendChild(tr);
     });
     tbl.appendChild(tb); return tbl;
@@ -1408,7 +1408,7 @@ function buildContacts() {
   const dc=buildCard(L('RÉSEAU DOMESTIQUE ACARS','DOMESTIC ACARS NETWORK'), c.n);
   [['VHF','131.850'],['DGAH','ALGDGAH'],['CCO','ALGOWAH / ALGJMAH'],['TECHNIQUE','ALGTTAH'],['OPS','XXXKKAH'],['PVD','XXXKLAH']].forEach(([k,v])=>{
     const r=el('div'); r.style.cssText='display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)';
-    r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px;text-shadow:0 0 8px ${c.g}">${v}</span>`;
+    r.innerHTML=`<span style="font-size:17px;color:#7090aa;font-weight:700">${k}</span><span style="font-family:monospace;color:${c.n};font-weight:700;font-size:18px;text-shadow:0 0 5px ${c.g}">${v}</span>`;
     dc.appendChild(r);
   });
   wrap.appendChild(card); wrap.appendChild(dc); return wrap;
@@ -1420,7 +1420,7 @@ function buildDelay() {
   const card=buildCard(L('RECHERCHE CODE DE RETARD','DELAY CODE LOOKUP'), c.n);
   const row=el('div','row');
   const inp=el('input','inp'); inp.placeholder=L('Entrer le code (ex: 93)','Enter the code (e.g. 93)'); inp.type='number'; inp.min='1'; inp.max='99';
-  const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 16px ${c.g}`;
+  const btn=el('button','btn',L('CHERCHER','SEARCH')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
   const clr=el('button','btn btn-g','✕');
   row.appendChild(inp); row.appendChild(btn); row.appendChild(clr); card.appendChild(row);
   const res=el('div');
@@ -1433,7 +1433,7 @@ function buildDelay() {
   const buildDT=(data)=>{
     const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th style="width:60px">CODE</th><th>DESCRIPTION</th></tr></thead>`;
     const tb=el('tbody');
-    data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:900;font-size:22px;text-shadow:0 0 8px ${c.g}">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
+    data.forEach(([k,v])=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;color:${c.n};font-weight:900;font-size:22px;text-shadow:0 0 5px ${c.g}">${k}</td><td style="font-size:16px">${v}</td>`;tb.appendChild(tr);});
     tbl.appendChild(tb); return tbl;
   };
   const delayEntries=()=>Object.keys(DELAY_CODES).map(k=>[k,delayText(k)]);
@@ -1503,7 +1503,7 @@ function buildApp() {
   UTILS.forEach(u=>{
     const b=el('button','tool-btn',svgIcon(u.icon)+'<span>'+UTIL_NAMES[u.id]+'</span>');
     if(STATE.page===u.id){
-      b.style.cssText=`border-color:${u.col.n}99;color:${u.col.n};background:${u.col.n}1a;box-shadow:0 0 12px ${u.col.g}`;
+      b.style.cssText=`border-color:${u.col.n}99;color:${u.col.n};background:${u.col.n}1a;box-shadow:0 0 8px ${u.col.g}`;
     }
     b.addEventListener('click',()=>{
       if(STATE.page===u.id){STATE.page=null;STATE.sub=null;}else{STATE.page=u.id;STATE.sub=null;}
@@ -1526,9 +1526,9 @@ function buildApp() {
     const grid=el('div','grid');
     SECTIONS.forEach(s=>{
       const block=el('div','block');
-      block.style.cssText=`border-color:${s.col.d};background:rgba(26,26,46,.92);box-shadow:0 0 28px ${s.col.g}`;
-      const ico=el('div','block-ico'); ico.innerHTML=svgIcon(s.icon); ico.style.color=s.col.n; ico.style.filter=`drop-shadow(0 0 12px ${s.col.n})`;
-      const name=el('div','block-name',s.name); name.style.cssText=`color:${s.col.n};text-shadow:0 0 14px ${s.col.g}`;
+      block.style.cssText=`border-color:${s.col.d};background:rgba(26,26,46,.92);box-shadow:0 0 18px ${s.col.g}`;
+      const ico=el('div','block-ico'); ico.innerHTML=svgIcon(s.icon); ico.style.color=s.col.n; ico.style.filter=`drop-shadow(0 0 8px ${s.col.n})`;
+      const name=el('div','block-name',s.name); name.style.cssText=`color:${s.col.n};text-shadow:0 0 9px ${s.col.g}`;
       const desc=el('div','block-sub',s.sub); desc.style.color=s.col.m;
       block.appendChild(ico); block.appendChild(name); block.appendChild(desc);
       block.addEventListener('click',()=>{ STATE.page=s.id; STATE.sub=null; render(); });
@@ -1546,9 +1546,9 @@ function buildApp() {
     pageWrap.appendChild(backHome);
     // Page header
     const pgHdr=el('div','pg-hdr');
-    const pgIco=el('div','pg-ico'); pgIco.innerHTML=svgIcon(sec?.icon); pgIco.style.color=c.n; pgIco.style.filter=`drop-shadow(0 0 16px ${c.n})`;
+    const pgIco=el('div','pg-ico'); pgIco.innerHTML=svgIcon(sec?.icon); pgIco.style.color=c.n; pgIco.style.filter=`drop-shadow(0 0 10px ${c.n})`;
     const pgText=el('div');
-    const pgTitle=el('div','pg-title',TITLES[STATE.page]); pgTitle.style.cssText=`color:${c.n};text-shadow:0 0 18px ${c.g}`;
+    const pgTitle=el('div','pg-title',TITLES[STATE.page]); pgTitle.style.cssText=`color:${c.n};text-shadow:0 0 12px ${c.g}`;
     const pgSub=el('div','pg-sub','AIR ALGÉRIE B737 · QUICK REFERENCE · DOA');
     pgText.appendChild(pgTitle); pgText.appendChild(pgSub);
     pgHdr.appendChild(pgIco); pgHdr.appendChild(pgText);
@@ -1613,7 +1613,7 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 13px;
     color: #60ff60;
-    text-shadow: 0 0 12px rgba(96,255,96,0.6);
+    text-shadow: 0 0 8px rgba(96,255,96,0.6);
     letter-spacing: 2px;
     font-weight: 700;
     margin-bottom: 6px;
