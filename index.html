@@ -653,11 +653,15 @@ function buildRNP(sub) {
       ];
       eqContainer.innerHTML='';
 
-      // AP / FD : relation OU — 1 A/P opérationnel OU 2 F/D opérationnels (pas les deux à la fois)
+      // A/P : 2 installés, il en faut AU MOINS 1 opérationnel — F/D : 2 installés, il faut les 2 opérationnels
+      // Ce sont deux exigences INDÉPENDANTES (ET), pas une alternative entre A/P et F/D.
       const apfdBox=el('div','apfd-box');
-      apfdBox.appendChild(buildToggleRow('ap', L('A/P (pilote automatique)','A/P (autopilot)'), L('1 requis','1 required')));
-      apfdBox.appendChild(el('div','or-divider', L('— OU —','— OR —')));
-      apfdBox.appendChild(buildToggleRow('fd', L('F/D (les deux côtés)','F/D (both sides)'), L('2 requis','2 required')));
+      apfdBox.appendChild(el('div',null,L('A/P — au moins 1 des 2 requis','A/P — at least 1 of 2 required'),{fontSize:'13px',color:'#7090aa',padding:'4px 10px 2px',letterSpacing:'.5px'}));
+      apfdBox.appendChild(buildToggleRow('ap1', L('A/P Capitaine','A/P Captain'), ''));
+      apfdBox.appendChild(buildToggleRow('ap2', L('A/P OPL','A/P F/O'), ''));
+      apfdBox.appendChild(el('div',null,L('F/D — les 2 requis','F/D — both required'),{fontSize:'13px',color:'#7090aa',padding:'10px 10px 2px',letterSpacing:'.5px'}));
+      apfdBox.appendChild(buildToggleRow('fd1', L('F/D Capitaine','F/D Captain'), ''));
+      apfdBox.appendChild(buildToggleRow('fd2', L('F/D OPL','F/D F/O'), ''));
       eqContainer.appendChild(apfdBox);
 
       otherEquip.forEach(eq=>{ eqContainer.appendChild(buildToggleRow(eq.id, eq.label, eq.req)); });
@@ -668,8 +672,9 @@ function buildRNP(sub) {
         noteContainer.appendChild(el('div','tip','⚠️ '+L('IMPORTANT : le Radio Altimètre doit être opérationnel du <b>même côté</b> que le pilote automatique utilisé.','IMPORTANT: the Radio Altimeter must be operative on the <b>same side</b> as the operating autopilot.')));
       }
 
-      const apOk=!failed['ap'], fdOk=!failed['fd'];
-      const apfdOk = apOk || fdOk;
+      const apOk = !failed['ap1'] || !failed['ap2'];
+      const fdOk = !failed['fd1'] && !failed['fd2'];
+      const apfdOk = apOk && fdOk;
       const otherFailed = otherEquip.filter(e=>failed[e.id]);
       const allOk = apfdOk && otherFailed.length===0;
 
@@ -677,7 +682,8 @@ function buildRNP(sub) {
         resultDiv.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#60ff60">✅ ${L('APPROCHE RNP AUTORISÉE','RNP APPROACH AUTHORIZED')}</div></div>`;
       } else {
         const reasons=[];
-        if(!apfdOk) reasons.push(L('A/P ET F/D insuffisants – il faut au moins 1 A/P OU 2 F/D opérationnels','A/P AND F/D insufficient – need at least 1 A/P OR 2 F/D operative'));
+        if(!apOk) reasons.push(L('A/P insuffisant – au moins 1 des 2 A/P doit être opérationnel','A/P insufficient – at least 1 of the 2 A/P must be operative'));
+        if(!fdOk) reasons.push(L('F/D insuffisant – les 2 F/D doivent être opérationnels','F/D insufficient – both F/D must be operative'));
         otherFailed.forEach(e=>reasons.push(L(`${e.label} inopérant (${e.req})`,`${e.label} inoperative (${e.req})`)));
         resultDiv.innerHTML=`<div class="err-box"><div class="res-lbl">${L('RÉSULTAT','RESULT')}</div><div class="res-val" style="color:#ff3355">🚨 ${L('RNP INTERDITE','RNP PROHIBITED')}</div>${reasons.map(r=>`<div style="margin-top:8px;font-size:15px;color:#ff9090">• ${r}</div>`).join('')}</div>`;
       }
