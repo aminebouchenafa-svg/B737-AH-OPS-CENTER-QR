@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
@@ -208,14 +208,14 @@ input:checked+.sl::before{transform:translateX(22px)}
 <body>
 <div class="app" id="app">
   <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;color:#60ff60;font-size:20px">
-    Chargement… / Loading…
+    Loading…
   </div>
 </div>
 
 <div id="ibanner">
   <button class="ib-close" onclick="closeInstall()">✕</button>
-  ✈️ <strong id="ib-title">Installer B737 OPS QR</strong>
-  <p id="ib-text">Partager ➜ "Sur l'écran d'accueil"</p>
+  ✈️ <strong id="ib-title">Install B737 OPS QR</strong>
+  <p id="ib-text">Share ➜ "Add to Home Screen"</p>
 </div>
 
 <script>
@@ -249,10 +249,9 @@ const h = (tag,props,...children) => {
 };
 
 // State management
-let STATE = { page: null, sub: null, lang: (function(){ try{ return localStorage.getItem('b737_lang')||'fr'; }catch(e){ return 'fr'; } })() };
+let STATE = { page: null, sub: null };
 const render = () => { $('app').innerHTML=''; $('app').appendChild(buildApp()); };
-const L = (fr, en) => STATE.lang==='en' ? en : fr;
-function setLang(lang){ STATE.lang=lang; try{ localStorage.setItem('b737_lang',lang); }catch(e){} render(); }
+const L = (fr, en) => en;
 
 // ═══════════════════════════════════════════════════════════════
 // DATA
@@ -331,16 +330,16 @@ const LVP_EQ=[
 ];
 
 const CPDLC_FIR={
-  "🇩🇿 ALGÉRIE":[{c:"DAAA",n:"Alger FIR (DAAA)"}],
+  "🇩🇿 ALGERIA":[{c:"DAAA",n:"Alger FIR (DAAA)"}],
   "🇫🇷 FRANCE":[{c:"LFBB",n:"Bordeaux (LFBB)"},{c:"LFFF",n:"Paris (LFFF)"},{c:"LFMM",n:"Marseille (LFMM)"},{c:"LFRR",n:"Brest (LFRR)"},{c:"LFEE",n:"Reims (LFEE)"}],
-  "🇪🇸 ESPAGNE":[{c:"LECB",n:"Barcelona (LECB)"},{c:"LECM",n:"Madrid (LECM)"},{c:"LECS",n:"Sevilla (LECS)"},{c:"LEVC",n:"Valencia (LEVC)"},{c:"GCCC",n:"Canarias (GCCC)"}],
-  "🇮🇹 ITALIE":[{c:"LIMM",n:"Milano (LIMM)"},{c:"LIRR",n:"Roma (LIRR)"},{c:"LIBB",n:"Brindisi (LIBB)"}],
-  "🇩🇪 ALLEMAGNE":[{c:"EDGG",n:"Langen FIR (EDGG)"},{c:"EDMM",n:"München FIR (EDMM)"},{c:"EDWW",n:"Bremen FIR (EDWW)"},{c:"EDUU",n:"Rhein UIR (EDUU)"}],
-  "🇨🇭 SUISSE":[{c:"LSAS",n:"Switzerland (LSAS)"}],
-  "🇬🇧 ANGLETERRE":[{c:"EGTT",n:"London (EGTT)"},{c:"EGPX",n:"Scottish (EGPX)"}],
+  "🇪🇸 SPAIN":[{c:"LECB",n:"Barcelona (LECB)"},{c:"LECM",n:"Madrid (LECM)"},{c:"LECS",n:"Sevilla (LECS)"},{c:"LEVC",n:"Valencia (LEVC)"},{c:"GCCC",n:"Canarias (GCCC)"}],
+  "🇮🇹 ITALY":[{c:"LIMM",n:"Milano (LIMM)"},{c:"LIRR",n:"Roma (LIRR)"},{c:"LIBB",n:"Brindisi (LIBB)"}],
+  "🇩🇪 GERMANY":[{c:"EDGG",n:"Langen FIR (EDGG)"},{c:"EDMM",n:"München FIR (EDMM)"},{c:"EDWW",n:"Bremen FIR (EDWW)"},{c:"EDUU",n:"Rhein UIR (EDUU)"}],
+  "🇨🇭 SWITZERLAND":[{c:"LSAS",n:"Switzerland (LSAS)"}],
+  "🇬🇧 ENGLAND":[{c:"EGTT",n:"London (EGTT)"},{c:"EGPX",n:"Scottish (EGPX)"}],
   "🇵🇹 PORTUGAL":[{c:"LPPC",n:"Lisboa (LPPC)"}],
-  "🇲🇦 MAROC":[{c:"GMMM",n:"Casablanca (GMMM)"}],
-  "🇹🇳 TUNISIE":[{c:"DTTC",n:"Tunis (DTTC)"}],
+  "🇲🇦 MOROCCO":[{c:"GMMM",n:"Casablanca (GMMM)"}],
+  "🇹🇳 TUNISIA":[{c:"DTTC",n:"Tunis (DTTC)"}],
 };
 
 const CONTACTS=[
@@ -363,15 +362,15 @@ const CONTACTS=[
   {f:"🇪🇸",city:"MALAGA",co:"IBERIA",freq:"131.425",sita:"AGPKZIB"},
   {f:"🇪🇸",city:"PALMA",co:"IBERIA",freq:"131.75",sita:"PMIKZIB"},
   {f:"🇪🇸",city:"OVIEDO",co:"IBERIA",freq:"131.475",sita:"OVDKKIB"},
-  {f:"🇪🇸",city:"VALENCE",co:"IBERIA",freq:"131.6",sita:""},
-  {f:"🇪🇸",city:"SÉVILLE",co:"IBERIA",freq:"131.6",sita:""},
+  {f:"🇪🇸",city:"VALENCIA",co:"IBERIA",freq:"131.6",sita:""},
+  {f:"🇪🇸",city:"SEVILLE",co:"IBERIA",freq:"131.6",sita:""},
   {f:"🇮🇹",city:"ROME",co:"AVIAPARTNER",freq:"131.465",sita:"FCOATXH"},
   {f:"🇮🇹",city:"MILAN",co:"AVIAPARTNER",freq:"131.605",sita:"MXPATXH"},
-  {f:"🇮🇹",city:"VENISE",co:"AVIAPARTNER",freq:"131.6",sita:""},
+  {f:"🇮🇹",city:"VENICE",co:"AVIAPARTNER",freq:"131.6",sita:""},
   {f:"🇩🇪",city:"FRANKFURT",co:"WISAG",freq:"131.705",sita:"FRAOCXH"},
   {f:"🇩🇪",city:"MUNICH",co:"SWISSPORT",freq:"131.6",sita:""},
   {f:"🇩🇪",city:"BERLIN",co:"SWISSPORT",freq:"131.6",sita:""},
-  {f:"🇩🇪",city:"HAMBOURG",co:"SWISSPORT",freq:"131.6",sita:""},
+  {f:"🇩🇪",city:"HAMBURG",co:"SWISSPORT",freq:"131.6",sita:""},
   {f:"🇬🇧",city:"LONDON LHR",co:"ASC LHR",freq:"131.585",sita:""},
   {f:"🇬🇧",city:"LONDON LGW",co:"DNATA",freq:"131.6",sita:""},
   {f:"🇬🇧",city:"MANCHESTER",co:"MENZIES",freq:"131.6",sita:""},
@@ -1602,7 +1601,7 @@ const SECTIONS=[
 ];
 const UTILS=[
   {id:'contacts',icon:'radio',name:'CONTACTS',col:C.contacts},
-  {id:'delay',   icon:'stopwatch',name:'CODES RETARD',col:C.delay},
+  {id:'delay',   icon:'stopwatch',name:'DELAY CODES',col:C.delay},
   {id:'notes',   icon:'document',name:'NOTES',col:C.notes},
 ];
 
@@ -1658,7 +1657,7 @@ const normalizeSearch = s => (s||'').toString().toLowerCase().normalize('NFD').r
 function searchMatches(query){
   const q = normalizeSearch(query);
   if(q.length<2) return [];
-  const li = STATE.lang==='fr'?0:1;
+  const li = 1;
   return SEARCH_INDEX
     .map(item=>{
       const title = item.title[li], desc = item.desc[li];
@@ -1778,9 +1777,6 @@ function buildApp() {
     });
     tools.appendChild(b);
   });
-  const langBtn=el('button','tool-btn lang-btn', STATE.lang==='fr' ? '🇬🇧 EN' : '🇫🇷 FR');
-  langBtn.addEventListener('click', ()=>{ setLang(STATE.lang==='fr'?'en':'fr'); });
-  tools.appendChild(langBtn);
   hdr.appendChild(logoRow); hdr.appendChild(tools); div.appendChild(hdr);
 
   // CONTENT
@@ -1856,13 +1852,7 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
   if(isIOS&&!isStandalone){
     setTimeout(()=>{
       const b=document.getElementById('ibanner');
-      if(b){
-        if(STATE.lang==='en'){
-          document.getElementById('ib-title').textContent='Install B737 OPS QR';
-          document.getElementById('ib-text').textContent='Share ➜ "Add to Home Screen"';
-        }
-        b.style.display='block';
-      }
+      if(b) b.style.display='block';
     },3000);
   }
 })();
@@ -1904,7 +1894,7 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
     letter-spacing: 1.5px;
     margin-bottom: 8px;
   ">
-    ⚠️ POUR ENTRAÎNEMENT UNIQUEMENT — NON OFFICIEL / FOR TRAINING PURPOSES ONLY — UNOFFICIAL
+    ⚠️ FOR TRAINING PURPOSES ONLY — UNOFFICIAL
   </div>
   <div style="
     font-family: monospace;
@@ -1912,10 +1902,9 @@ function closeInstall(){document.getElementById('ibanner').style.display='none';
     color: #7090aa;
     letter-spacing: 1px;
   ">
-    © 2025 – Tous droits réservés · All rights reserved<br>
-    Document à usage interne exclusif – Air Algérie · Direction des Opérations Aériennes<br>
-    Toute reproduction, distribution ou modification non autorisée est strictement interdite.<br>
-    <span style="opacity:.7">For internal use only – unauthorized reproduction or distribution is strictly prohibited.</span>
+    © 2025 – All rights reserved<br>
+    For internal use only – Air Algérie · Flight Operations Directorate<br>
+    Unauthorized reproduction, distribution, or modification is strictly prohibited.
   </div>
 </div>
 
