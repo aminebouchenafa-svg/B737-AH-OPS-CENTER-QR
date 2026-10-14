@@ -51,6 +51,18 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .home h1{font-size:clamp(26px,5vw,48px);font-weight:900;text-align:center;background:linear-gradient(135deg,#60ff60,#40d0ff,#df80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;line-height:1.2}
 .home-sub{font-family:monospace;font-size:12px;color:#7090aa;letter-spacing:3px;text-align:center;margin-top:-16px}
 
+/* LOGIN GATE */
+.login-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:100%;max-width:380px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:36px 28px;text-align:center}
+.login-icon img{width:64px;height:64px;border-radius:16px;margin-bottom:16px;display:block;margin-inline:auto}
+.login-title{font-size:19px;font-weight:800;letter-spacing:2px;color:#e8f0ff;margin-bottom:6px}
+.login-sub{font-size:13px;color:#7090aa;letter-spacing:1px;margin-bottom:26px}
+.login-form{display:flex;flex-direction:column;gap:12px}
+.login-form .inp{width:100%}
+.login-btn{background:#40d0ff;color:#000;box-shadow:0 0 12px rgba(64,208,255,.4);margin-top:4px}
+.login-err{color:#ff6b6b;font-size:13px;min-height:16px;display:none;text-align:left}
+.login-err.show{display:block}
+
 /* BLOCKS */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:880px}
 @media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
@@ -249,8 +261,52 @@ const h = (tag,props,...children) => {
 
 // State management
 let STATE = { page: null, sub: null };
-const render = () => { $('app').innerHTML=''; $('app').appendChild(buildApp()); };
+const render = () => { $('app').innerHTML=''; $('app').appendChild(isAuthed() ? buildApp() : buildLoginGate()); };
 const L = (fr, en) => en;
+
+// Crew access gate — deters casual/outside access to a link meant for company flight crew only.
+// This is client-side only (no backend): anyone who reads the page source can see the credentials
+// or bypass the check entirely. It is not real security, just a basic access deterrent.
+const CREW_ID = 'PNT-B737';
+const CREW_PASSWORD = 'OpsCenter2026';
+const isAuthed = () => { try { return localStorage.getItem('b737_authed') === '1'; } catch(e){ return false; } };
+const setAuthed = () => { try { localStorage.setItem('b737_authed', '1'); } catch(e){} };
+
+function buildLoginGate(){
+  const wrap = el('div', 'login-gate');
+  const card = el('div', 'login-card');
+
+  const icon = el('div', 'login-icon');
+  icon.innerHTML = '<img src="./icon-header-dark.png" alt="B737 OPS Center" width="64" height="64"/>';
+  const title = el('div', 'login-title', 'B737 OPS CENTER');
+  const sub = el('div', 'login-sub', 'Flight crew access only');
+  card.appendChild(icon); card.appendChild(title); card.appendChild(sub);
+
+  const form = el('div', 'login-form');
+  const idInp = el('input', 'inp'); idInp.placeholder = 'Crew ID'; idInp.autocapitalize = 'off'; idInp.autocomplete = 'username';
+  const pwInp = el('input', 'inp'); pwInp.type = 'password'; pwInp.placeholder = 'Password'; pwInp.autocomplete = 'current-password';
+  const err = el('div', 'login-err', 'Incorrect ID or password.');
+  const btn = el('button', 'btn login-btn', 'Sign In');
+
+  const tryLogin = () => {
+    if (idInp.value.trim() === CREW_ID && pwInp.value === CREW_PASSWORD) {
+      setAuthed();
+      render();
+    } else {
+      err.classList.add('show');
+    }
+  };
+  btn.addEventListener('click', tryLogin);
+  [idInp, pwInp].forEach(inp => inp.addEventListener('keydown', e => {
+    err.classList.remove('show');
+    if (e.key === 'Enter') tryLogin();
+  }));
+
+  form.appendChild(idInp); form.appendChild(pwInp); form.appendChild(err); form.appendChild(btn);
+  card.appendChild(form);
+  wrap.appendChild(card);
+  return wrap;
+}
 
 // ═══════════════════════════════════════════════════════════════
 // DATA
