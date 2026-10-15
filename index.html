@@ -1049,7 +1049,7 @@ function buildLVP(sub) {
     const mTb=el('tbody');
     [['CAT I','200ft','550m','550m','75m','—'],
      ['CAT II','100ft','300m','300m','75m',L('Requis','Required')],
-     ['CAT IIIA',L('50ft (ou pas de DH)','50ft (or no DH)'),'175m','175m','75m',L('Requis','Required')],
+     ['CAT IIIA','50ft RA','175m','175m','75m',L('Requis','Required')],
     ].forEach(([cat,dh,tdz,mid,se,al])=>{
       const tr=el('tr'); tr.innerHTML=`<td style="font-weight:700;color:${c.n}">${cat}</td><td style="font-family:monospace;font-weight:700">${dh}</td><td style="font-family:monospace;font-weight:700">${tdz}</td><td style="font-family:monospace;font-weight:700">${mid}</td><td style="font-family:monospace;font-weight:700">${se}</td><td>${al}</td>`;
       mTb.appendChild(tr);
