@@ -64,9 +64,10 @@ body{background:#1a1a2e;color:#e8f0ff;font-family:'Segoe UI',system-ui,-apple-sy
 .login-err.show{display:block}
 
 /* BLOCKS */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:880px}
-@media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:380px){.grid{grid-template-columns:1fr}}
+.grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;max-width:880px}
+.grid .block{flex:0 1 calc((100% - 28px)/3)}
+@media(max-width:680px){.grid .block{flex:0 1 calc((100% - 14px)/2)}}
+@media(max-width:380px){.grid .block{flex:0 1 100%}}
 .block{border-radius:22px;border:2px solid;padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .2s,filter .2s;text-align:center;min-height:190px;justify-content:center;-webkit-tap-highlight-color:transparent}
 .block:active{transform:scale(.96);filter:brightness(1.2)}
 .block-ico{width:52px;height:52px;line-height:1}
@@ -221,12 +222,12 @@ input:checked+.sl::before{transform:translateX(22px)}
 #splashTextWrap{position:relative;overflow:visible;isolation:isolate}
 #splashText{position:relative;font-family:'Segoe UI',system-ui,-apple-system,Helvetica,Arial,sans-serif;
   font-weight:900;font-size:clamp(22px,7.5vw,48px);letter-spacing:clamp(2px,1.2vw,6px);text-align:center;white-space:nowrap;
-  background:linear-gradient(100deg,#00ffcc,#40c8ff,#df80ff,#ff9040,#ffe040,#60ff60,#00ffcc);
+  background:linear-gradient(100deg,#40c8ff,#2979ff,#7c6eff,#5c4dff,#ff3355,#e60039,#40c8ff);
   background-size:400% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
-  filter:blur(16px) drop-shadow(0 0 22px rgba(0,255,204,.6)) drop-shadow(0 0 48px rgba(223,128,255,.45)) drop-shadow(0 0 80px rgba(64,200,255,.35));
+  filter:blur(16px) drop-shadow(0 0 22px rgba(64,200,255,.6)) drop-shadow(0 0 48px rgba(124,110,255,.45)) drop-shadow(0 0 80px rgba(255,51,85,.35));
   opacity:0;transform:scale(.55);
   transition:opacity .9s ease,transform .9s cubic-bezier(.16,1.6,.3,1),filter .9s ease}
-#splashText.show{opacity:1;transform:scale(1);filter:blur(0) drop-shadow(0 0 22px rgba(0,255,204,.6)) drop-shadow(0 0 48px rgba(223,128,255,.45)) drop-shadow(0 0 80px rgba(64,200,255,.35));
+#splashText.show{opacity:1;transform:scale(1);filter:blur(0) drop-shadow(0 0 22px rgba(64,200,255,.6)) drop-shadow(0 0 48px rgba(124,110,255,.45)) drop-shadow(0 0 80px rgba(255,51,85,.35));
   animation:splashGradientMove 5s linear infinite}
 @keyframes splashGradientMove{0%{background-position:0% 50%}100%{background-position:400% 50%}}
 #splashFlare{position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;
@@ -290,7 +291,7 @@ input:checked+.sl::before{transform:translateX(22px)}
   const ctx = canvas.getContext('2d');
   if(!ctx){ splash.remove(); return; }
 
-  const COLORS = ['#00ffcc','#df80ff','#ff9040','#40c8ff','#ffe040','#60ff60'];
+  const COLORS = ['#40c8ff','#2979ff','#7c6eff','#5c4dff','#ff3355','#e60039'];
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   function resize(){
     canvas.width = innerWidth * dpr;
@@ -433,7 +434,7 @@ input:checked+.sl::before{transform:translateX(22px)}
       ctx.beginPath();
       ctx.arc(point.x, point.y, 2 + p*1.5, 0, Math.PI*2);
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#60ff60';
+      ctx.shadowColor = '#40c8ff';
       ctx.shadowBlur = 20;
       ctx.fill();
       ctx.shadowBlur = 0;
