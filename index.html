@@ -766,6 +766,7 @@ const C={
   contacts:{n:"#9ee600",g:"rgba(158,230,0,.35)",d:"#3d5700",m:"#7db300"},
   delay:{n:"#29c5ff",g:"rgba(41,197,255,.35)",d:"#063a4d",m:"#0d94c2"},
   notes:{n:"#ffd500",g:"rgba(255,213,0,.35)",d:"#4d3f00",m:"#e0b400"},
+  hot:  {n:"#ff5a36",g:"rgba(255,90,54,.4)",  d:"#5c1800",m:"#e64a19"},
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -795,6 +796,7 @@ const ICON_BODY = {
   wheel:        '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/><line x1="12" y1="4" x2="12" y2="9.5"/><line x1="12" y1="14.5" x2="12" y2="20"/><line x1="4" y1="12" x2="9.5" y2="12"/><line x1="14.5" y1="12" x2="20" y2="12"/>',
   flag:         '<line x1="5" y1="21" x2="5" y2="3"/><path d="M5 4h12v10H5z"/><rect x="5" y="4" width="6" height="5" fill="currentColor" stroke="none"/><rect x="11" y="9" width="6" height="5" fill="currentColor" stroke="none"/>',
   thermometer:  '<rect x="10" y="3" width="4" height="11" rx="2"/><circle cx="12" cy="17" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="8" x2="12" y2="17" stroke-width="3"/>',
+  sun:          '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>',
 };
 function svgIcon(key){
   const body = ICON_BODY[key];
@@ -906,23 +908,24 @@ function buildCard(title, color, ...children) {
 function buildSubgrid(items, color, onPick) {
   const g = el('div','subgrid');
   items.forEach(item=>{
+    const itemColor = item.col ? item.col.n : color;
     const isDone = !!(item.ckTotal && ckDone(item.ckKey) >= item.ckTotal);
     const sb = el('div','subblock');
     sb.style.position = 'relative';
-    sb.style.borderColor = isDone ? color : color+'55';
-    sb.style.background = isDone ? color+'1c' : color+'08';
-    if(isDone) sb.style.boxShadow = `0 0 14px ${color}40`;
-    const ico = el('div','subblock-ico'); ico.innerHTML = svgIcon(item.icon); ico.style.color = color; ico.style.filter = `drop-shadow(0 0 4px ${color}90)`;
+    sb.style.borderColor = isDone ? itemColor : itemColor+'55';
+    sb.style.background = isDone ? itemColor+'1c' : itemColor+'08';
+    if(isDone) sb.style.boxShadow = `0 0 14px ${itemColor}40`;
+    const ico = el('div','subblock-ico'); ico.innerHTML = svgIcon(item.icon); ico.style.color = itemColor; ico.style.filter = `drop-shadow(0 0 4px ${itemColor}90)`;
     const info = el('div');
     const name = el('div','subblock-name', item.label);
-    name.style.color = color;
+    name.style.color = itemColor;
     const desc = el('div','subblock-desc', isDone ? L('✓ Terminé','✓ Done') : item.desc);
-    if(isDone){ desc.style.color = color; desc.style.fontWeight = '700'; }
+    if(isDone){ desc.style.color = itemColor; desc.style.fontWeight = '700'; }
     info.appendChild(name); info.appendChild(desc);
     sb.appendChild(ico); sb.appendChild(info);
     if(isDone){
       const badge = el('div',null,'✓');
-      badge.style.cssText = `position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:${color};color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;box-shadow:0 0 10px ${color}`;
+      badge.style.cssText = `position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:${itemColor};color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;box-shadow:0 0 10px ${itemColor}`;
       sb.appendChild(badge);
     }
     sb.addEventListener('click', ()=>onPick(item.id));
@@ -1875,11 +1878,78 @@ function buildCold(sub) {
   }
 
   const phase=phases.find(p=>p.id===sub);
-  if(phase) wrap.appendChild(buildCard(`${phase.icon} ${phase.name}`, c.n, buildChecklist(phase.items, c.n, `cold-${sub}`)));
+  if(phase) wrap.appendChild(buildCard(phase.name, c.n, buildChecklist(phase.items, c.n, `cold-${sub}`)));
 
   const nextBtn = buildNextBtn(subItems, sub, c.n, id=>{ STATE.sub=id; render(); });
   if(nextBtn) wrap.appendChild(nextBtn);
 
+  return wrap;
+}
+
+// ── HOT ──
+// Source: OM-C Supplementary Procedures SP.16.17-18 (Hot Weather Operation)
+// + SOP B737 10.13.2.2 (Air Algérie company additions).
+function buildHot(sub) {
+  const c=C.hot; const wrap=el('div','page');
+  const phases=[
+    {id:'ground',icon:'sun',name:L('SOL · REFROIDISSEMENT','GROUND · COOLING'),items:[
+      {id:'h1',label:L('TAE > 40°C : faire tourner les packs ou alimenter en air de refroidissement','OAT > 40°C: run packs or supply cooling air'),sub:L('Protège la fiabilité des équipements électriques/électroniques','Protects the reliability of electrical and electronic equipment')},
+      {id:'h2',label:L('Air de refroidissement externe : brancher juste après coupure moteurs, débrancher juste avant démarrage','External cooling air: plug in immediately after engine shutdown, remove just before engine start')},
+      {id:'h3',label:L('Portes et hublots (y compris soute) : garder fermés autant que possible','Doors and windows, including cargo doors: keep closed as much as possible')},
+      {id:'h4',label:L('Éteindre les équipements électroniques inutilisés générant de la chaleur au poste','Turn off unneeded electronic equipment that heats up the flight deck')},
+      {id:'h5',label:L('Ouvrir les aérateurs cabine, fermer les hublots côté soleil','Open all passenger cabin gasper outlets, close window shades on the sun-exposed side')},
+      {id:'h6',label:L('Air du groupe sol seul (sans APU/air sol pressurisé) : sondes TAT non ventilées → différer la dérate T° assumée jusqu\'à disponibilité de l\'air prélevé','Ground air cart only (no APU/pressurized ground air): TAT probes not aspirated → delay assumed temperature derate until bleed air is available')},
+    ]},
+    {id:'cabine',icon:'thermometer',name:L('REFROIDISSEMENT CABINE','CABIN COOLING'),items:[
+      {id:'h7',label:L('Si T° cabine encore élevée : sélecteur PASSENGER CABIN','If cabin temperature still high: PASSENGER CABIN temperature selector'),action:'AUTO COOL'},
+      {id:'h8',label:'PACK switches',action:'HIGH'},
+      {id:'h9',label:L('Si T° cabine reste élevée : sélecteur PASSENGER CABIN','If cabin temperature remains high: PASSENGER CABIN temperature selector'),action:'MAN COOL'},
+    ]},
+    {id:'apugnd',icon:'wheel',name:L('REFROIDISSEMENT PROLONGÉ AU SOL','EXTENDED GROUND COOLING'),items:[
+      {id:'h10',label:L('Après démarrage, ralenti : pression pneumatique insuffisante → besoin de refroidissement supplémentaire','After engine start at idle: pneumatic pressure may be insufficient → additional cooling needed')},
+      {id:'h11',label:'Engine BLEED 1 air switch',action:'OFF'},{id:'h12',label:'Engine BLEED 2 air switch',action:'OFF'},
+      {id:'h13',label:'ISOLATION VALVE switch',action:'OPEN'},{id:'h14',label:'APU BLEED air switch',action:'ON'},
+      {id:'h15',label:'PACK switches',action:'HIGH'},{id:'h16',label:L('Sélecteurs de température','Temperature selectors'),action:'AUTO COOL'},
+    ]},
+    {id:'avantdecollage',icon:'plane',name:L('AVANT DÉCOLLAGE','BEFORE TAKE-OFF'),items:[
+      {id:'h17',label:'PACK switches',action:'AUTO'},{id:'h18',label:'Engine BLEED 2 air switch',action:'ON'},
+      {id:'h19',label:'APU BLEED air switch',action:'OFF'},{id:'h20',label:'Engine BLEED 1 air switch',action:'ON'},
+      {id:'h21',label:'ISOLATION VALVE switch',action:'AUTO'},{id:'h22',label:L('Sélecteurs de température','Temperature selectors'),action:L('Comme requis','As needed')},
+    ]},
+    {id:'freins',icon:'warning',name:L('FREINS & PNEUS','BRAKES & TIRES'),items:[
+      {id:'h23',label:L('Rotations courtes et rapprochées : échauffement des freins cumulatif','Short/frequent sectors: brake heat buildup is cumulative'),sub:L('Risque de fusion des bouchons fusibles de roue et dégonflage des pneus','Risk of wheel fuse plug melting and tire deflation')},
+      {id:'h24',label:L('Sortir le train tôt en approche pour refroidir pneus et freins','Extend the landing gear early during approach for extra tire/brake cooling')},
+      {id:'h25',label:L('Temps de refroidissement en vol : voir "Brake Cooling Schedule" (QRH Performance-Inflight)','In-flight cooling time: see "Brake Cooling Schedule" (QRH Performance-Inflight)')},
+    ]},
+    {id:'prepa',icon:'document',name:L('PRÉPARATION DU VOL','FLIGHT PLANNING'),items:[
+      {id:'h26',label:L('Fortes T° = pénalités de performance → à prendre en compte avant le décollage','High temperatures = performance penalties → account for them before takeoff')},
+      {id:'h27',label:L('Envisager procédures de décollage alternatives (No Bleed T/O, Improved Climb)','Consider alternate takeoff procedures (No Engine Bleed Takeoff, Improved Climb Performance)')},
+    ]},
+    {id:'embarquement',icon:'clipboard',name:L('EMBARQUEMENT','BOARDING'),items:[
+      {id:'h28',label:L('CDB + OPL + SCCM : évaluer la T° cabine avant d\'accepter l\'embarquement','Captain + F/O + SCCM: assess cabin temperature before accepting boarding')},
+      {id:'h29',label:L('Facteurs à considérer : T° cabine, humidité, capacité de refroidissement au roulage (si APU HS), durée de vol, nombre de packs opérationnels','Factors to consider: cabin temperature, humidity, cooling ability during taxi (if APU inoperative), flight time, number of operating packs')},
+    ]},
+  ];
+  const subItems=phases.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`),ckKey:`hot-${p.id}`,ckTotal:p.items.length}));
+  if(!sub){ wrap.appendChild(buildSubgrid(subItems, c.n, id=>{ STATE.sub=id; render(); })); return wrap; }
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
+
+  const phase=phases.find(p=>p.id===sub);
+  if(phase) wrap.appendChild(buildCard(phase.name, c.n, buildChecklist(phase.items, c.n, `hot-${sub}`)));
+
+  const nextBtn = buildNextBtn(subItems, sub, c.n, id=>{ STATE.sub=id; render(); });
+  if(nextBtn) wrap.appendChild(nextBtn);
+
+  return wrap;
+}
+
+// ── ADVERSE WEATHER (picker: Cold Weather / Hot Weather) ──
+function buildAdverse() {
+  const wrap=el('div','page');
+  wrap.appendChild(buildSubgrid([
+    {id:'cold',icon:'snowflake',label:L('Temps Froid','Cold Weather'),desc:L('Givre · Dégivrage · Corrections T°','Icing · De-icing · Temp corrections'),col:C.cold},
+    {id:'hot', icon:'sun',      label:L('Temps Chaud','Hot Weather'), desc:L('Refroidissement · Freins · Cabine','Cooling · Brakes · Cabin'), col:C.hot},
+  ], C.hot.n, id=>{ STATE.page=id; STATE.sub=null; render(); }));
   return wrap;
 }
 
@@ -2006,7 +2076,7 @@ const SECTIONS=[
   {id:'rnp',  icon:'radar',name:'RNP',   sub:'APPROACH',      col:C.rnp},
   {id:'lvp',  icon:'plane',name:'LVP',   sub:'CAT II/IIIA',   col:C.lvp},
   {id:'cpdlc',icon:'chat', name:'CPDLC', sub:'DATALINK',      col:C.cpdlc},
-  {id:'cold', icon:'snowflake',name:'COLD',  sub:'WEATHER',       col:C.cold},
+  {id:'adverse', icon:'warning',name:'ADVERSE',  sub:'WEATHER',    col:C.cold},
   {id:'grf',  icon:'barchart',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
   {id:'brnav',icon:'compass',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
 ];
@@ -2055,6 +2125,15 @@ const SEARCH_INDEX=[
   {page:'cold',sub:'approche',icon:'plane',col:C.cold,title:['Approche & atterrissage (froid)','Approach & Landing (cold)'],desc:['Corrections T° froide','Cold temp corrections'],kw:[]},
   {page:'cold',sub:'apres',icon:'flag',col:C.cold,title:['Après atterrissage (froid)','After Landing (cold)'],desc:['Volets · Anti-glace','Flaps · Anti-ice'],kw:[]},
   {page:'cold',sub:'corr',icon:'thermometer',col:C.cold,title:['Corrections Altimétriques','Altitude Corrections'],desc:['Calcul T° froide automatique','Automatic cold temp calculation'],kw:['altitude correction']},
+  {page:'adverse',sub:null,icon:'warning',col:C.cold,title:['Adverse Weather','Adverse Weather'],desc:['Temps froid · Temps chaud','Cold weather · Hot weather'],kw:['adverse','meteo','météo']},
+  {page:'hot',sub:null,icon:'sun',col:C.hot,title:['Hot Weather','Hot Weather'],desc:['Procédures grande chaleur','Hot weather procedures'],kw:['chaud','chaleur','heat','cooling','refroidissement']},
+  {page:'hot',sub:'ground',icon:'sun',col:C.hot,title:['Sol · Refroidissement (chaud)','Ground · Cooling (hot)'],desc:['Packs · Air de refroidissement','Packs · Cooling air'],kw:[]},
+  {page:'hot',sub:'cabine',icon:'thermometer',col:C.hot,title:['Refroidissement cabine','Cabin cooling'],desc:['AUTO COOL · MAN COOL','AUTO COOL · MAN COOL'],kw:[]},
+  {page:'hot',sub:'apugnd',icon:'wheel',col:C.hot,title:['Refroidissement prolongé au sol','Extended ground cooling'],desc:['APU BLEED · Packs HIGH','APU BLEED · Packs HIGH'],kw:[]},
+  {page:'hot',sub:'avantdecollage',icon:'plane',col:C.hot,title:['Avant décollage (chaud)','Before Take-off (hot)'],desc:['Reconfiguration packs/bleed','Pack/bleed reconfiguration'],kw:[]},
+  {page:'hot',sub:'freins',icon:'warning',col:C.hot,title:['Freins & pneus','Brakes & tires'],desc:['Échauffement cumulatif','Cumulative heat buildup'],kw:['brake','freins','tires','pneus']},
+  {page:'hot',sub:'prepa',icon:'document',col:C.hot,title:['Préparation du vol (chaud)','Flight planning (hot)'],desc:['Pénalités de performance','Performance penalties'],kw:[]},
+  {page:'hot',sub:'embarquement',icon:'clipboard',col:C.hot,title:['Embarquement','Boarding'],desc:['Confort cabine avant embarquement','Cabin comfort before boarding'],kw:['boarding','embarquement']},
 
   {page:'brnav',sub:null,icon:'compass',col:C.brnav,title:['BRNAV / PRNAV','BRNAV / PRNAV'],desc:['RNAV 5 · RNAV 1/2','RNAV 5 · RNAV 1/2'],kw:['rnav','rnav5','rnav1']},
 
@@ -2159,7 +2238,7 @@ document.addEventListener('keydown',e=>{
 
 function buildApp() {
   const div=el('div','app');
-  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',cold:'COLD WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
+  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',adverse:'ADVERSE WEATHER',cold:'COLD WEATHER',hot:'HOT WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
 
   // HEADER
   const hdr=el('div','hdr');
@@ -2210,7 +2289,7 @@ function buildApp() {
     home.appendChild(grid); div.appendChild(home);
   } else {
     // PAGE
-    const sec=[...SECTIONS,...UTILS].find(s=>s.id===STATE.page);
+    const sec=[...SECTIONS,...UTILS,{id:'cold',icon:'snowflake',col:C.cold},{id:'hot',icon:'sun',col:C.hot}].find(s=>s.id===STATE.page);
     const c=sec?.col||C.util;
     const pageWrap=el('div','page');
     // Back to home
@@ -2232,7 +2311,9 @@ function buildApp() {
     if(STATE.page==='lvp')     content=buildLVP(STATE.sub);
     if(STATE.page==='cpdlc')   content=buildCPDLC(STATE.sub);
     if(STATE.page==='grf')     content=buildGRF(STATE.sub);
+    if(STATE.page==='adverse') content=buildAdverse();
     if(STATE.page==='cold')    content=buildCold(STATE.sub);
+    if(STATE.page==='hot')     content=buildHot(STATE.sub);
     if(STATE.page==='brnav')   content=buildBRNAV();
     if(STATE.page==='contacts')content=buildContacts();
     if(STATE.page==='delay')   content=buildDelay();
