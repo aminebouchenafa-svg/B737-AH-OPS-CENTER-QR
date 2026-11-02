@@ -768,6 +768,7 @@ const C={
   notes:{n:"#ffd500",g:"rgba(255,213,0,.35)",d:"#4d3f00",m:"#e0b400"},
   hot:  {n:"#ff5a36",g:"rgba(255,90,54,.4)",  d:"#5c1800",m:"#e64a19"},
   adverse:{n:"#7c6eff",g:"rgba(124,110,255,.4)",d:"#1a1050",m:"#5c4dff"},
+  gps:  {n:"#ff3355",g:"rgba(255,51,85,.4)",  d:"#5c0014",m:"#e60039"},
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -798,6 +799,7 @@ const ICON_BODY = {
   flag:         '<line x1="5" y1="21" x2="5" y2="3"/><path d="M5 4h12v10H5z"/><rect x="5" y="4" width="6" height="5" fill="currentColor" stroke="none"/><rect x="11" y="9" width="6" height="5" fill="currentColor" stroke="none"/>',
   thermometer:  '<rect x="10" y="3" width="4" height="11" rx="2"/><circle cx="12" cy="17" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="8" x2="12" y2="17" stroke-width="3"/>',
   sun:          '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>',
+  pin:          '<path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.3" fill="currentColor" stroke="none"/>',
 };
 function svgIcon(key){
   const body = ICON_BODY[key];
@@ -1954,6 +1956,51 @@ function buildAdverse() {
   return wrap;
 }
 
+// ── GPS ──
+// Source: QRH B737NG, Non-Normal Checklists "GPS" (GPS Receivers Failed,
+// p.11.7) and "GPS Data Unreliable" (p.11.8-11.11), D6-27370-8D6-ALG.
+// This is a quick-reference summary of the official QRH checklist for
+// situational awareness — always execute the actual QRH in the aircraft.
+const GPS_SUBS = [
+  {id:'failed',icon:'warning',label:L('GPS En Panne','GPS Receivers Failed'),desc:L('Les deux récepteurs GPS en panne','Both GPS receivers failed'),ckKey:'gps-failed',ckTotal:1},
+  {id:'unreliable',icon:'pin',label:L('Données GPS Non Fiables','GPS Data Unreliable'),desc:L('Interférence · Brouillage · Leurrage','Interference · Jamming · Spoofing'),ckKey:'gps-unreliable',ckTotal:9},
+];
+function buildGPS(sub) {
+  const c=C.gps; const wrap=el('div','page');
+  if(!sub){
+    const warn=el('div','warn'); warn.innerHTML='<span style="font-size:20px">⚠️</span><div>'+L('L\'interférence GPS peut altérer la trajectoire de l\'avion sans indication ni alerte évidente au poste de pilotage.','GPS interference can alter the airplane flight path without obvious flight deck indications or effects.')+'</div>';
+    wrap.appendChild(warn);
+    wrap.appendChild(buildSubgrid(GPS_SUBS, c.n, id=>{ STATE.sub=id; render(); }));
+    return wrap;
+  }
+  wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
+
+  if(sub==='failed'){
+    wrap.appendChild(buildCard(L('GPS EN PANNE','GPS RECEIVERS FAILED'), c.n, buildChecklist([
+      {id:'f1',label:L('Les deux récepteurs GPS sont en panne','Both GPS receivers are failed'),sub:L('Le FMC utilise uniquement IRS/radio · Alerte et affichage terrain anticipés indisponibles (incertitude de position) · ADS-B inopérant','The FMC uses only IRS or radio inputs · Look-ahead terrain alerting and display are unavailable due to position uncertainty · ADS-B is inoperative'),action:L('Continuer normalement si ANP OK','Continue normal ops if ANP OK')},
+    ], c.n, 'gps-failed')));
+  }
+
+  if(sub==='unreliable'){
+    wrap.appendChild(buildCard(L('DONNÉES GPS NON FIABLES','GPS DATA UNRELIABLE'), c.n, buildChecklist([
+      {id:'u1',label:L('Voyant GPS allumé ?','GPS light illuminated?'),sub:L('Si OUI → aller au checklist "GPS en panne"','If ON → go to the "GPS Receivers Failed" checklist')},
+      {id:'u2',label:L('Au sol','On the ground'),sub:L('Utiliser les Procédures Complémentaires ou le SOP compagnie pour une utilisation intentionnelle en zone d\'interférence GPS connue','Use Supplementary Procedures or company SOP for intentional operations in areas of known GPS interference')},
+      {id:'u3',label:L('En vol — rechercher les signes de données GPS non fiables','In flight — check for signs of unreliable GPS data'),sub:L('Alerte PULL UP avec marge de terrain immédiatement vérifiable · Augmentation lente de l\'ANP · Terrain ND/VSD incohérent avec les cartes · Message TERR POS · GPS-L/R INVALID · VERIFY POS FMC-FMC/FMC-GPS · UTC/date et ETA FMC erronés · Logon ATC datalink impossible (UTC erroné) · UNABLE REQD NAV PERF-RNP (toujours valide)','PULL UP alert with sufficient immediately verifiable terrain clearance · Slow increase in ANP · ND/VSD terrain data not matching charts · VSD TERR flag · TERR POS message · GPS-L/R INVALID · VERIFY POS FMC-FMC or FMC-GPS · Inaccurate UTC TIME/DATE and FMC ETA · Unable to log on to ATC datalink (inaccurate UTC) · UNABLE REQD NAV PERF-RNP (must be considered valid)')},
+      {id:'u4',label:L('Si une de ces indications apparaît : les données GPS et l\'alerte terrain anticipée GPWS peuvent être temporairement inhibées','If any of these indications occur: GPS data and GPWS look-ahead terrain alerting can be temporarily inhibited')},
+      {id:'u5',label:L('Si inhibition GPS nécessaire','If GPS data inhibit is needed'),sub:L('PROG → NAV STATUS → NAV OPTIONS → GPS UPDATE OFF. Sélectionner DME/VOR/LOC UPDATE ON si besoin. Surveiller la position FMC pour une récupération.','PROG page → NAV STATUS → NAV OPTIONS → GPS UPDATE OFF. Select DME UPDATE, VOR UPDATE, LOC UPDATE ON as needed. Monitor GPS FMC position updating for recovery.')},
+      {id:'u6',label:L('Récupération des données GPS','GPS data recovery'),sub:L('Indiquée par : LAT/LON GPS affiché sur POS REF page 2 pour GPS L ou R, ET BRG/DST affiché sur POS SHIFT page 3 inférieur à l\'ANP actuel affiché sur le ND. Si récupération confirmée, remettre GPS UPDATE sur ON à la discrétion du commandant de bord.','Indicated by: GPS LAT/LON shown for GPS L or GPS R on POS REF page 2, AND BRG/DST shown for GPS L or GPS R on POS SHIFT page 3 is less than current ANP shown on the ND. If GPS data appears to recover, turn GPS UPDATE ON at Captain\'s discretion.')},
+      {id:'u7',label:L('Si inhibition de l\'alerte terrain anticipée GPWS nécessaire','If GPWS look-ahead terrain alerting inhibit is needed'),action:'TERR INHIBIT',sub:L('Les alertes GPWS de base restent valides. Note : des alertes anticipées erronées peuvent persister pour le reste du vol si le sélecteur est remis sur NORM après avoir traversé une zone de données GPS non fiables.','Basic GPWS alerts that occur are valid. Note: erroneous GPWS look-ahead terrain alerts may continue for the remainder of the flight if the Ground Proximity Terrain Inhibit switch is selected to NORM after flying through areas of unreliable GPS data.')},
+      {id:'u8',label:L('Informer l\'ATC de l\'interférence GPS suspectée et de toute capacité de navigation dégradée','Advise ATC of suspected GPS interference and any degraded navigation capability')},
+      {id:'u9',label:L('Référence : QRH B737NG, Non-Normal Checklist "GPS Data Unreliable", p.11.8-11.11','Reference: QRH B737NG, Non-Normal Checklist "GPS Data Unreliable", p.11.8-11.11')},
+    ], c.n, 'gps-unreliable')));
+  }
+
+  const nextBtn = buildNextBtn(GPS_SUBS, sub, c.n, id=>{ STATE.sub=id; render(); });
+  if(nextBtn) wrap.appendChild(nextBtn);
+
+  return wrap;
+}
+
 // ── BRNAV ──
 function buildBRNAV() {
   const c=C.brnav; const wrap=el('div','page');
@@ -2080,6 +2127,7 @@ const SECTIONS=[
   {id:'adverse', icon:'warning',name:'ADVERSE',  sub:'WEATHER',    col:C.adverse},
   {id:'grf',  icon:'barchart',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
   {id:'brnav',icon:'compass',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
+  {id:'gps',  icon:'pin',  name:'GPS',   sub:'NNC · QRH',     col:C.gps},
 ];
 const UTILS=[
   {id:'contacts',icon:'radio',name:'CONTACTS',col:C.contacts},
@@ -2135,6 +2183,9 @@ const SEARCH_INDEX=[
   {page:'hot',sub:'freins',icon:'warning',col:C.hot,title:['Freins & pneus','Brakes & tires'],desc:['Échauffement cumulatif','Cumulative heat buildup'],kw:['brake','freins','tires','pneus']},
   {page:'hot',sub:'prepa',icon:'document',col:C.hot,title:['Préparation du vol (chaud)','Flight planning (hot)'],desc:['Pénalités de performance','Performance penalties'],kw:[]},
   {page:'hot',sub:'embarquement',icon:'clipboard',col:C.hot,title:['Embarquement','Boarding'],desc:['Confort cabine avant embarquement','Cabin comfort before boarding'],kw:['boarding','embarquement']},
+  {page:'gps',sub:null,icon:'pin',col:C.gps,title:['GPS','GPS'],desc:['Interférence · Brouillage · Leurrage','Interference · Jamming · Spoofing'],kw:['gps','jamming','spoofing','brouillage','leurrage','interference','interférence','nnc']},
+  {page:'gps',sub:'failed',icon:'warning',col:C.gps,title:['GPS en panne','GPS Receivers Failed'],desc:['Les deux récepteurs GPS en panne','Both GPS receivers failed'],kw:['gps fail']},
+  {page:'gps',sub:'unreliable',icon:'pin',col:C.gps,title:['Données GPS non fiables','GPS Data Unreliable'],desc:['Brouillage · Leurrage','Jamming · Spoofing'],kw:['gps unreliable','jamming','spoofing','terr inhibit']},
 
   {page:'brnav',sub:null,icon:'compass',col:C.brnav,title:['BRNAV / PRNAV','BRNAV / PRNAV'],desc:['RNAV 5 · RNAV 1/2','RNAV 5 · RNAV 1/2'],kw:['rnav','rnav5','rnav1']},
 
@@ -2239,7 +2290,7 @@ document.addEventListener('keydown',e=>{
 
 function buildApp() {
   const div=el('div','app');
-  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',adverse:'ADVERSE WEATHER',cold:'COLD WEATHER',hot:'HOT WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
+  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',adverse:'ADVERSE WEATHER',cold:'COLD WEATHER',hot:'HOT WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',gps:'GPS',contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
 
   // HEADER
   const hdr=el('div','hdr');
@@ -2316,6 +2367,7 @@ function buildApp() {
     if(STATE.page==='cold')    content=buildCold(STATE.sub);
     if(STATE.page==='hot')     content=buildHot(STATE.sub);
     if(STATE.page==='brnav')   content=buildBRNAV();
+    if(STATE.page==='gps')     content=buildGPS(STATE.sub);
     if(STATE.page==='contacts')content=buildContacts();
     if(STATE.page==='delay')   content=buildDelay();
     if(STATE.page==='notes')   content=buildNotes();
