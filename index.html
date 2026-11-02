@@ -650,9 +650,14 @@ const COLD_TBL = [
   {alt:3000,m0:170,m10:290,m20:420,m30:570,m40:720,m50:890},
 ];
 function getCorr(a,o){
+  // OM-C: no correction needed when the reported airport temperature is
+  // above 0°C — do NOT use Math.abs(o), a positive OAT must return 0,
+  // not reuse the negative-temperature column.
+  if (o > 0) return 0;
   const row=COLD_TBL.reduce((p,c)=>Math.abs(c.alt-a)<Math.abs(p.alt-a)?c:p);
   const cols=[[0,'m0'],[10,'m10'],[20,'m20'],[30,'m30'],[40,'m40'],[50,'m50']];
-  const [,k]=cols.reduce((p,[v,kk])=>Math.abs(v-Math.abs(o))<Math.abs(p[0]-Math.abs(o))?[v,kk]:p,[0,'m0']);
+  const mag=-o;
+  const [,k]=cols.reduce((p,[v,kk])=>Math.abs(v-mag)<Math.abs(p[0]-mag)?[v,kk]:p,[0,'m0']);
   let corr = row[k];
   // Table published up to 3000 ft; beyond that, scale linearly per OM-C note
   // ("to correct 6000 ft, use twice the correction for 3000 ft").
@@ -1837,18 +1842,25 @@ function buildCold(sub) {
 
   if(sub==='corr'){
     const card=buildCard(L('CORRECTIONS ALTIMÉTRIQUES TEMPÉRATURE FROIDE','COLD TEMPERATURE ALTITUDE CORRECTIONS'), c.n);
-    card.appendChild(el('div','info',L('<b>IMPORTANT :</b> Pour approche RNP, la correction est EN PLUS des 50 ft obligatoires.','<b>IMPORTANT:</b> For an RNP approach, the correction is IN ADDITION to the mandatory 50 ft additive.')));
+    card.appendChild(el('div','info',L('<b>IMPORTANT :</b> Pour approche RNP, la correction est EN PLUS des 50 ft obligatoires. Aucune correction requise si TAE &gt; 0°C.','<b>IMPORTANT:</b> For an RNP approach, the correction is IN ADDITION to the mandatory 50 ft additive. No correction is required when OAT &gt; 0°C.')));
     const row=el('div','row');
-    const aInp=el('input','inp'); aInp.placeholder=L('Altitude publiée (ft)','Published altitude (ft)'); aInp.type='number';
+    const aInp=el('input','inp'); aInp.placeholder=L('Altitude min. publiée (ft)','Published min. altitude (ft)'); aInp.type='number';
+    const eInp=el('input','inp'); eInp.placeholder=L('Altitude terrain/référence (ft)','Airport/reference elevation (ft)'); eInp.type='number';
     const oInp=el('input','inp'); oInp.placeholder=L('TAE (°C) ex: -20','OAT (°C) e.g. -20'); oInp.type='number';
     const btn=el('button','btn',L('CALCULER','CALCULATE')); btn.style.cssText=`background:${c.n};color:#000;box-shadow:0 0 10px ${c.g}`;
-    row.appendChild(aInp); row.appendChild(oInp); row.appendChild(btn); card.appendChild(row);
+    row.appendChild(aInp); row.appendChild(eInp); row.appendChild(oInp); row.appendChild(btn); card.appendChild(row);
     const res=el('div');
     btn.addEventListener('click',()=>{
-      const a=parseInt(aInp.value),o=parseInt(oInp.value);
-      if(isNaN(a)||isNaN(o)){res.innerHTML='';return;}
-      const corr=getCorr(a,o);
-      res.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('CORRECTION À AJOUTER','CORRECTION TO ADD')}</div><div class="res-val" style="color:#60ff60;font-size:52px">+${corr} ft</div><div style="margin-top:10px;font-size:17px;color:#7090aa">${L('Altitude publiée','Published altitude')} : <b style="color:#e8f0ff">${a} ft</b> &nbsp;|&nbsp; OAT : <b style="color:#e8f0ff">${o}°C</b> &nbsp;→&nbsp; ${L('Altitude corrigée','Corrected altitude')} : <b style="color:${c.n};font-size:22px">${a+corr} ft</b></div></div>`;
+      const a=parseInt(aInp.value),elev=parseInt(eInp.value),o=parseInt(oInp.value);
+      if(isNaN(a)||isNaN(elev)||isNaN(o)){res.innerHTML='';return;}
+      const height=a-elev;
+      if(height<=0){
+        res.innerHTML=`<div class="err-box"><div class="res-val" style="color:#ff3355">${L('Altitude de référence ≥ altitude publiée — vérifier les valeurs saisies','Reference elevation ≥ published altitude — check the entered values')}</div></div>`;
+        return;
+      }
+      const corr=getCorr(height,o);
+      const noCorrNote = o>0 ? `<div style="margin-top:8px;font-size:14px;color:#7090aa">${L('TAE &gt; 0°C : aucune correction requise (OM-C)','OAT &gt; 0°C: no correction required (OM-C)')}</div>` : '';
+      res.innerHTML=`<div class="ok-box"><div class="res-lbl">${L('CORRECTION À AJOUTER','CORRECTION TO ADD')}</div><div class="res-val" style="color:#60ff60;font-size:52px">+${corr} ft</div><div style="margin-top:10px;font-size:17px;color:#7090aa">${L('Hauteur / référence','Height above reference')} : <b style="color:#e8f0ff">${height} ft</b> &nbsp;|&nbsp; OAT : <b style="color:#e8f0ff">${o}°C</b> &nbsp;→&nbsp; ${L('Altitude corrigée','Corrected altitude')} : <b style="color:${c.n};font-size:22px">${a+corr} ft</b></div>${noCorrNote}</div>`;
     });
     card.appendChild(res);
     // Table
