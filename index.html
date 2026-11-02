@@ -314,11 +314,21 @@ input:checked+.sl::before{transform:translateX(22px)}
     speed: 0.0012 + Math.random() * 0.0022
   }));
 
-  // ── Distant planets ──
-  const planets = [
-    {x: innerWidth*0.84, y: innerHeight*0.22, r: Math.min(innerWidth,innerHeight)*0.045, c1:'#9fd8ff', c2:'#1a3a66', ring:'#df80ff'},
-    {x: innerWidth*0.13, y: innerHeight*0.78, r: Math.min(innerWidth,innerHeight)*0.03,  c1:'#ffcf9f', c2:'#6b2f0e', ring:null}
-  ];
+  // ── Ambient background nebulae (visible from the start, drifting slowly) ──
+  const ambientNebula = Array.from({length: 6}, () => {
+    const maxR = Math.min(innerWidth, innerHeight) * (0.28 + Math.random()*0.22);
+    return {
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      r: maxR,
+      col: COLORS[(Math.random() * COLORS.length) | 0],
+      vx: (Math.random()-0.5) * 0.06,
+      vy: (Math.random()-0.5) * 0.06,
+      base: 0.08 + Math.random()*0.07,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.0005 + Math.random()*0.0007
+    };
+  });
 
   function drawStars(t){
     stars.forEach(s=>{
@@ -330,24 +340,22 @@ input:checked+.sl::before{transform:translateX(22px)}
     });
   }
 
-  function drawPlanet(p){
+  function drawAmbientNebula(t){
     ctx.save();
-    if(p.ring){
-      ctx.strokeStyle = p.ring + '55';
-      ctx.lineWidth = p.r*0.16;
+    ctx.globalCompositeOperation = 'lighter';
+    ambientNebula.forEach(n=>{
+      n.x += n.vx; n.y += n.vy;
+      if(n.x < -n.r) n.x = innerWidth + n.r; if(n.x > innerWidth + n.r) n.x = -n.r;
+      if(n.y < -n.r) n.y = innerHeight + n.r; if(n.y > innerHeight + n.r) n.y = -n.r;
+      const a = n.base + Math.sin(t*n.speed + n.phase) * (n.base*0.5);
+      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      g.addColorStop(0, n.col + Math.round(Math.max(a,0)*255).toString(16).padStart(2,'0'));
+      g.addColorStop(1, n.col + '00');
       ctx.beginPath();
-      ctx.ellipse(p.x, p.y, p.r*1.9, p.r*0.55, -0.35, 0, Math.PI*2);
-      ctx.stroke();
-    }
-    const grad = ctx.createRadialGradient(p.x - p.r*0.35, p.y - p.r*0.35, p.r*0.1, p.x, p.y, p.r);
-    grad.addColorStop(0, p.c1);
-    grad.addColorStop(1, p.c2);
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-    ctx.fillStyle = grad;
-    ctx.shadowColor = p.c1;
-    ctx.shadowBlur = p.r*0.6;
-    ctx.fill();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+    });
     ctx.restore();
   }
 
@@ -406,7 +414,7 @@ input:checked+.sl::before{transform:translateX(22px)}
     const t = now - start;
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     drawStars(now);
-    planets.forEach(drawPlanet);
+    drawAmbientNebula(now);
 
     if(!exploded){
       const p = Math.min(t / travelMs, 1);
