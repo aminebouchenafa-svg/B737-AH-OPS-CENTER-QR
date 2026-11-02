@@ -349,35 +349,43 @@ const SNOWE_EN = {"1":"10% or less","2":"11–25%","5":"26–50%","9":"51–100%
 const snowT = code => L(SNOWT[code], SNOWT_EN[code]);
 const snowE = code => L(SNOWE[code], SNOWE_EN[code]);
 
+// Source: OM-C Supplementary Procedures SP.16.12-13, Cold Temperature Altitude
+// Correction Table (Heights and Altitudes in Feet).
 const COLD_TBL = [
-  {alt:200,m10:0,m20:10,m30:10,m40:20,m50:20,m60:30},
-  {alt:300,m10:10,m20:10,m30:20,m40:30,m50:40,m60:50},
-  {alt:400,m10:10,m20:20,m30:30,m40:40,m50:60,m60:70},
-  {alt:500,m10:10,m20:20,m30:40,m40:60,m50:70,m60:90},
-  {alt:600,m10:10,m20:30,m30:50,m40:70,m50:90,m60:110},
-  {alt:700,m10:10,m20:30,m30:60,m40:80,m50:100,m60:130},
-  {alt:800,m10:20,m20:40,m30:60,m40:90,m50:120,m60:150},
-  {alt:900,m10:20,m20:40,m30:70,m40:100,m50:130,m60:170},
-  {alt:1000,m10:20,m20:50,m30:80,m40:120,m50:150,m60:190},
-  {alt:1500,m10:30,m20:80,m30:120,m40:170,m50:220,m60:280},
-  {alt:2000,m10:40,m20:100,m30:160,m40:230,m50:300,m60:380},
-  {alt:3000,m10:60,m20:150,m30:240,m40:340,m50:450,m60:570},
-  {alt:4000,m10:90,m20:200,m30:330,m40:460,m50:610,m60:770},
-  {alt:5000,m10:110,m20:260,m30:420,m40:590,m50:790,m60:980},
+  {alt:200,m0:20,m10:20,m20:30,m30:40,m40:50,m50:60},
+  {alt:300,m0:20,m10:30,m20:50,m30:60,m40:80,m50:90},
+  {alt:400,m0:30,m10:40,m20:60,m30:80,m40:100,m50:120},
+  {alt:500,m0:30,m10:50,m20:70,m30:100,m40:120,m50:150},
+  {alt:600,m0:40,m10:60,m20:90,m30:120,m40:150,m50:180},
+  {alt:700,m0:40,m10:70,m20:100,m30:140,m40:170,m50:210},
+  {alt:800,m0:50,m10:80,m20:120,m30:150,m40:190,m50:240},
+  {alt:900,m0:50,m10:90,m20:130,m30:170,m40:220,m50:270},
+  {alt:1000,m0:60,m10:100,m20:140,m30:190,m40:240,m50:300},
+  {alt:1500,m0:90,m10:150,m20:210,m30:280,m40:360,m50:450},
+  {alt:2000,m0:120,m10:200,m20:280,m30:380,m40:480,m50:590},
+  {alt:3000,m0:170,m10:290,m20:420,m30:570,m40:720,m50:890},
 ];
 function getCorr(a,o){
   const row=COLD_TBL.reduce((p,c)=>Math.abs(c.alt-a)<Math.abs(p.alt-a)?c:p);
-  const cols=[[10,'m10'],[20,'m20'],[30,'m30'],[40,'m40'],[50,'m50'],[60,'m60']];
-  const [,k]=cols.reduce((p,[v,kk])=>Math.abs(v-Math.abs(o))<Math.abs(p[0]-Math.abs(o))?[v,kk]:p,[0,'m10']);
-  return row[k];
+  const cols=[[0,'m0'],[10,'m10'],[20,'m20'],[30,'m30'],[40,'m40'],[50,'m50']];
+  const [,k]=cols.reduce((p,[v,kk])=>Math.abs(v-Math.abs(o))<Math.abs(p[0]-Math.abs(o))?[v,kk]:p,[0,'m0']);
+  let corr = row[k];
+  // Table published up to 3000 ft; beyond that, scale linearly per OM-C note
+  // ("to correct 6000 ft, use twice the correction for 3000 ft").
+  if (a > 3000) corr = Math.round(corr * a / 3000);
+  return corr;
 }
 
+// Source: Air Algérie B737 OPS INFO, "CAT II/III PROCEDURE REQUIREMENTS" table
+// (CL-AH-DOA-DOC-B737-002, Ed.6 Nov 22, p.6). X=Required, R=Recommended, — =Not required.
+// Note: CAT 2 "AUTOLAND" row officially reads "1 A/P" (one autopilot engaged in APP
+// mode is sufficient — full autoland is NOT required for CAT 2, only for CAT 3A).
 const LVP_EQ=[
-  {n:"A/P AUTOLAND",c2:"1",c3:"1"},{n:"ALL ENGINES",c2:"X",c3:"X"},{n:"FLAPS 30/40",c2:"X",c3:"X"},
-  {n:"HYDRAULIC A+B",c2:"X",c3:"X"},{n:"AUTO SPEEDBRAKES",c2:"X",c3:"X"},{n:"EFIS CONTROL PANEL",c2:"1",c3:"2"},
-  {n:"ANTISKID",c2:"X",c3:"X"},{n:"GENERATOR",c2:"2",c3:"2"},{n:"TR1 + TR2/TR3",c2:"X",c3:"X"},
+  {n:"AUTOLAND",c2:"—",c3:"X"},{n:"ALL ENGINES",c2:"—",c3:"X"},{n:"FLAPS 30/40",c2:"—",c3:"X"},
+  {n:"HYDRAULIC A+B",c2:"—",c3:"X"},{n:"AUTO SPEEDBRAKES",c2:"—",c3:"X"},{n:"EFIS CONTROL PANEL",c2:"1",c3:"2"},
+  {n:"ANTISKID",c2:"—",c3:"X"},{n:"GENERATOR",c2:"2",c3:"2"},{n:"TR1 + TR2/TR3",c2:"X",c3:"X"},
   {n:"AUTOPILOT APP MODE",c2:"1",c3:"2"},{n:"A/P DISENGAGE SW",c2:"1",c3:"2"},{n:"A/P AURAL WARNING",c2:"X",c3:"X"},
-  {n:"FD BARS PFD",c2:"PF",c3:"2"},{n:"AUTOTHROTTLE A/T",c2:"R",c3:"R"},{n:"TO/GA SWITCHES",c2:"1",c3:"2"},
+  {n:"FD BARS PFD",c2:"PF",c3:"2"},{n:"AUTOTHROTTLE A/T",c2:"—",c3:"R"},{n:"TO/GA SWITCHES",c2:"1",c3:"2"},
   {n:"ADIRU NAV MODE",c2:"2",c3:"2"},{n:"ILS RECEIVER",c2:"PF",c3:"2"},{n:"GS VALIDITY CHECK",c2:"X",c3:"X"},
   {n:"DEU",c2:"1",c3:"2"},{n:"STANDBY HORIZON",c2:"—",c3:"X"},{n:"PFD ND DISPLAYS",c2:"4",c3:"4"},
   {n:"ATTITUDE PFD",c2:"2",c3:"2"},{n:"FMA PFD",c2:"2",c3:"2"},{n:"RADIO ALTIMETER",c2:"1",c3:"2"},
@@ -1095,6 +1103,7 @@ function buildLVP(sub) {
     });
     tbl.appendChild(tb);
     const wrap2=el('div','tbl-wrap'); wrap2.appendChild(tbl); card.appendChild(wrap2);
+    card.appendChild(el('div','tip',L('Note AUTOLAND : CAT 2 requiert 1 pilote automatique engagé en mode APP (pas d\'atterrissage automatique complet). CAT 3A requiert l\'ATTERRISSAGE AUTOMATIQUE.','Note AUTOLAND: CAT 2 requires 1 autopilot engaged in APP mode (full autoland is not required). CAT 3A requires AUTOLAND.')));
     wrap.appendChild(card);
   }
   return wrap;
@@ -1467,6 +1476,10 @@ function buildCold(sub) {
       {id:'c10',label:L('Après démarrage : ENGINE ANTI-ICE switches','Immediately after engine start: ENGINE ANTI-ICE switches'),action:L('ON – OPL','ON – F/O')},
     ]},
     {id:'roulage',icon:'wheel',name:L('ROULAGE','TAXI'),items:[
+      {id:'c31',label:L('GENERATOR 1 et 2','GENERATOR 1 and 2 switches'),action:L('ON – OPL','ON – F/O'),sub:L('Huile froide : jusqu\'à 5 min pour stabiliser','Due to cold oil, up to 5 min can be needed to produce steady power')},
+      {id:'c32',label:L('Commandes de vol — vérifier','Flight controls — check'),sub:L('Efforts accrus par T° froide. Si givre/neige sur l\'aile : différer la vérification jusqu\'après dégivrage/antigivrage','Increase in control forces expected at low temperatures. If snow/ice on the wing, consider delaying until after de-icing/anti-icing')},
+      {id:'c33',label:L('VOLETS — recycler : Rentrés → Volets 40 → Rentrés','FLAPS — cycle: Up → Flaps 40 → Up'),sub:L('Course complète pour vérifier la liberté de mouvement','Full travel to ensure freedom of movement')},
+      {id:'c34',label:L('Maintenir VOLETS RENTRÉS pour le roulage','Maintain FLAPS UP for taxiing'),sub:L('Si piste contaminée (givre/neige/gadoue/eau), précipitations à T° sous 0°C, ou dégivrage requis','If taxi route is contaminated (ice/snow/slush/standing water), precipitation below freezing, or de-icing is required')},
       {id:'c11',label:L('Informer PNC et passagers avant dégivrage','Advise cabin crew and passengers before de-icing')},
       {id:'c12',label:L('VOLETS RENTRÉS avant dégivrage','FLAPS UP before de-icing'),action:L('UP – OPL','UP – F/O')},
       {id:'c13',label:L('BLEED moteurs','Engine BLEED air switches'),action:L('OFF – OPL','OFF – F/O')},{id:'c14',label:'APU BLEED',action:L('OFF – OPL','OFF – F/O')},
@@ -1515,9 +1528,9 @@ function buildCold(sub) {
     });
     card.appendChild(res);
     // Table
-    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('ALT (ft)','ALT (ft)')}</th><th>-10°C</th><th>-20°C</th><th>-30°C</th><th>-40°C</th><th>-50°C</th><th>-60°C</th></tr></thead>`;
+    const tbl=el('table','tbl'); tbl.innerHTML=`<thead><tr><th>${L('ALT (ft)','ALT (ft)')}</th><th>0°C</th><th>-10°C</th><th>-20°C</th><th>-30°C</th><th>-40°C</th><th>-50°C</th></tr></thead>`;
     const tb=el('tbody');
-    COLD_TBL.forEach(r=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;font-weight:700;color:${c.n}">${r.alt}</td><td>${r.m10}</td><td>${r.m20}</td><td>${r.m30}</td><td>${r.m40}</td><td>${r.m50}</td><td>${r.m60}</td>`;tb.appendChild(tr);});
+    COLD_TBL.forEach(r=>{const tr=el('tr');tr.innerHTML=`<td style="font-family:monospace;font-weight:700;color:${c.n}">${r.alt}</td><td>${r.m0}</td><td>${r.m10}</td><td>${r.m20}</td><td>${r.m30}</td><td>${r.m40}</td><td>${r.m50}</td>`;tb.appendChild(tr);});
     tbl.appendChild(tb); const tw=el('div','tbl-wrap');tw.appendChild(tbl); card.appendChild(tw);
     wrap.appendChild(card); return wrap;
   }
