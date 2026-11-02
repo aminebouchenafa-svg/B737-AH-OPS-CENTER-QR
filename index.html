@@ -767,6 +767,7 @@ const C={
   delay:{n:"#29c5ff",g:"rgba(41,197,255,.35)",d:"#063a4d",m:"#0d94c2"},
   notes:{n:"#ffd500",g:"rgba(255,213,0,.35)",d:"#4d3f00",m:"#e0b400"},
   hot:  {n:"#ff5a36",g:"rgba(255,90,54,.4)",  d:"#5c1800",m:"#e64a19"},
+  adverse:{n:"#7c6eff",g:"rgba(124,110,255,.4)",d:"#1a1050",m:"#5c4dff"},
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1949,7 +1950,7 @@ function buildAdverse() {
   wrap.appendChild(buildSubgrid([
     {id:'cold',icon:'snowflake',label:L('Temps Froid','Cold Weather'),desc:L('Givre · Dégivrage · Corrections T°','Icing · De-icing · Temp corrections'),col:C.cold},
     {id:'hot', icon:'sun',      label:L('Temps Chaud','Hot Weather'), desc:L('Refroidissement · Freins · Cabine','Cooling · Brakes · Cabin'), col:C.hot},
-  ], C.hot.n, id=>{ STATE.page=id; STATE.sub=null; render(); }));
+  ], C.adverse.n, id=>{ STATE.page=id; STATE.sub=null; render(); }));
   return wrap;
 }
 
@@ -2076,7 +2077,7 @@ const SECTIONS=[
   {id:'rnp',  icon:'radar',name:'RNP',   sub:'APPROACH',      col:C.rnp},
   {id:'lvp',  icon:'plane',name:'LVP',   sub:'CAT II/IIIA',   col:C.lvp},
   {id:'cpdlc',icon:'chat', name:'CPDLC', sub:'DATALINK',      col:C.cpdlc},
-  {id:'adverse', icon:'warning',name:'ADVERSE',  sub:'WEATHER',    col:C.cold},
+  {id:'adverse', icon:'warning',name:'ADVERSE',  sub:'WEATHER',    col:C.adverse},
   {id:'grf',  icon:'barchart',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
   {id:'brnav',icon:'compass',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
 ];
@@ -2125,7 +2126,7 @@ const SEARCH_INDEX=[
   {page:'cold',sub:'approche',icon:'plane',col:C.cold,title:['Approche & atterrissage (froid)','Approach & Landing (cold)'],desc:['Corrections T° froide','Cold temp corrections'],kw:[]},
   {page:'cold',sub:'apres',icon:'flag',col:C.cold,title:['Après atterrissage (froid)','After Landing (cold)'],desc:['Volets · Anti-glace','Flaps · Anti-ice'],kw:[]},
   {page:'cold',sub:'corr',icon:'thermometer',col:C.cold,title:['Corrections Altimétriques','Altitude Corrections'],desc:['Calcul T° froide automatique','Automatic cold temp calculation'],kw:['altitude correction']},
-  {page:'adverse',sub:null,icon:'warning',col:C.cold,title:['Adverse Weather','Adverse Weather'],desc:['Temps froid · Temps chaud','Cold weather · Hot weather'],kw:['adverse','meteo','météo']},
+  {page:'adverse',sub:null,icon:'warning',col:C.adverse,title:['Adverse Weather','Adverse Weather'],desc:['Temps froid · Temps chaud','Cold weather · Hot weather'],kw:['adverse','meteo','météo']},
   {page:'hot',sub:null,icon:'sun',col:C.hot,title:['Hot Weather','Hot Weather'],desc:['Procédures grande chaleur','Hot weather procedures'],kw:['chaud','chaleur','heat','cooling','refroidissement']},
   {page:'hot',sub:'ground',icon:'sun',col:C.hot,title:['Sol · Refroidissement (chaud)','Ground · Cooling (hot)'],desc:['Packs · Air de refroidissement','Packs · Cooling air'],kw:[]},
   {page:'hot',sub:'cabine',icon:'thermometer',col:C.hot,title:['Refroidissement cabine','Cabin cooling'],desc:['AUTO COOL · MAN COOL','AUTO COOL · MAN COOL'],kw:[]},
