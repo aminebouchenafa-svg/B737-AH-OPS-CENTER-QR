@@ -770,7 +770,7 @@ const C={
   hot:  {n:"#ff5a36",g:"rgba(255,90,54,.4)",  d:"#5c1800",m:"#e64a19"},
   adverse:{n:"#7c6eff",g:"rgba(124,110,255,.4)",d:"#1a1050",m:"#5c4dff"},
   windshear:{n:"#ff3355",g:"rgba(255,51,85,.4)",d:"#5c0014",m:"#e60039"},
-  turbulence:{n:"#a855f7",g:"rgba(168,85,247,.4)",d:"#2e1065",m:"#9333ea"},
+  tem:{n:"#b0bac8",g:"rgba(176,186,200,.35)",d:"#2a3140",m:"#7e8aa0"},
   csff:{n:"#b3e8ff",g:"rgba(179,232,255,.4)",d:"#1a3a4d",m:"#7fd4ff"},
 };
 
@@ -804,6 +804,7 @@ const ICON_BODY = {
   sun:          '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>',
   pin:          '<path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.3" fill="currentColor" stroke="none"/>',
   wave:         '<path d="M2 12 L6 6 L10 16 L14 6 L18 16 L22 10"/>',
+  shield:       '<path d="M12 2 L20 6 V11 C20 16.5 16.5 20.5 12 22 C7.5 20.5 4 16.5 4 11 V6 Z"/>',
 };
 function svgIcon(key){
   const body = ICON_BODY[key];
@@ -2008,36 +2009,64 @@ function buildWindshear(sub) {
   return wrap;
 }
 
-// ── TURBULENCE ──
-// Source: OM-C Supplementary Procedures SP.16.25-26 (Adverse Weather —
-// Turbulence, Severe Turbulence).
-const TURB_PHASES = [
-  {id:'light',icon:'wave',name:L('LÉGÈRE À MODÉRÉE','LIGHT TO MODERATE'),items:[
-    {id:'t1',label:L('A/P et/ou A/T peuvent rester engagés sauf performance gênante','Autopilot and/or autothrottle may remain engaged unless performance is objectionable')},
-    {id:'t2',label:L('Activité accrue des manettes attendue (vent, T°, pression) ; excursions de vitesse de 10 à 15 kt possibles','Increased thrust lever activity can be expected; brief airspeed excursions of 10 to 15 knots can occur')},
-    {id:'t3',label:L('Panneaux passagers','Passenger signs'),action:'ON',sub:L('Conseiller aux passagers d\'attacher leur ceinture avant les zones de turbulence signalée/anticipée ; PNC vérifie toutes les ceintures','Advise passengers to fasten seat belts prior to entering areas of reported/anticipated turbulence; cabin crew checks all seat belts fastened')},
-    {id:'t4',label:L('Conseiller aux surnuméraires d\'attacher leur ceinture avant d\'entrer en zone de turbulence','Advise supernumeraries to fasten seat belts prior to entering areas of reported or anticipated turbulence')},
+// ── TEM BRIEFING (Threat & Error Management) ──
+// Source: Air Algérie Flight Training Department — TEM Quick Reference
+// Card, B737 NG/MAX (FTD-TEM-QRC, Rev 00, Oct 2026). Simplified adaptation
+// of the Boeing TEM Card (Rev 4). For training purposes; does not replace
+// FCOM, QRH or OM.
+const TEM_PHASES = [
+  {id:'threats',icon:'magnify',name:L('IDENTIFIER LES MENACES','IDENTIFY THE THREATS'),items:[
+    {id:'tt1',label:L('Météo & Environnement','Weather & Environment'),sub:L('Vent, cisaillement, orages · Visibilité, précipitations · Givrage, dégivrage · Relief, nuit, trafic','Wind, windshear, thunderstorms · Visibility, precipitation · Icing, de-icing · Terrain, night, traffic')},
+    {id:'tt2',label:L('Aéroport & ATC','Airport & ATC'),sub:L('État piste, travaux, NOTAMs · Changements piste/clairance · Phraséologie, langue · Indicatifs similaires, congestion','Runway condition, works, NOTAMs · Runway/clearance changes · Phraseology, language · Similar call signs, congestion')},
+    {id:'tt3',label:L('Avion','Aircraft'),sub:L('Pannes, éléments MEL · Automatisme, base de données FMC · Performance, masse · Maintenance, carnet technique','Failures, MEL items · Automation, FMC database · Performance, weight · Maintenance, technical log')},
+    {id:'tt4',label:L('Équipage & Exploitation','Crew & Operations'),sub:L('Fatigue, stress, hydratation · Pression du temps, retards · Interruptions, cabine, passagers · Aéroport non familier, expérience','Fatigue, stress, hydration · Time pressure, delays · Interruptions, cabin, passengers · Unfamiliar airport, experience')},
   ]},
-  {id:'severe',icon:'warning',name:L('TURBULENCE SÉVÈRE','SEVERE TURBULENCE'),items:[
-    {id:'t5',label:L('Yaw Damper','Yaw Damper'),action:'ON'},
-    {id:'t6',label:L('Autothrottle','Autothrottle'),action:L('Désengager','Disengage')},
-    {id:'t7',label:L('AUTOPILOT','AUTOPILOT'),action:'CWS',sub:L('Annonciateurs A/P affichent CWS tangage/roulis. Si trim soutenu : désengager l\'A/P','A/P status annunciators display CWS for pitch and roll. If sustained trimming occurs, disengage the autopilot')},
-    {id:'t8',label:L('ENGINE START switches','ENGINE START switches'),action:'FLT'},
-    {id:'t9',label:L('Poussée : régler selon la phase de vol','Thrust: set as needed for the phase of flight'),sub:L('Montée : 280 kt ou M.76 (le plus faible) · Croisière : réglages FMC recommandés, ou page Unreliable Airspeed du QRH si FMC HS · Descente : M.76/280/250 kt (le plus faible) ; sous 15000 ft et masse < masse max atterrissage, ralentir à 250 kt lisse possible','Climb: 280kt or .76 Mach, whichever lower · Cruise: FMC recommended thrust, or Unreliable Airspeed QRH page if FMC inop · Descent: .76 Mach/280/250kt whichever lower; below 15,000ft and below max landing weight, may slow to 250kt clean')},
-    {id:'t10',label:L('Approche en zone de turbulence sévère : différer la sortie des volets le plus longtemps possible (config lisse supporte des charges de rafale plus élevées)','If an approach must be made into severe turbulence, delay flap extension as long as possible (clean configuration withstands higher gust loads)')},
+  {id:'takeoff-brief',icon:'plane',name:L('BRIEFING DÉCOLLAGE — T.R.A.P.','TAKEOFF BRIEFING — T.R.A.P.'),items:[
+    {id:'tb1',label:L('T — Taxi & piste','T — Taxi & runway'),sub:L('Cheminement taxi, piste, intersection, hotspots','Taxi path, runway, intersection, hotspots')},
+    {id:'tb2',label:L('R — Route','R — Route'),sub:L('Clairance, plan de vol, recoupement FMC RTE','Clearance, flight plan, FMC RTE cross-check')},
+    {id:'tb3',label:L('A — Anomalies','A — Abnormals'),sub:L('Panne moteur, retour terrain, dégagement décollage','Engine failure, return to airport, takeoff alternate')},
+    {id:'tb4',label:L('P — Performance','P — Performance'),sub:L('Données valides, adaptées aux conditions, configuration','Data valid, appropriate for conditions, configuration')},
+    {id:'tb5',label:L('Considérations','Considerations'),sub:L('Tâches PM · Procédure anti-bruit · Révision si nécessaire','PM duties · Noise abatement · Review as needed')},
+  ]},
+  {id:'approach-brief',icon:'compass',name:L('BRIEFING APPROCHE — M.A.P.S.','APPROACH BRIEFING — M.A.P.S.'),items:[
+    {id:'ab1',label:L('M — Météo & NOTAMs','M — Meteo & NOTAMs'),sub:L('Météo, NOTAMs, programmation FMC','Weather, NOTAMs, FMC programming')},
+    {id:'ab2',label:L('A — Automatisme','A — Automation'),sub:L('Mode approche, minimums, MCP ALT, approche interrompue','Approach mode, minimums, MCP ALT, missed approach')},
+    {id:'ab3',label:L('P — Performance & piste','P — Performance & runway'),sub:L('Distance atterrissage, point de toucher, sortie, autobrake','Landing distance, touchdown point, exit, autobrake')},
+    {id:'ab4',label:L('S — Vitesses & STAR','S — Speeds & STAR'),sub:L('Volets, VREF et bugs, routing, dégagement, carburant','Flaps, VREF and bugs, routing, alternate, fuel')},
+    {id:'ab5',label:L('Considérations','Considerations'),sub:L('Tâches PM · Plan approche interrompue','PM duties · Arrival/missed approach plan')},
+  ]},
+  {id:'model',icon:'flag',name:L('MODÈLE TEM','THE TEM MODEL'),items:[
+    {id:'tm1',label:L('Étape 1 — Menace','Stage 1 — Threat'),action:L('ANTICIPER','ANTICIPATE'),sub:L('Existe avant l\'action de l\'équipage → Briefer · Plan B · Marges','Exists before the crew acts → Brief · Plan B · Margins')},
+    {id:'tm2',label:L('Étape 2 — Erreur','Stage 2 — Error'),action:L('PIÉGER','TRAP'),sub:L('Action ou inaction de l\'équipage → Détecter · Annoncer · Corriger','Crew action or inaction → Detect · Call out · Correct')},
+    {id:'tm3',label:L('Étape 3 — État indésirable de l\'avion','Stage 3 — Undesired Aircraft State'),action:L('RÉCUPÉRER','RECOVER'),sub:L('Vitesse, trajectoire, configuration → Piloter l\'avion en priorité. Marge de sécurité : Haute → Basse','Speed, flight path, configuration → Fly the aircraft first. Safety margin: High → Low')},
+  ]},
+  {id:'errors',icon:'warning',name:L('TYPES D\'ERREUR','ERROR TYPES'),items:[
+    {id:'et1',label:L('Liée à l\'habileté','Skill-based'),action:'PRO · FPA · FPM',sub:L('Mauvaise action, mauvais mode (ex : mauvais mode MCP, étape NNC manquée)','Wrong action, wrong mode (e.g. wrong MCP mode, missed NNC step)')},
+    {id:'et2',label:L('Décision','Decision'),action:'KNO · PSD',sub:L('Mauvais choix ou option (ex : poursuite d\'une approche instable)','Wrong choice or option (e.g. continuing an unstable approach)')},
+    {id:'et3',label:L('Perceptuelle','Perceptual'),action:'WLM',sub:L('Non vu, non entendu (ex : changement de FMA manqué sous charge de travail élevée)','Not seen, not heard (e.g. missed FMA change under high workload)')},
+    {id:'et4',label:L('CRM','CRM'),action:'LTW · COM · SAW',sub:L('Non dit, non partagé, non vérifié (ex : le PM ne challenge pas un écart)','Not said, not shared, not checked (e.g. PM does not challenge a deviation)')},
+  ]},
+  {id:'debrief',icon:'chat',name:L('DEBRIEF — 4 QUESTIONS','DEBRIEF — 4 QUESTIONS'),items:[
+    {id:'db1',label:L('1. Marges','1. Margins'),sub:L('Les marges de sécurité ont-elles été compromises à un moment ?','Were safety margins compromised at any time?')},
+    {id:'db2',label:L('2. Standards','2. Standards'),sub:L('Des standards, politiques ou tâches ont-ils été compromis ?','Were standards, policies or tasks compromised?')},
+    {id:'db3',label:L('3. Questions non résolues','3. Unresolved questions'),sub:L('Quelles questions soulevées sont restées sans réponse adéquate ?','What raised questions that were never adequately answered?')},
+    {id:'db4',label:L('4. Opportunités','4. Opportunities'),sub:L('Où aurions-nous pu performer à un niveau supérieur ?','Where could we have performed at a higher level?')},
+    {id:'db5',label:L('Règle d\'or','Golden rule'),sub:L('Chaque pilote répond d\'abord pour lui-même, puis l\'équipage discute. Pas de blâme : chercher le piège.','Each pilot answers for himself first, then the crew discusses. No blame: look for the trap.')},
   ]},
 ];
-const TURB_SUBS = TURB_PHASES.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`),ckKey:`turb-${p.id}`,ckTotal:p.items.length}));
-function buildTurbulence(sub) {
-  const c=C.turbulence; const wrap=el('div','page');
+const TEM_SUBS = TEM_PHASES.map(p=>({id:p.id,icon:p.icon,label:p.name,desc:L(`${p.items.length} actions`,`${p.items.length} actions`),ckKey:`tem-${p.id}`,ckTotal:p.items.length}));
+function buildTEM(sub) {
+  const c=C.tem; const wrap=el('div','page');
   if(!sub){
-    wrap.appendChild(buildSubgrid(TURB_SUBS, c.n, id=>{ STATE.sub=id; render(); }));
+    const warn=el('div','warn'); warn.innerHTML='<span style="font-size:20px">🎯</span><div><b>'+L('LA QUESTION CLÉ : ','THE KEY QUESTION: ')+'</b>'+L('Quelle est la menace n°1 sur ce vol, et que ferons-nous si elle se concrétise ?','What is the #1 threat on this flight, and what will we do if it happens?')+'</div>';
+    wrap.appendChild(warn);
+    wrap.appendChild(buildSubgrid(TEM_SUBS, c.n, id=>{ STATE.sub=id; render(); }));
     return wrap;
   }
   wrap.appendChild(buildBackBtn(L('RETOUR','BACK'),()=>{ STATE.sub=null; render(); }));
-  const phase=TURB_PHASES.find(p=>p.id===sub);
-  if(phase) wrap.appendChild(buildCard(phase.name, c.n, buildChecklist(phase.items, c.n, `turb-${sub}`)));
-  const nextBtn = buildNextBtn(TURB_SUBS, sub, c.n, id=>{ STATE.sub=id; render(); });
+  const phase=TEM_PHASES.find(p=>p.id===sub);
+  if(phase) wrap.appendChild(buildCard(phase.name, c.n, buildChecklist(phase.items, c.n, `tem-${sub}`)));
+  const nextBtn = buildNextBtn(TEM_SUBS, sub, c.n, id=>{ STATE.sub=id; render(); });
   if(nextBtn) wrap.appendChild(nextBtn);
   return wrap;
 }
@@ -2203,7 +2232,7 @@ const SECTIONS=[
   {id:'grf',  icon:'barchart',name:'GRF',   sub:'RCAM · RUNWAY', col:C.grf},
   {id:'brnav',icon:'compass',name:'BRNAV', sub:'PRNAV · RNAV',  col:C.brnav},
   {id:'windshear',  icon:'wind', name:'WINDSHEAR',  sub:'AVOIDANCE',   col:C.windshear},
-  {id:'turbulence', icon:'wave', name:'TURBULENCE', sub:'SEVERE WX',   col:C.turbulence},
+  {id:'tem', icon:'shield', name:'TEM', sub:'BRIEFING',   col:C.tem},
   {id:'csff',       icon:'snowflake', name:'CSFF',  sub:'COLD-SOAKED FUEL', col:C.csff},
 ];
 const UTILS=[
@@ -2264,9 +2293,13 @@ const SEARCH_INDEX=[
   {page:'windshear',sub:'avoidance',icon:'wind',col:C.windshear,title:['Évitement','Avoidance'],desc:['Reconnaissance et évitement du windshear','Windshear recognition and avoidance'],kw:['avoidance','evitement','predictive']},
   {page:'windshear',sub:'takeoff',icon:'wind',col:C.windshear,title:['Précautions décollage','Takeoff precautions'],desc:['Précautions avant/pendant le décollage','Precautions before/during takeoff'],kw:['takeoff','decollage']},
   {page:'windshear',sub:'approach',icon:'wind',col:C.windshear,title:['Précautions approche','Approach & landing precautions'],desc:['Précautions approche et atterrissage','Approach and landing precautions'],kw:['approach','landing','atterrissage']},
-  {page:'turbulence',sub:null,icon:'wave',col:C.turbulence,title:['Turbulence','Turbulence'],desc:['Légère à modérée · Sévère','Light-to-moderate · Severe'],kw:['turbulence','cws','yaw damper','secousses']},
-  {page:'turbulence',sub:'light',icon:'wave',col:C.turbulence,title:['Légère à modérée','Light-to-moderate'],desc:['Turbulence légère à modérée','Light-to-moderate turbulence'],kw:['light','moderate','legere']},
-  {page:'turbulence',sub:'severe',icon:'wave',col:C.turbulence,title:['Sévère','Severe'],desc:['Turbulence sévère','Severe turbulence'],kw:['severe','severe turbulence']},
+  {page:'tem',sub:null,icon:'shield',col:C.tem,title:['TEM Briefing','TEM Briefing'],desc:['Threat & Error Management · Briefing décollage/approche','Threat & Error Management · Takeoff/approach briefing'],kw:['tem','threat error management','trap','maps','briefing','menaces']},
+  {page:'tem',sub:'threats',icon:'magnify',col:C.tem,title:['Identifier les menaces','Identify the threats'],desc:['4 familles de menaces','4 threat families'],kw:['threats','menaces','weather','airport','aircraft','crew']},
+  {page:'tem',sub:'takeoff-brief',icon:'plane',col:C.tem,title:['Briefing décollage','Takeoff briefing'],desc:['T.R.A.P.','T.R.A.P.'],kw:['trap','takeoff briefing','briefing decollage']},
+  {page:'tem',sub:'approach-brief',icon:'compass',col:C.tem,title:['Briefing approche','Approach briefing'],desc:['M.A.P.S.','M.A.P.S.'],kw:['maps','approach briefing','briefing approche']},
+  {page:'tem',sub:'model',icon:'flag',col:C.tem,title:['Modèle TEM','The TEM model'],desc:['Menace · Erreur · État indésirable','Threat · Error · Undesired aircraft state'],kw:['tem model','anticipate','trap','recover']},
+  {page:'tem',sub:'errors',icon:'warning',col:C.tem,title:['Types d\'erreur','Error types'],desc:['Habileté · Décision · Perceptuelle · CRM','Skill-based · Decision · Perceptual · CRM'],kw:['error types','skill based','decision','perceptual','crm']},
+  {page:'tem',sub:'debrief',icon:'chat',col:C.tem,title:['Debrief','Debrief'],desc:['4 questions après le vol','4 post-flight questions'],kw:['debrief','margins','standards','opportunities']},
   {page:'csff',sub:null,icon:'snowflake',col:C.csff,title:['Givre de carburant froid','Cold-Soaked Fuel Frost'],desc:['Surfaces inférieures · Surfaces supérieures','Lower surfaces · Upper surfaces'],kw:['csff','frost','givre','cold soaked fuel','aile']},
   {page:'csff',sub:'lower',icon:'snowflake',col:C.csff,title:['Surfaces inférieures de voilure','Lower wing surfaces'],desc:['Conditions des surfaces inférieures','Lower wing surface conditions'],kw:['lower','inferieure']},
   {page:'csff',sub:'upper',icon:'snowflake',col:C.csff,title:['Surfaces supérieures de voilure','Upper wing surfaces'],desc:['Conditions des surfaces supérieures','Upper wing surface conditions'],kw:['upper','superieure']},
@@ -2374,7 +2407,7 @@ document.addEventListener('keydown',e=>{
 
 function buildApp() {
   const div=el('div','app');
-  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',adverse:'ADVERSE WEATHER',cold:'COLD WEATHER',hot:'HOT WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',windshear:'WINDSHEAR',turbulence:'TURBULENCE',csff:L('GIVRE CARBURANT FROID','COLD-SOAKED FUEL FROST'),contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
+  const TITLES={rnp:'RNP APPROACH',lvp:'CAT II/IIIA LVP',cpdlc:'CPDLC DATALINK',adverse:'ADVERSE WEATHER',cold:'COLD WEATHER',hot:'HOT WEATHER',grf:'GRF / RCAM',brnav:'BRNAV / PRNAV',windshear:'WINDSHEAR',tem:'TEM BRIEFING',csff:L('GIVRE CARBURANT FROID','COLD-SOAKED FUEL FROST'),contacts:'COMMUNICATIONS',delay:L('CODES DE RETARD','DELAY CODES'),notes:L('NOTES DE VOL','FLIGHT NOTES')};
 
   // HEADER
   const hdr=el('div','hdr');
@@ -2452,7 +2485,7 @@ function buildApp() {
     if(STATE.page==='hot')     content=buildHot(STATE.sub);
     if(STATE.page==='brnav')   content=buildBRNAV();
     if(STATE.page==='windshear')  content=buildWindshear(STATE.sub);
-    if(STATE.page==='turbulence') content=buildTurbulence(STATE.sub);
+    if(STATE.page==='tem')        content=buildTEM(STATE.sub);
     if(STATE.page==='csff')       content=buildCSFF(STATE.sub);
     if(STATE.page==='contacts')content=buildContacts();
     if(STATE.page==='delay')   content=buildDelay();
