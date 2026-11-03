@@ -1,6 +1,6 @@
 // Bump this version string whenever index.html (or any cached asset) changes,
 // so returning clients pick up the new content instead of the stale cache.
-const CACHE_VERSION = 'b737-ops-center-v45';
+const CACHE_VERSION = 'b737-ops-center-v46';
 
 const APP_SHELL = [
   './',
@@ -9,7 +9,8 @@ const APP_SHELL = [
   './icon-180.png',
   './icon-192.png',
   './icon-512.png',
-  './icon-header-dark.png'
+  './icon-header-dark.png',
+  './air-algerie-logo.png'
 ];
 
 self.addEventListener('install', (event) => {
